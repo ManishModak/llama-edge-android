@@ -120,6 +120,8 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
 - **Yes** → freeze the change; anything further goes in "future work"
 - **No** → pivot: the submission story becomes the harness + device findings + adaptive fallback controller ("this device class needs X, here's the data and the tool"). Do **not** start a second optimization after 7 Aug.
 
+**Sequential revisit rule:** the non-chosen workstreams are queued, not discarded. A second workstream may be started **only if** the first is fully done (G2 = Yes: frozen, validated, documented) **and** it's still before 7 Aug. Same rules apply: one at a time, own branch, own A/B run, baseline = the already-frozen optimized build. After the deadline, the queue becomes the upstream/future-work roadmap in the README.
+
 ### Phase 4 — Android app (Aug 3–10, interleaved with Phase 3 · ~13 h)
 
 *Interleave rule (solo): when blocked on native builds/benchmarks, switch to app tasks.*
