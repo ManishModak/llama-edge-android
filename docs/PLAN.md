@@ -71,10 +71,11 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
 - [x] `models/manifest.json` — sha256 still TODO after first model download
 
 **First native build (the real Phase 0 exit test)**
-- [ ] Cross-compile **CPU-only** `llama-cli` + `llama-bench` for arm64 with NDK 28 (host-side CMake build, not in-app)
-- [ ] Download bring-up model: **Llama 3.2 1B Instruct Q4_0** (~0.73 GB); record sha256 in manifest
-- [ ] `adb push` to `/data/local/tmp`, run smoke generation
-- [ ] **Exit criterion:** model streams tokens on the Redmi from the shell
+- [x] Cross-compile **CPU-only** binaries for arm64, NDK 28, `-march=armv8.2-a+dotprod+fp16`, static — done 20 Jul (note: upstream renamed `llama-cli` → **`llama-completion`**; new `llama-cli` is a server client needing a host compiler)
+- [x] Download bring-up model **Llama 3.2 1B Q4_0** to `D:\models`; sha256 in manifest
+- [x] `adb push` + smoke generation ✓ — coherent output on device
+- [x] **Exit criterion MET** (20 Jul). First numbers (2×A78 pinned, pp64/tg32): **pp 45.1 tok/s, tg 12.2 tok/s**
+- ⚠ Learnings: always pass explicit small `-c` to llama-completion (default 128K ctx thrashes 5.6 GB RAM → 0.26 tok/s); toybox `taskset` wants bare hex mask (`taskset c0` = A78 pair); details in `docs/phase0-report.md`
 
 ### Phase 1 — Baseline harness & first numbers (Jul 24–28 · ~11 h)
 

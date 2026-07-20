@@ -9,7 +9,7 @@
       "source": "https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF",
       "approxSizeGb": 0.73,
       "quantization": "Q4_0",
-      "sha256": "TODO after download",
+      "sha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
       "license": "Llama 3.2 Community License"
     },
     {
