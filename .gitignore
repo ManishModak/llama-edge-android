@@ -1,0 +1,30 @@
+# Android / Gradle
+.gradle/
+build/
+local.properties
+*.apk
+*.aab
+.cxx/
+captures/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Native build output
+out/
+build-android-*/
+build-host/
+
+# Model weights — never commit (see models/manifest.json)
+*.gguf
+*.bin
+*.safetensors
+
+# Large raw benchmark bundles (keep small summaries only)
+benchmarks/results/raw/
+
+# OS junk
+Thumbs.db
+.DS_Store

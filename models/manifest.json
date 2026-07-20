@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "note": "No model weights in git. Download to a local models dir (e.g. the shared exFAT drive) and record sha256 here.",
+  "models": [
+    {
+      "id": "llama-3.2-1b-instruct-q4_0",
+      "role": "bring-up / primary benchmark",
+      "file": "Llama-3.2-1B-Instruct-Q4_0.gguf",
+      "source": "https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF",
+      "approxSizeGb": 0.73,
+      "quantization": "Q4_0",
+      "sha256": "TODO after download",
+      "license": "Llama 3.2 Community License"
+    }
+  ]
+}
