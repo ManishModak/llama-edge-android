@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "suite": "phase1-baseline",
+  "description": "Phase 1 CPU thread sweep (big.LITTLE policy) plus a CPU pg case and a Vulkan comparison group, on Llama 3.2 1B Q4_0. See benchmarks/suites/README.md for the schema.",
+  "defaults": {
+    "binDir": "/data/local/tmp/llama-edge",
+    "modelsDir": "/data/local/tmp/llama-edge/models",
+    "binary": "llama-bench",
+    "model": "llama-3.2-1b-instruct-q4_0",
+    "repetitions": 5,
+    "contextSize": 2048,
+    "warmup": true,
+    "seed": null
+  },
+  "cases": [
+    {
+      "id": "cpu-t2-pp512",
+      "backend": "cpu",
+      "threads": 2,
+      "nGpuLayers": 0,
+      "test": { "type": "pp", "promptTokens": 512, "genTokens": 0 },
+      "note": "2 threads ~ A78-only intent; true big-core pinning needs cpuMask (Phase 2 / workstream C)."
+    },
+    {
+      "id": "cpu-t2-tg128",
+      "backend": "cpu",
+      "threads": 2,
+      "nGpuLayers": 0,
+      "test": { "type": "tg", "promptTokens": 0, "genTokens": 128 }
+    },
+    {
+      "id": "cpu-t4-pp512",
+      "backend": "cpu",
+      "threads": 4,
+      "nGpuLayers": 0,
+      "test": { "type": "pp", "promptTokens": 512, "genTokens": 0 }
+    },
+    {
+      "id": "cpu-t4-tg128",
+      "backend": "cpu",
+      "threads": 4,
+      "nGpuLayers": 0,
+      "test": { "type": "tg", "promptTokens": 0, "genTokens": 128 }
+    },
+    {
+      "id": "cpu-t6-pp512",
+      "backend": "cpu",
+      "threads": 6,
+      "nGpuLayers": 0,
+      "test": { "type": "pp", "promptTokens": 512, "genTokens": 0 }
+    },
+    {
+      "id": "cpu-t6-tg128",
+      "backend": "cpu",
+      "threads": 6,
+      "nGpuLayers": 0,
+      "test": { "type": "tg", "promptTokens": 0, "genTokens": 128 }
+    },
+    {
+      "id": "cpu-t8-pp512",
+      "backend": "cpu",
+      "threads": 8,
+      "nGpuLayers": 0,
+      "test": { "type": "pp", "promptTokens": 512, "genTokens": 0 }
+    },
+    {
+      "id": "cpu-t8-tg128",
+      "backend": "cpu",
+      "threads": 8,
+      "nGpuLayers": 0,
+      "test": { "type": "tg", "promptTokens": 0, "genTokens": 128 }
+    },
+    {
+      "id": "cpu-t6-pg512-128",
+      "backend": "cpu",
+      "threads": 6,
+      "nGpuLayers": 0,
+      "test": { "type": "pg", "promptTokens": 512, "genTokens": 128 },
+      "note": "best-guess thread count for combined prefill+decode; revise after the sweep names a winner."
+    },
+    {
+      "id": "vulkan-pp512",
+      "backend": "vulkan",
+      "binary": "llama-bench-vulkan",
+      "threads": 4,
+      "nGpuLayers": 99,
+      "test": { "type": "pp", "promptTokens": 512, "genTokens": 0 },
+      "note": "Vulkan build pushed as llama-bench-vulkan; override binary/binDir if named differently."
+    },
+    {
+      "id": "vulkan-tg128",
+      "backend": "vulkan",
+      "binary": "llama-bench-vulkan",
+      "threads": 4,
+      "nGpuLayers": 99,
+      "test": { "type": "tg", "promptTokens": 0, "genTokens": 128 }
+    },
+    {
+      "id": "vulkan-pg512-128",
+      "backend": "vulkan",
+      "binary": "llama-bench-vulkan",
+      "threads": 4,
+      "nGpuLayers": 99,
+      "test": { "type": "pg", "promptTokens": 512, "genTokens": 128 }
+    }
+  ]
+}
