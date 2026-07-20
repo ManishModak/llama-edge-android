@@ -1,8 +1,9 @@
 # MobileSpec — Execution Plan & Checklist
 
 **Arm Create: AI Optimization Challenge — Mobile AI track**
-Plan date: 20 July 2026 · Deadline: **14 Aug 2026, 4:00 PM PDT** (= **15 Aug, 4:30 AM IST** — treat **13 Aug evening** as the real deadline)
+Plan date: 20 July 2026 (updated 20 Jul, post-scaffold) · Deadline: **14 Aug 2026, 4:00 PM PDT** (= **15 Aug, 4:30 AM IST** — treat **13 Aug evening** as the real deadline)
 Constraints: **solo**, **2–3 h/day → ~55–65 total hours**, balanced ambition (competition first, upstream PR if it falls out naturally).
+Repo: **https://github.com/ManishModak/llama-edge-android** (private until submission — flip public by 12 Aug). Canonical copy of this plan: `docs/PLAN.md` in the repo.
 
 ---
 
@@ -43,6 +44,11 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
 4. **Upstream PR = prepared branch + evidence, not a merged PR.** llama.cpp restricts AI-generated PRs; you must author, understand, and disclose. A clean branch + llama-bench data documented in `docs/upstream-contribution.md` scores the Impact points even unmerged.
 5. **Submission target is 12 Aug**, leaving 13 Aug as pure buffer.
 
+**Cross-OS setup (user dual-boots Windows/Linux):**
+- One clone per OS on its native filesystem: `C:\Projects\llama-edge-android` (NTFS) on Windows, home dir (ext4) on Linux. GitHub is the sync mechanism — push before switching OS.
+- The exFAT drive holds **data only**: GGUF models, raw benchmark bundles, demo footage. Both clones point at it via `LLAMA_EDGE_MODELS` env var.
+- All `tools/` scripts are Python (no PowerShell/bash-only tooling); `.gitattributes` normalizes line endings.
+
 **Guaranteed minimum deliverable** (even if everything goes wrong): reproducible CPU-vs-Vulkan benchmark harness for this device class + thread/core-policy findings on big.LITTLE + a working demo app with A/B benchmark screen. That alone is a legitimate submission.
 
 ---
@@ -53,16 +59,16 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
 
 **Admin**
 - [ ] Register for the challenge on Devpost (Mobile AI track)
-- [ ] Fork `ggml-org/llama.cpp` on GitHub (your account)
-- [ ] Create public repo `llama-edge-android`, **Apache-2.0 license file in root**
-- [ ] Add `third_party/llama.cpp` submodule → your fork; add `upstream` remote; **pin and record the commit hash**
+- [x] Create repo `llama-edge-android` with **Apache-2.0 license in root** — done 20 Jul as **private**; ⚠ must be public before submission (12 Aug)
+- [x] Add `third_party/llama.cpp` submodule — pinned to **upstream `178a6c4`** (b10069, 19 Jul, shallow clone; `git fetch --unshallow` if history needed)
+- ~~Fork llama.cpp now~~ → **deferred to Phase 3**: submodule pins upstream directly until we patch it. If repo is still private then, push the patched llama.cpp to a standalone private repo (forks can't be private) and swap the submodule URL; proper fork + PR only when going public.
 
 **Local scaffold** (Claude does this)
-- [ ] Directory structure per Part II §3 (lean set: `app`, `engine-api`, `engine-llama`, `benchmark/`, `tools/`, `docs/`, `benchmarks/{suites,prompts,results}`)
-- [ ] Gradle multi-module skeleton (Kotlin + Compose, NDK/CMake wired but app can build without native first)
-- [ ] `tools/` scripts: device snapshot, push+run bench, result collection
-- [ ] `docs/` templates: architecture, benchmark-methodology, reproducibility, optimization-notes
-- [ ] `models/manifest.json` (no weights in git — names, URLs, sha256)
+- [x] Directory structure (lean set: `app`, `engine-api`, `engine-llama`, `tools/`, `docs/`, `benchmarks/{suites,prompts,results}`) — commit `2e22c9f`, pushed
+- [ ] Gradle multi-module skeleton (Kotlin + Compose, NDK/CMake wired) — deferred to Phase 4 start; not needed for ADB benchmarking
+- [x] `tools/device_snapshot.py` (cross-OS Python) · [ ] push+run bench script · [ ] result collection script
+- [x] `docs/` templates: benchmark-methodology, reproducibility, optimization-notes (+ PLAN.md)
+- [x] `models/manifest.json` — sha256 still TODO after first model download
 
 **First native build (the real Phase 0 exit test)**
 - [ ] Cross-compile **CPU-only** `llama-cli` + `llama-bench` for arm64 with NDK 28 (host-side CMake build, not in-app)
@@ -177,7 +183,7 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
 - [ ] ≥1 metric improves reproducibly **or** adaptive controller demonstrably avoids a slower path
 - [ ] Correctness checks pass; unsupported-device fallback works
 - [ ] App demos chat + A/B benchmark without log-diving
-- [ ] Public repo, Apache-2.0 visible, README judge-ordered, video <3 min
+- [ ] Repo flipped **private → public**, Apache-2.0 visible, README judge-ordered, video <3 min
 
 ## 5. Weekly cadence (2–3 h/day)
 
