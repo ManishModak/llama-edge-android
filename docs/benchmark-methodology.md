@@ -21,7 +21,9 @@ Rules:
   captures thermal/battery before and after, and writes one schemaVersion-1 result per case
   into `benchmarks/results/raw/<timestamp>-<suite>/` (git-ignored). The full llama-bench
   payload is preserved under `rawBench`. Flags: `--dry-run` (prints adb commands, no device
-  needed), `--serial`, `--cooldown SECONDS` (default 120), `--device-snapshot`, `--ndk-version`.
+  needed), `--serial`, `--only-backend BACKEND` (repeatable; runs only the matching cases —
+  use `--only-backend cpu` while the Vulkan binary does not exist yet),
+  `--cooldown SECONDS` (default 120), `--device-snapshot`, `--ndk-version`.
 - `tools/summarize_results.py <results-dir> [-o out.md]` renders a markdown table
   (case, backend, threads, pp/tg tok/s mean±std, thermal start→end).
 - llama-bench (pinned `178a6c4`) has no seed or context-size flag; `seed`/`contextSize` are

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "suite": "phase1-baseline",
+  "caseId": "cpu-t6-pp512",
+  "timestampUtc": "2026-07-22T15:49:07.778892+00:00",
+  "dryRun": false,
+  "device": {
+    "model": "24094RAD4I",
+    "android": "16",
+    "soc": "MT6855",
+    "vulkanDevice": null,
+    "vulkanDriver": null,
+    "serial": "8DYTMRKF755TOBZD",
+    "thermalStart": {
+      "batteryLevel": 99,
+      "batteryTempC": 36.2,
+      "thermalStatus": "0 (NONE)",
+      "memAvailableKb": 1458036,
+      "capturedAt": "2026-07-22T15:48:18.173878+00:00"
+    },
+    "thermalEnd": {
+      "batteryLevel": 99,
+      "batteryTempC": 36.7,
+      "thermalStatus": "0 (NONE)",
+      "memAvailableKb": 2173792,
+      "capturedAt": "2026-07-22T15:49:07.778892+00:00"
+    }
+  },
+  "software": {
+    "appCommit": "0fcd0ea77b874f9e1c093046a362f753dab701b0",
+    "llamaCppCommit": "178a6c4",
+    "buildVariant": "cpu",
+    "ndkVersion": "28.2.13676358"
+  },
+  "model": {
+    "name": "llama-3.2-1b-instruct-q4_0",
+    "sha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
+    "quantization": "Q4_0",
+    "contextSize": 2048
+  },
+  "run": {
+    "backend": "cpu",
+    "threads": 6,
+    "nGpuLayers": 0,
+    "promptTokens": 512,
+    "generatedTokens": 0,
+    "seed": null,
+    "repetition": 5
+  },
+  "metrics": {
+    "ppTokensPerSec": {
+      "mean": 68.201115,
+      "std": 0.770558,
+      "samples": [
+        67.3134,
+        67.9211,
+        67.9805,
+        68.3972,
+        69.3934
+      ]
+    }
+  },
+  "rawBench": [
+    {
+      "build_commit": "178a6c4",
+      "build_number": 1,
+      "cpu_info": "CPU",
+      "gpu_info": "",
+      "backends": "CPU",
+      "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+      "model_type": "llama 1B Q4_0",
+      "model_size": 765194368,
+      "model_n_params": 1235814432,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 6,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 0,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": -1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "use_mmap": true,
+      "use_direct_io": false,
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 512,
+      "n_gen": 0,
+      "n_depth": 0,
+      "test_time": "2026-07-22T15:48:23Z",
+      "avg_ns": 7507970908,
+      "stddev_ns": 84335389,
+      "avg_ts": 68.201115,
+      "stddev_ts": 0.770558,
+      "samples_ns": [
+        7606211693,
+        7538157539,
+        7531573308,
+        7485685539,
+        7378226462
+      ],
+      "samples_ts": [
+        67.3134,
+        67.9211,
+        67.9805,
+        68.3972,
+        69.3934
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ Usage:
 Options:
   --serial SERIAL       adb device serial (default: first attached device)
   --dry-run             print the adb commands without running them (needs no device)
+  --only-backend B      run only cases with this backend (repeatable, e.g. --only-backend cpu)
   --cooldown SECONDS    idle seconds between cases to shed heat (default: 120)
   --out-dir DIR         base results dir (default: benchmarks/results/raw)
   --device-snapshot F   JSON from device_snapshot.py, imported to fill the device block
@@ -26,6 +27,10 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 _INTERRUPTED = False
+
+# android.os.PowerManager thermal status codes, as reported by `dumpsys thermalservice`
+THERMAL_STATUS = {0: "NONE", 1: "LIGHT", 2: "MODERATE", 3: "SEVERE",
+                  4: "CRITICAL", 5: "EMERGENCY", 6: "SHUTDOWN"}
 
 
 def now_utc() -> str:
@@ -78,20 +83,31 @@ def app_commit() -> str | None:
         return None
 
 
+BATT_CMD = "dumpsys battery | grep -E 'level|temperature|status'"
+# `-i status` also matches "IsStatusOverride:", which sorts first — match the real line.
+THERMAL_CMD = "dumpsys thermalservice | grep -m1 'Thermal Status'"
+MEM_CMD = "grep MemAvailable /proc/meminfo"
+
+
 def capture_thermal(serial: str | None, dry_run: bool) -> dict:
-    """Compact thermal/battery reading via dumpsys (read-only)."""
+    """Compact thermal/battery/memory reading via dumpsys + procfs (read-only)."""
     if dry_run:
-        run_adb(serial, ["shell", "dumpsys battery | grep -E 'level|temperature|status'"], dry_run=True)
-        run_adb(serial, ["shell", "dumpsys thermalservice | grep -m1 -i status"], dry_run=True)
-        return {"batteryLevel": None, "batteryTempC": None, "thermalStatus": None, "capturedAt": now_utc()}
-    batt = run_adb(serial, ["shell", "dumpsys battery | grep -E 'level|temperature|status'"], dry_run=False)
-    status = run_adb(serial, ["shell", "dumpsys thermalservice | grep -m1 -i status"], dry_run=False)
+        for cmd in (BATT_CMD, THERMAL_CMD, MEM_CMD):
+            run_adb(serial, ["shell", cmd], dry_run=True)
+        return {"batteryLevel": None, "batteryTempC": None, "thermalStatus": None,
+                "memAvailableKb": None, "capturedAt": now_utc()}
+    batt = run_adb(serial, ["shell", BATT_CMD], dry_run=False)
+    status = run_adb(serial, ["shell", THERMAL_CMD], dry_run=False)
+    mem = run_adb(serial, ["shell", MEM_CMD], dry_run=False)
     level = _grep_int(batt, r"level:\s*(\d+)")
     temp_raw = _grep_int(batt, r"temperature:\s*(\d+)")  # tenths of degC
+    code = _grep_int(status, r"Thermal Status:\s*(\d+)")
     return {
         "batteryLevel": level,
         "batteryTempC": (temp_raw / 10.0) if temp_raw is not None else None,
-        "thermalStatus": status.strip() or None,
+        "thermalStatus": (f"{code} ({THERMAL_STATUS.get(code, '?')})" if code is not None
+                          else (status.strip() or None)),
+        "memAvailableKb": _grep_int(mem, r"MemAvailable:\s*(\d+)"),
         "capturedAt": now_utc(),
     }
 
@@ -252,6 +268,8 @@ def main() -> None:
     ap.add_argument("suite", help="path to a suite JSON (benchmarks/suites/*.json)")
     ap.add_argument("--serial", default=None)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--only-backend", action="append", default=None, metavar="BACKEND",
+                    help="run only cases with this backend (repeatable; e.g. --only-backend cpu)")
     ap.add_argument("--cooldown", type=int, default=120, help="idle seconds between cases")
     ap.add_argument("--out-dir", default=str(REPO_ROOT / "benchmarks" / "results" / "raw"))
     ap.add_argument("--device-snapshot", default=None)
@@ -262,6 +280,16 @@ def main() -> None:
     defaults = suite.get("defaults", {})
     suite_name = suite.get("suite", Path(args.suite).stem)
     cases = suite["cases"]
+
+    if args.only_backend:
+        wanted = {b.lower() for b in args.only_backend}
+        kept = [c for c in cases if c.get("backend", "").lower() in wanted]
+        skipped = len(cases) - len(kept)
+        if not kept:
+            sys.exit(f"no cases with backend in {sorted(wanted)} (suite has "
+                     f"{sorted({c.get('backend') for c in cases})})")
+        print(f"--only-backend {sorted(wanted)}: {len(kept)} case(s) kept, {skipped} skipped")
+        cases = kept
 
     serial = args.serial or first_serial(args.dry_run)
     snapshot = json.loads(Path(args.device_snapshot).read_text(encoding="utf-8")) if args.device_snapshot else None

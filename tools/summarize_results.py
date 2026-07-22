@@ -4,7 +4,7 @@
 Usage:
   python tools/summarize_results.py benchmarks/results/raw/<timestamp>-<suite> [-o out.md]
 
-Columns: case, backend, threads, pp tok/s, tg tok/s (mean +/- std), thermal start->end.
+Columns: case, backend, threads, pp / tg / pg tok/s (mean +/- std), thermal start->end.
 Works on an empty/dry-run dir (prints a clear message). stdlib only, Windows + Linux.
 """
 import argparse
@@ -44,20 +44,21 @@ def load_results(results_dir: Path) -> list[dict]:
 
 
 def build_table(rows: list[dict]) -> str:
-    header = ("| case | backend | threads | pp tok/s | tg tok/s | thermal (batt) |\n"
-              "|---|---|---|---|---|---|")
+    header = ("| case | backend | threads | pp tok/s | tg tok/s | pg tok/s | thermal (batt) |\n"
+              "|---|---|---|---|---|---|---|")
     lines = [header]
     dry = False
     for r in rows:
         m = r.get("metrics", {})
         run = r.get("run", {})
         dry = dry or r.get("dryRun", False)
-        lines.append("| {case} | {backend} | {threads} | {pp} | {tg} | {th} |".format(
+        lines.append("| {case} | {backend} | {threads} | {pp} | {tg} | {pg} | {th} |".format(
             case=r.get("caseId", "?"),
             backend=run.get("backend", "?"),
             threads=run.get("threads", "?"),
             pp=fmt_stat(m.get("ppTokensPerSec")),
             tg=fmt_stat(m.get("tgTokensPerSec")),
+            pg=fmt_stat(m.get("pgTokensPerSec")),
             th=fmt_thermal(r.get("device", {})),
         ))
     out = "\n".join(lines)

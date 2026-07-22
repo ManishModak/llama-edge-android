@@ -64,7 +64,9 @@ tests so only the combined test runs.
   `-d`/`n-depth` (not yet in this suite) to bench at a prefilled depth.
 - **Vulkan binary name**: the suite assumes a Vulkan build pushed as
   `llama-bench-vulkan`. If your build is named differently or lives elsewhere,
-  override `binary`/`binDir` on those cases.
+  override `binary`/`binDir` on those cases. Until that binary exists, run the
+  CPU half only with `python tools/run_suite.py <suite.json> --only-backend cpu`
+  (the flag is repeatable and filters on each case's `backend` field).
 - **big.LITTLE pinning**: the Dimensity 7025 is 2×A78 + 6×A55. The `t2` case only
   *intends* A78-only; real pinning needs `cpuMask` once the core index layout is
   confirmed on-device.
