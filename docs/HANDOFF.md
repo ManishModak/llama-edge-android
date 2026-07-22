@@ -1,6 +1,7 @@
 # Handoff — Windows → Linux
 
-Written 22 Jul 2026. Read this first when picking the project up on the Linux side of the dual boot.
+Written 22 Jul 2026, final at commit `1220d9a`. Read this first when picking the project up on the Linux side of the dual boot.
+**Everything is committed and pushed — the working tree is clean. Nothing needs hand-copying; clone and go.**
 Companion docs: [PLAN.md](PLAN.md) (strategy + checklists), [phase0-report.md](phase0-report.md) (build/deploy detail), [vulkan-build-notes.md](vulkan-build-notes.md) (Vulkan blocker analysis), [benchmark-methodology.md](benchmark-methodology.md).
 
 ---
@@ -10,7 +11,7 @@ Companion docs: [PLAN.md](PLAN.md) (strategy + checklists), [phase0-report.md](p
 | Phase | State |
 |---|---|
 | 0 — environment, repo, first build | **DONE** (exit criterion met: model streams tokens on device) |
-| 1 — baseline harness + numbers | **Tooling done; CPU baseline in progress on Windows; Vulkan blocked** |
+| 1 — baseline harness + numbers | **Tooling done; CPU baseline DONE (9/9 cases); Vulkan blocked on Windows** |
 | 2 — profiling / bottleneck note | not started |
 | 3 — the one optimization | not started (Gate G1 selects it) |
 | 4 — Android app | not started |
@@ -41,29 +42,22 @@ Deadline **14 Aug 2026 4:00 PM PDT**; submission target **12 Aug**. Repo is **pr
 - `models/manifest.json` with Llama 3.2 1B sha256 + Gemma 4 E2B QAT entries
 - `docs/phase0-report.md`, `docs/vulkan-build-notes.md`
 
-**Uncommitted at time of writing** (fixes from the live benchmark run — commit before switching):
-`tools/run_suite.py`, `benchmarks/suites/README.md`, `docs/benchmark-methodology.md`
+- `docs/baseline-results.md` + the Phase 1 raw result JSONs (force-added, git-ignore notwithstanding — they are evidence)
 
 **Not in git, and intentionally so:**
 - `build-android-cpu/`, `build-android-vulkan/` — Windows-built, **worthless on Linux, do not copy**
-- `benchmarks/results/raw/` — git-ignored; see §4 about preserving Phase 1 results
+- Future `benchmarks/results/raw/` runs — git-ignored by default; force-add the ones that matter
 - Model weights — live on the **exFAT drive at `D:/models/`** (`Llama-3.2-1B-Instruct-Q4_0.gguf`, 773,025,920 B, sha256 `fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8`)
 
 **On the device** at `/data/local/tmp/llama-edge/`: `llama-completion`, `llama-bench` (Windows-built CPU-only, static) + `models/Llama-3.2-1B-Instruct-Q4_0.gguf`. These will be **replaced** by Linux-built binaries.
 
 ## 4. Migration: clone from GitHub (not a folder copy)
 
-**Do this, in order:**
+**Windows side is finished — nothing left to push.** On Linux:
 
-1. **On Windows, before rebooting:** commit + push the uncommitted files above. Also commit the Phase 1 raw results — they are small JSON and are evidence:
-   ```bash
-   git add -f benchmarks/results/raw/<timestamp>-phase1-baseline
-   git commit -m "Phase 1 preliminary CPU baseline (Windows-built binaries)"
-   git push
-   ```
-2. **On Linux:** `git clone --recurse-submodules` into your **home dir (ext4)** — never onto the exFAT drive (no exec bits, no symlinks, no journaling).
-3. **Models:** already on the exFAT drive; just mount it and `export LLAMA_EDGE_MODELS=/path/to/mount/models`. No re-download, no copying.
-4. **Do not** copy `build-android-*/` or the Windows `C:\Tools\w64devkit` — Linux has its own toolchain.
+1. `git clone --recurse-submodules https://github.com/ManishModak/llama-edge-android.git` into your **home dir (ext4)** — never onto the exFAT drive (no exec bits, no symlinks, no journaling).
+2. **Models:** already on the exFAT drive; mount it and `export LLAMA_EDGE_MODELS=/path/to/mount/models`. No re-download, no copying.
+3. **Do not** copy `build-android-*/` or the Windows `C:\Tools\w64devkit` — Linux has its own toolchain.
 
 **Why clone, not copy:** git is the sync mechanism between your two OSes for the rest of the project; the only things worth moving by drive are the multi-GB model files, and those already live on the shared drive. A folder copy would drag along dead Windows build artifacts and lose git's identity of what's pushed.
 
@@ -119,10 +113,29 @@ adb shell chmod +x /data/local/tmp/llama-edge/llama-bench
 
 ## 8. Numbers so far (preliminary — Windows-built binaries)
 
-Llama 3.2 1B Q4_0, 2× A78 pinned, pp64/tg32, 2 reps:
-**prefill 45.08 ± 0.25 tok/s · decode 12.16 ± 0.15 tok/s** (build `178a6c4`)
+Llama 3.2 1B Q4_0, `llama-bench` @ `178a6c4`, 5 reps/case, 120 s cooldowns, 9/9 cases clean:
 
-The fuller CPU thread sweep (t=2/4/6/8 × pp512/tg128 + pg512+128) was running on Windows at handoff time; see `docs/baseline-results.md` if present. **Re-run it on Linux-built binaries before treating any of it as the baseline.**
+| threads | pp512 tok/s | tg128 tok/s |
+|---:|---:|---:|
+| 2 | 66.11 ± 6.77 | 12.80 ± 0.16 |
+| 4 | 63.41 ± 2.65 | 11.19 ± 0.53 |
+| **6** | **68.20 ± 0.77** | **14.16 ± 0.20** |
+| 8 | 58.62 ± 26.74 | 9.48 ± 2.31 |
+
+pg512+128 @ t=6: **31.98 ± 4.58 tok/s**. Thermal status never left NONE; skin 36.5 → 42.2 °C.
+Full report + 6 observations: `docs/baseline-results.md`. Raw JSON: `benchmarks/results/raw/20260722-210643-phase1-baseline/`.
+
+Findings that will shape Gate G1:
+- **t=6 optimal and most stable** (~1 % rel. stddev vs 46 % at t=8)
+- **Non-monotonic scaling — t=4 is worse than t=2**: big.LITTLE straggler effect (A55 threads stall A78s at ggml's per-op barrier) → direct evidence for **workstream C**
+- **t=8 collapses unpredictably** (reps 74.8 / 78.9 / 78.1 / **19.6** / 41.7)
+- **Decode is memory-bandwidth bound**; prefill is 4.8× decode
+- **pg runs 17 % below naive pp/tg composition** — KV-depth cost is real
+- **DVFS boost decay visible within a single 50 s case** at only +0.7 °C — not thermal; sustained-run design must account for it
+
+⚠ **Re-run this suite with Linux-built binaries before treating any of it as the official A/B baseline.**
+
+Benchmark hygiene notes: battery was 99 % and USB-charging (unavoidable with adb as transport), so battery-delta is meaningless and temps are mildly pessimistic. Airplane mode can't be toggled over adb. `svc power stayon usb` is still set on the device — clear with `adb shell svc power stayon false` when done benchmarking.
 
 ## 9. Next actions, in order
 

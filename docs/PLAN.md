@@ -79,17 +79,35 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
 
 ### Phase 1 — Baseline harness & first numbers (Jul 24–28 · ~11 h)
 
-- [ ] Build **Vulkan** variant (`GGML_VULKAN=ON`) with the same pinned commit → does it even initialize on BXM-8-256? *(Answer this in the first session of Phase 1 — highest-information experiment of the project)*
-- [ ] Write `tools/run_suite.ps1`: runs `llama-bench` matrix over ADB, captures `dumpsys thermalservice` + `dumpsys battery` before/after each run, saves JSON per run
-- [ ] Benchmark matrix v1 (all ≥5 reps, warm):
-  - [ ] CPU threads sweep: **2 (A78-only), 4, 6, 8** — big.LITTLE policy data
-  - [ ] pp512 / tg128 / pg 512+128, CPU best-config vs Vulkan
-  - [ ] Cold-load time and peak RSS per backend
-  - [ ] Context 2048 and 4096
+- [ ] Build **Vulkan** variant (`GGML_VULKAN=ON`) → does it even initialize on BXM-8-256? *(highest-information experiment of the project)* — **blocked on Windows by Smart App Control; do this first thing on Linux**
+- [x] `tools/run_suite.py` + `summarize_results.py` (Python, cross-OS): llama-bench matrix over ADB, thermal/battery/memAvailable before+after, one schemaVersion-1 JSON per case
+- [x] Benchmark matrix v1 CPU portion (5 reps, warm, 120 s cooldowns) — **9/9 cases clean, 25 min**
+  - [x] CPU thread sweep 2/4/6/8 × pp512/tg128 + pg512+128
+  - [ ] Vulkan comparison (blocked, see above) · [ ] cold-load + peak RSS per backend · [ ] context 2048/4096
 - [ ] 10–15 min **sustained run** per backend; log tokens/s over time + thermal transitions
-- [ ] Deterministic prompts committed to `benchmarks/prompts/`; fixed seed; result JSON schema from Part II §9.2
-- [ ] **Write `docs/baseline-results.md`** — table + 3 observations
+- [x] Result JSON schema (Part II §9.2) implemented; raw results committed · [ ] deterministic prompts for `llama-completion` correctness runs
+- [x] **`docs/baseline-results.md`** written — table + 6 observations
 - [ ] *Stretch:* LiteRT-LM same-class model, one CPU + one GPU number
+
+**Preliminary CPU baseline** (Llama 3.2 1B Q4_0, Windows-built binaries — ⚠ re-run on Linux-built binaries before treating as the official A/B baseline):
+
+| threads | pp512 tok/s | tg128 tok/s |
+|---:|---:|---:|
+| 2 | 66.11 ± 6.77 | 12.80 ± 0.16 |
+| 4 | 63.41 ± 2.65 | 11.19 ± 0.53 |
+| **6** | **68.20 ± 0.77** | **14.16 ± 0.20** |
+| 8 | 58.62 ± 26.74 | 9.48 ± 2.31 |
+
+pg512+128 @ t=6: 31.98 ± 4.58 tok/s. Thermal never left NONE; skin +5.7 °C over the run.
+
+**Findings that shape Gate G1:**
+- **t=6 is optimal and by far the most stable** (~1 % rel. stddev vs 46 % at t=8)
+- **Scaling is non-monotonic — t=4 is *worse* than t=2** (big.LITTLE straggler effect: A55 threads stall A78s at ggml's per-op barrier) → **direct evidence for workstream C**
+- **t=8 collapses unpredictably** (reps: 74.8, 78.9, 78.1, **19.6**, 41.7) — highest peak, indefensible tail
+- **Decode is memory-bandwidth bound** (prefill 4.8× decode; decode barely responds to threads)
+- **pg runs 17 % below naive pp/tg composition** — KV-depth cost is real; benchmark the combined case, not the parts
+- **Boost-clock (DVFS) decay is visible within a single 50 s case** with only +0.7 °C — not thermal. Sustained runs must account for this
+- No memory thrashing under llama-bench (MemAvailable 1.39–2.07 GB); the Phase 0 128K-context gotcha is `llama-completion`-specific
 
 ### Phase 2 — Profiling & bottleneck selection (Jul 29–31 · ~7 h)
 
