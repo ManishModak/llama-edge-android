@@ -9,7 +9,47 @@ arm64-v8a (android-28), for a PowerVR BXM-8-256 (Vulkan 1.3) device.
 - NDK: `C:\Users\win-home\AppData\Local\Android\Sdk\ndk\28.2.13676358`
 - CMake/Ninja: `C:\Users\win-home\AppData\Local\Android\Sdk\cmake\3.22.1\bin`
 
-## STATUS: BLOCKED (host prerequisites missing)
+## STATUS (20 Jul, update 2): host toolchain SOLVED — now blocked by Smart App Control
+
+Progress since the first investigation:
+
+- **Blocker 1 (SPIRV-Headers) — SOLVED.** `tools/cmake/SPIRV-Headers/SPIRV-HeadersConfig.cmake`
+  is a committed shim exposing the NDK's bundled SPIR-V headers as the imported
+  target. Pass `-DSPIRV-Headers_DIR=<repo>/tools/cmake/SPIRV-Headers`. No LunarG
+  SDK needed.
+- **Blocker 2 (no host C++ compiler) — SOLVED.** Portable **w64devkit 2.8.0**
+  (GCC 16.1.0) extracted to `C:\Tools\w64devkit` (not installed system-wide, not
+  in the repo). With `C:\Tools\w64devkit\bin` prepended to PATH,
+  `detect_host_compiler()` picks real host GCC and **`vulkan-shaders-gen.exe`
+  compiles and links successfully**.
+- **Blocker 3 (NEW) — Windows Smart App Control blocks the generated tool.**
+  Building reaches the shader-generation step and every invocation dies with:
+
+  ```
+  'build-android-vulkan\Release\vulkan-shaders-gen.exe' was blocked by your
+  organization's Device Guard policy.
+  ```
+
+  Confirmed cause: `Get-MpComputerStatus` → `SmartAppControlState: On`, and
+  `Win32_DeviceGuard` → `UsermodeCodeIntegrityPolicyEnforcementStatus: 2`
+  (enforced). Smart App Control is reputation-based: w64devkit's own signed/known
+  binaries run fine, but a **freshly compiled, unsigned local .exe has no
+  reputation and is blocked**. This affects any locally built host tool, not just
+  llama.cpp.
+
+### Options to get past Blocker 3
+
+| Option | Cost | Notes |
+|---|---|---|
+| **Build inside WSL2 (Ubuntu)** | ~2–3 GB distro install | Recommended. SAC does not police ELF binaries in WSL. Use the Linux NDK inside WSL; adb/push can stay on Windows. WSL2 is already enabled on this machine (only a `docker-desktop` distro exists today). |
+| **Build on the Linux side of the dual boot** | zero install | Cleanest, but requires rebooting to rebuild the Vulkan variant. Needs the NDK set up under Linux. |
+| **Build natively on the phone (Termux)** | slow | arm64-native, dodges Windows entirely; poor iteration speed. |
+| **Turn Smart App Control off** | ⚠ irreversible | Windows Security → App & browser control → Smart App Control → Off. **Cannot be re-enabled without reinstalling Windows.** User decision only; not performed as part of this project. |
+
+The CPU-only build is unaffected because it never has to execute a freshly built
+host binary.
+
+## Original investigation: BLOCKED (host prerequisites missing)
 
 The Android/arm64 target side is fully satisfied by the NDK, and CMake
 **configure succeeds**. The build is blocked at the point where it must build a
