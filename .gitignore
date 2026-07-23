@@ -16,6 +16,7 @@ captures/
 out/
 build-android-*/
 build-host/
+dist/
 
 # Model weights — never commit (see models/manifest.json)
 *.gguf

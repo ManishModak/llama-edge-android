@@ -1,5 +1,14 @@
 # Handoff — Windows → Linux
 
+> **✅ MIGRATION COMPLETE (23 Jul 2026).** The Linux environment is set up, both CPU and
+> **Vulkan** variants build, and both are deployed to the device. The Vulkan blocker that
+> forced this migration is resolved — see [vulkan-build-notes.md](vulkan-build-notes.md).
+> Sections 4–6 below are now historical; §7 gotchas and §9 next actions remain live.
+>
+> Linux env: CachyOS (Arch), GCC 16.1.1, CMake 4.3.4, ninja 1.13.1,
+> NDK r28c at `~/Android/Sdk/ndk/28.2.13676358`, models at
+> `/run/media/manishm/T7_Shield/models/`.
+
 Written 22 Jul 2026, final at commit `1220d9a`. Read this first when picking the project up on the Linux side of the dual boot.
 **Everything is committed and pushed — the working tree is clean. Nothing needs hand-copying; clone and go.**
 Companion docs: [PLAN.md](PLAN.md) (strategy + checklists), [phase0-report.md](phase0-report.md) (build/deploy detail), [vulkan-build-notes.md](vulkan-build-notes.md) (Vulkan blocker analysis), [benchmark-methodology.md](benchmark-methodology.md).
@@ -11,8 +20,8 @@ Companion docs: [PLAN.md](PLAN.md) (strategy + checklists), [phase0-report.md](p
 | Phase | State |
 |---|---|
 | 0 — environment, repo, first build | **DONE** (exit criterion met: model streams tokens on device) |
-| 1 — baseline harness + numbers | **Tooling done; CPU baseline DONE (9/9 cases); Vulkan blocked on Windows** |
-| 2 — profiling / bottleneck note | not started |
+| 1 — baseline harness + numbers | **DONE** — official Linux-built baseline, 12/12 cases (9 CPU + 3 Vulkan), see [baseline-results.md](baseline-results.md) |
+| 2 — profiling / bottleneck note | **NEXT** |
 | 3 — the one optimization | not started (Gate G1 selects it) |
 | 4 — Android app | not started |
 | 5 — evidence, docs, demo, submit | not started |
@@ -110,8 +119,20 @@ adb shell chmod +x /data/local/tmp/llama-edge/llama-bench
 4. **`llama-bench` at this pin has no seed and no context-size flag.** pp/tg workloads are synthetic; `seed`/`contextSize` are metadata only. Determinism/correctness checks belong to `llama-completion` runs. `-d/--n-depth` exists if you need prefilled-depth benchmarks.
 5. **Vulkan needs a host-side shader generator** — that's the whole Windows blocker (Smart App Control refuses to execute freshly compiled unsigned .exe). Non-issue on Linux.
 6. **Binaries from different toolchains are not comparable.** Every A/B must use binaries built by the same toolchain. Windows numbers below are a sanity reference only.
+7. **An Android emulator is also attached on the Linux box.** Bare `adb shell` fails with `more than one device/emulator`. Always pin the phone: `export ANDROID_SERIAL=8DYTMRKF755TOBZD` (adb honours it natively), or pass `--serial` to `run_suite.py`. Note `tools/device_snapshot.py` has **no** `--serial` flag — it needs the env var, and silently writes an all-empty snapshot if it can't reach a unique device. Check the snapshot is populated before trusting a run.
+8. **Vulkan cross-compile needs two headers the NDK doesn't provide.** `vulkan.hpp` (vendored: `third_party/Vulkan-Headers` @ `v1.4.350`) and `spirv/unified1/spirv.hpp` (present in the NDK but never propagated to the `ggml-vulkan` target — inject with `-isystem`). Full recipe in [vulkan-build-notes.md](vulkan-build-notes.md).
+9. **zsh does not word-split unquoted variables.** `D="-s $SERIAL"; adb $D shell …` fails on this box (works in bash). Inline the flags or use `${=D}`.
+10. **Piping a build to `tail` masks its exit code.** `cmake --build … | tail -40` reports tail's status, so a failed ninja build looks like success. Redirect to a log and check `$?` instead.
 
-## 8. Numbers so far (preliminary — Windows-built binaries)
+## 8. Numbers so far (SUPERSEDED — Windows-built binaries)
+
+> **⚠ Superseded 23 Jul 2026.** The official baseline is now the Linux-built 12-case run in
+> [baseline-results.md](baseline-results.md). Two findings below did **not** reproduce:
+> **"t=8 collapses unpredictably" is false** (Linux: 80.04 ± 1.34, the *best* prefill result),
+> and t=2 prefill is ~46.5 not 66.11. What did reproduce: the t=6 decode optimum (14.16),
+> the t=4 < t=2 decode anomaly, and the ~17 % pg shortfall.
+> Vulkan is no longer blocked — it builds, runs, and **loses to CPU on every workload**
+> (prefill 2.0×, decode 9.4×, combined 5.4×).
 
 Llama 3.2 1B Q4_0, `llama-bench` @ `178a6c4`, 5 reps/case, 120 s cooldowns, 9/9 cases clean:
 

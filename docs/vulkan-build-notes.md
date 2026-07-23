@@ -5,6 +5,119 @@ arm64-v8a (android-28), for a PowerVR BXM-8-256 (Vulkan 1.3) device.
 
 - llama.cpp pinned commit: `178a6c4` (upstream `b10069`), submodule at
   `third_party/llama.cpp`.
+## STATUS (23 Jul 2026): ✅ RESOLVED — builds and runs on Linux
+
+The Windows Smart App Control blocker is gone: on Linux the host `vulkan-shaders-gen`
+compiles **and executes** with the system `g++`, exactly as predicted. Two *new*
+blockers surfaced that the Windows side never reached, both header-resolution
+problems in the cross-compile. Both are solved below.
+
+Host: CachyOS (Arch), GCC 16.1.1, CMake 4.3.4, ninja 1.13.1.
+NDK: `~/Android/Sdk/ndk/28.2.13676358` (r28c).
+
+### Linux blocker A — `vulkan/vulkan.hpp` not found
+
+The NDK sysroot ships the Vulkan **C** headers (`vulkan.h`, `vulkan_core.h`) and
+`libvulkan.so`, but **not** the C++ bindings header `vulkan.hpp`, which
+`ggml-vulkan.cpp` includes. `vulkan.hpp` normally arrives with the LunarG SDK or a
+distro `vulkan-headers` package — neither applies to an Android cross-build.
+
+Fix: vendor Khronos **Vulkan-Headers pinned at `v1.4.350`** (commit `8864cdc`) as a
+submodule at `third_party/Vulkan-Headers`, and point CMake at it:
+
+```
+-DVulkan_INCLUDE_DIR=$PWD/third_party/Vulkan-Headers/include
+```
+
+`v1.4.350` was chosen to match the system glslang/SPIRV-Tools already present
+(1.4.350.1). These headers are used with the NDK's `libvulkan.so`; ggml resolves
+post-1.1 entry points through `vk::DispatchLoaderDynamic`, so the newer headers
+link cleanly against the API-28 stub library.
+
+### Linux blocker B — `spirv/unified1/spirv.hpp` not found
+
+`ggml/src/ggml-vulkan/CMakeLists.txt:14` calls
+`find_package(SPIRV-Headers CONFIG REQUIRED)` but **never links
+`SPIRV-Headers::SPIRV-Headers` to the `ggml-vulkan` target** (line 112 links only
+`Vulkan::Vulkan`). Upstream gets away with this because a system-installed
+spirv-headers package puts `spirv/unified1/spirv.hpp` on the default include path.
+In a cross-compile against the NDK sysroot there is no such path, so the include
+fails even though the shim resolved the package.
+
+Fix without patching the pinned submodule — inject the NDK's own copy via flags:
+
+```
+-DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod+fp16 -isystem \
+  $NDK/sources/third_party/shaderc/third_party/spirv-tools/external/spirv-headers/include"
+```
+
+(`-isystem` rather than `-I` so the vendored headers don't trip the build's
+`-Wall -Wextra -Wpedantic`.) The committed `tools/cmake/SPIRV-Headers` shim is
+still required to satisfy `find_package`; keep both.
+
+### Working Linux build (reproducible)
+
+```bash
+export NDK=$HOME/Android/Sdk/ndk/28.2.13676358
+SPV="$NDK/sources/third_party/shaderc/third_party/spirv-tools/external/spirv-headers/include"
+
+cmake -G Ninja -B build-android-vulkan -S third_party/llama.cpp \
+  -DCMAKE_TOOLCHAIN_FILE=$NDK/build/cmake/android.toolchain.cmake \
+  -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-28 \
+  -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
+  -DGGML_OPENMP=OFF -DGGML_LLAMAFILE=OFF -DLLAMA_CURL=OFF \
+  -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF \
+  -DCMAKE_C_FLAGS="-march=armv8.2-a+dotprod+fp16" \
+  -DCMAKE_CXX_FLAGS="-march=armv8.2-a+dotprod+fp16 -isystem $SPV" \
+  -DGGML_VULKAN=ON \
+  -DVulkan_GLSLC_EXECUTABLE=$NDK/shader-tools/linux-x86_64/glslc \
+  -DVulkan_INCLUDE_DIR=$PWD/third_party/Vulkan-Headers/include \
+  -DSPIRV-Headers_DIR=$PWD/tools/cmake/SPIRV-Headers
+
+cmake --build build-android-vulkan --target llama-bench llama-completion -j12
+```
+
+Deploy stripped (the unstripped binaries are ~154 MB; keep them locally for Phase 2
+symbolization):
+
+```bash
+STRIP=$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip
+$STRIP -o dist/vulkan/llama-bench-vulkan build-android-vulkan/bin/llama-bench
+adb push dist/vulkan/llama-bench-vulkan /data/local/tmp/llama-edge/
+```
+
+### Device capability readout (first successful run)
+
+```
+ggml_vulkan: 0 = PowerVR B-Series BXM-8-256 (PowerVR B-Series Vulkan Driver)
+  uma: 1 | fp16: 1 | bf16: 0 | fp4: 0 | warp size: 128
+  shared memory: 16384 | int dot: 0 | matrix cores: none
+```
+
+Load-bearing for Gate G1: **`int dot: 0`** (no `VK_KHR_shader_integer_dot_product`,
+so Q4_0 matmul gets no integer-dot acceleration), **`matrix cores: none`**, and only
+**16 KB shared memory** (vs 32–64 KB typical), which caps `mul_mm` tile sizes.
+`uma: 1` is the one favourable property — no host↔device copy cost.
+
+### Caveat: the NDK's glslc is old
+
+`$NDK/shader-tools/linux-x86_64/glslc` is **shaderc v2022.3 (ndk-r27-beta1)**; the
+system `/usr/bin/glslc` is **2026.2**. With the NDK glslc, configure reports these
+as unsupported and compiles no shader variants for them:
+`GL_KHR_cooperative_matrix`, `GL_NV_cooperative_matrix2`,
+`GL_EXT_integer_dot_product`, `GL_EXT_bfloat16`, `GL_EXT_float_e2m1/e4m3`.
+
+The device reports `int dot: 0` and `matrix cores: none`, so most of these would be
+inert anyway — but rebuilding with the system glslc is a cheap, well-scoped
+experiment for Phase 2 / workstream B. Not done yet.
+
+---
+
+## Historical: Windows investigation (superseded)
+
+Everything below documents the Windows-host attempt and why it was abandoned.
+Retained as evidence; the Linux recipe above is the one to use.
+
 - Host: Windows 11.
 - NDK: `C:\Users\win-home\AppData\Local\Android\Sdk\ndk\28.2.13676358`
 - CMake/Ninja: `C:\Users\win-home\AppData\Local\Android\Sdk\cmake\3.22.1\bin`
