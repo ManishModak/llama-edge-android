@@ -1,0 +1,466 @@
+4137 (llama-bench) 7 0 2
+---
+4137 (llama-bench) 7 10 3
+---
+4137 (llama-bench) 7 19 3
+---
+4137 (llama-bench) 4 30 4
+---
+4137 (llama-bench) 6 39 5
+---
+4137 (llama-bench) 6 50 6
+---
+4137 (llama-bench) 6 60 7
+---
+4137 (llama-bench) 6 60 16
+---
+4137 (llama-bench) 7 66 21
+---
+4137 (llama-bench) 7 72 26
+---
+4137 (llama-bench) 7 81 28
+---
+4137 (llama-bench) 7 90 30
+---
+4137 (llama-bench) 7 96 35
+---
+4137 (llama-bench) 7 102 40
+---
+4137 (llama-bench) 7 110 43
+---
+4137 (llama-bench) 5 116 49
+---
+4137 (llama-bench) 7 125 52
+4203 (llama-bench) 6 5 0
+4204 (llama-bench) 2 5 0
+4205 (llama-bench) 5 5 0
+---
+4137 (llama-bench) 1 138 52
+4203 (llama-bench) 5 17 0
+4204 (llama-bench) 7 18 0
+4205 (llama-bench) 2 17 0
+---
+4137 (llama-bench) 6 153 52
+4203 (llama-bench) 5 32 0
+4204 (llama-bench) 7 32 0
+4205 (llama-bench) 3 31 0
+---
+4137 (llama-bench) 6 166 52
+4203 (llama-bench) 7 45 0
+4204 (llama-bench) 4 45 0
+4205 (llama-bench) 3 44 0
+---
+4137 (llama-bench) 4 179 52
+4203 (llama-bench) 5 58 0
+4204 (llama-bench) 3 58 0
+4205 (llama-bench) 6 57 0
+---
+4137 (llama-bench) 2 191 52
+4203 (llama-bench) 3 70 0
+4204 (llama-bench) 0 70 0
+4205 (llama-bench) 6 69 0
+---
+4137 (llama-bench) 2 205 52
+4203 (llama-bench) 5 84 0
+4204 (llama-bench) 6 84 0
+4205 (llama-bench) 1 82 0
+---
+4137 (llama-bench) 4 217 52
+4203 (llama-bench) 6 96 0
+4204 (llama-bench) 5 96 0
+4205 (llama-bench) 1 94 0
+---
+4137 (llama-bench) 2 230 52
+4203 (llama-bench) 5 109 0
+4204 (llama-bench) 3 109 0
+4205 (llama-bench) 6 107 0
+---
+4137 (llama-bench) 6 243 52
+4203 (llama-bench) 7 122 0
+4204 (llama-bench) 0 123 0
+4205 (llama-bench) 4 121 0
+---
+4137 (llama-bench) 7 256 52
+4203 (llama-bench) 3 135 0
+4204 (llama-bench) 1 136 0
+4205 (llama-bench) 6 134 0
+---
+4137 (llama-bench) 7 270 52
+4203 (llama-bench) 5 149 0
+4204 (llama-bench) 4 149 0
+4205 (llama-bench) 6 148 0
+---
+4137 (llama-bench) 2 284 52
+4203 (llama-bench) 6 163 0
+4204 (llama-bench) 3 163 0
+4205 (llama-bench) 1 162 0
+---
+4137 (llama-bench) 6 297 52
+4203 (llama-bench) 3 176 0
+4204 (llama-bench) 2 176 0
+4205 (llama-bench) 5 174 0
+---
+4137 (llama-bench) 0 309 52
+4203 (llama-bench) 3 188 0
+4204 (llama-bench) 6 188 0
+4205 (llama-bench) 1 187 0
+---
+4137 (llama-bench) 6 323 52
+4203 (llama-bench) 5 202 0
+4204 (llama-bench) 4 202 0
+4205 (llama-bench) 2 201 0
+---
+4137 (llama-bench) 5 336 52
+4203 (llama-bench) 4 215 0
+4204 (llama-bench) 6 215 0
+4205 (llama-bench) 7 213 0
+---
+4137 (llama-bench) 5 350 52
+4203 (llama-bench) 6 228 0
+4204 (llama-bench) 4 229 0
+4205 (llama-bench) 2 227 0
+---
+4137 (llama-bench) 2 363 52
+4203 (llama-bench) 5 242 0
+4204 (llama-bench) 3 243 0
+4205 (llama-bench) 7 241 0
+---
+4137 (llama-bench) 5 375 52
+4203 (llama-bench) 6 254 0
+4204 (llama-bench) 7 255 0
+4205 (llama-bench) 1 253 0
+---
+4137 (llama-bench) 7 390 52
+4203 (llama-bench) 4 269 0
+4204 (llama-bench) 1 269 0
+4205 (llama-bench) 6 267 0
+---
+4137 (llama-bench) 3 403 52
+4203 (llama-bench) 7 282 0
+4204 (llama-bench) 2 282 0
+4205 (llama-bench) 1 280 0
+---
+4137 (llama-bench) 7 416 52
+4203 (llama-bench) 1 294 0
+4204 (llama-bench) 6 295 0
+4205 (llama-bench) 2 293 0
+---
+4137 (llama-bench) 3 429 52
+4203 (llama-bench) 7 307 0
+4204 (llama-bench) 5 308 0
+4205 (llama-bench) 2 306 0
+---
+4137 (llama-bench) 5 440 52
+4203 (llama-bench) 3 319 0
+4204 (llama-bench) 0 320 0
+4205 (llama-bench) 4 318 0
+---
+4137 (llama-bench) 4 453 52
+4203 (llama-bench) 2 332 0
+4204 (llama-bench) 6 333 0
+4205 (llama-bench) 7 331 0
+---
+4137 (llama-bench) 1 466 52
+4203 (llama-bench) 6 345 0
+4204 (llama-bench) 5 346 0
+4205 (llama-bench) 2 344 0
+---
+4137 (llama-bench) 5 478 52
+4203 (llama-bench) 1 357 0
+4204 (llama-bench) 2 358 0
+4205 (llama-bench) 7 356 0
+---
+4137 (llama-bench) 3 491 52
+4203 (llama-bench) 2 369 0
+4204 (llama-bench) 6 371 0
+4205 (llama-bench) 7 369 0
+---
+4137 (llama-bench) 6 505 52
+4203 (llama-bench) 2 383 0
+4204 (llama-bench) 5 385 0
+4205 (llama-bench) 1 383 0
+---
+4137 (llama-bench) 2 519 52
+4203 (llama-bench) 3 397 0
+4204 (llama-bench) 5 399 0
+4205 (llama-bench) 4 397 0
+---
+4137 (llama-bench) 6 531 52
+4203 (llama-bench) 5 409 0
+4204 (llama-bench) 2 410 0
+4205 (llama-bench) 1 409 0
+---
+4137 (llama-bench) 5 544 52
+4203 (llama-bench) 6 422 0
+4204 (llama-bench) 1 423 0
+4205 (llama-bench) 2 422 1
+---
+4137 (llama-bench) 7 557 52
+4203 (llama-bench) 5 435 0
+4204 (llama-bench) 3 436 0
+4205 (llama-bench) 2 435 1
+---
+4137 (llama-bench) 3 571 52
+4203 (llama-bench) 7 449 0
+4204 (llama-bench) 2 450 0
+4205 (llama-bench) 1 448 1
+---
+4137 (llama-bench) 6 584 52
+4203 (llama-bench) 7 461 0
+4204 (llama-bench) 2 463 0
+4205 (llama-bench) 5 461 1
+---
+4137 (llama-bench) 0 598 52
+4203 (llama-bench) 3 475 0
+4204 (llama-bench) 2 477 0
+4205 (llama-bench) 7 475 1
+---
+4137 (llama-bench) 1 609 52
+4203 (llama-bench) 2 486 0
+4204 (llama-bench) 6 488 0
+4205 (llama-bench) 3 486 1
+---
+4137 (llama-bench) 4 623 52
+4203 (llama-bench) 6 500 0
+4204 (llama-bench) 3 502 0
+4205 (llama-bench) 2 500 1
+---
+4137 (llama-bench) 1 635 52
+4203 (llama-bench) 6 512 0
+4204 (llama-bench) 3 514 0
+4205 (llama-bench) 5 512 1
+---
+4137 (llama-bench) 2 649 52
+4203 (llama-bench) 1 526 0
+4204 (llama-bench) 3 528 0
+4205 (llama-bench) 6 526 1
+---
+4137 (llama-bench) 5 660 52
+4203 (llama-bench) 4 537 0
+4204 (llama-bench) 2 539 0
+4205 (llama-bench) 1 537 1
+---
+4137 (llama-bench) 1 673 52
+4203 (llama-bench) 2 551 0
+4204 (llama-bench) 6 553 0
+4205 (llama-bench) 5 551 1
+---
+4137 (llama-bench) 3 686 52
+4203 (llama-bench) 0 563 0
+4204 (llama-bench) 1 565 0
+4205 (llama-bench) 6 563 1
+---
+4137 (llama-bench) 5 699 52
+4203 (llama-bench) 6 576 0
+4204 (llama-bench) 1 578 0
+4205 (llama-bench) 7 576 1
+---
+4137 (llama-bench) 6 712 52
+4203 (llama-bench) 7 590 0
+4204 (llama-bench) 2 591 0
+4205 (llama-bench) 4 588 1
+---
+4137 (llama-bench) 6 725 52
+4203 (llama-bench) 2 602 0
+4204 (llama-bench) 3 604 0
+4205 (llama-bench) 4 601 1
+---
+4137 (llama-bench) 7 740 52
+4203 (llama-bench) 3 617 1
+4204 (llama-bench) 5 619 0
+4205 (llama-bench) 6 616 1
+---
+4137 (llama-bench) 1 753 52
+4203 (llama-bench) 5 630 1
+4204 (llama-bench) 6 632 1
+4205 (llama-bench) 7 629 1
+---
+4137 (llama-bench) 6 765 52
+4203 (llama-bench) 4 642 1
+4204 (llama-bench) 2 644 1
+4205 (llama-bench) 5 641 1
+---
+4137 (llama-bench) 6 777 52
+4203 (llama-bench) 3 654 1
+4204 (llama-bench) 4 656 1
+4205 (llama-bench) 2 653 1
+---
+4137 (llama-bench) 6 791 52
+4203 (llama-bench) 4 668 1
+4204 (llama-bench) 2 670 1
+4205 (llama-bench) 7 668 1
+---
+4137 (llama-bench) 2 804 52
+4203 (llama-bench) 5 682 1
+4204 (llama-bench) 3 683 1
+4205 (llama-bench) 7 680 1
+---
+4137 (llama-bench) 7 818 52
+4203 (llama-bench) 3 695 1
+4204 (llama-bench) 1 697 1
+4205 (llama-bench) 5 694 1
+---
+4137 (llama-bench) 2 831 52
+4203 (llama-bench) 7 708 1
+4204 (llama-bench) 3 710 1
+4205 (llama-bench) 5 707 1
+---
+4137 (llama-bench) 3 844 52
+4203 (llama-bench) 5 721 1
+4204 (llama-bench) 7 722 1
+4205 (llama-bench) 6 720 1
+---
+4137 (llama-bench) 5 857 52
+4203 (llama-bench) 4 734 1
+4204 (llama-bench) 6 735 1
+4205 (llama-bench) 7 733 1
+---
+4137 (llama-bench) 5 870 52
+4203 (llama-bench) 4 747 1
+4204 (llama-bench) 2 749 1
+4205 (llama-bench) 6 746 1
+---
+4137 (llama-bench) 4 883 52
+4203 (llama-bench) 7 760 1
+4204 (llama-bench) 6 762 1
+4205 (llama-bench) 1 759 1
+---
+4137 (llama-bench) 7 896 52
+4203 (llama-bench) 6 773 1
+4204 (llama-bench) 1 774 1
+4205 (llama-bench) 4 772 1
+---
+4137 (llama-bench) 6 909 52
+4203 (llama-bench) 3 786 1
+4204 (llama-bench) 6 787 1
+4205 (llama-bench) 5 785 1
+---
+4137 (llama-bench) 1 921 52
+4203 (llama-bench) 6 798 1
+4204 (llama-bench) 5 800 1
+4205 (llama-bench) 4 797 1
+---
+4137 (llama-bench) 2 933 53
+4203 (llama-bench) 5 811 1
+4204 (llama-bench) 6 812 1
+4205 (llama-bench) 4 810 1
+---
+4137 (llama-bench) 7 946 53
+4203 (llama-bench) 1 823 1
+4204 (llama-bench) 2 825 1
+4205 (llama-bench) 3 823 1
+---
+4137 (llama-bench) 7 959 53
+4203 (llama-bench) 4 836 1
+4204 (llama-bench) 6 838 1
+4205 (llama-bench) 2 836 1
+---
+4137 (llama-bench) 0 972 53
+4203 (llama-bench) 6 849 1
+4204 (llama-bench) 7 851 1
+4205 (llama-bench) 2 849 1
+---
+4137 (llama-bench) 2 987 53
+4203 (llama-bench) 1 864 1
+4204 (llama-bench) 7 865 1
+4205 (llama-bench) 3 863 1
+---
+4137 (llama-bench) 1 999 53
+4203 (llama-bench) 5 876 1
+4204 (llama-bench) 3 877 1
+4205 (llama-bench) 7 875 1
+---
+4137 (llama-bench) 2 1012 53
+4203 (llama-bench) 4 889 1
+4204 (llama-bench) 6 891 1
+4205 (llama-bench) 7 889 1
+---
+4137 (llama-bench) 4 1027 53
+4203 (llama-bench) 2 903 1
+4204 (llama-bench) 6 905 1
+4205 (llama-bench) 5 903 1
+---
+4137 (llama-bench) 3 1039 53
+4203 (llama-bench) 2 916 1
+4204 (llama-bench) 7 918 1
+4205 (llama-bench) 4 915 1
+---
+4137 (llama-bench) 5 1051 53
+4203 (llama-bench) 7 928 1
+4204 (llama-bench) 3 930 1
+4205 (llama-bench) 2 927 1
+---
+4137 (llama-bench) 5 1063 53
+4203 (llama-bench) 4 940 1
+4204 (llama-bench) 2 942 1
+4205 (llama-bench) 6 939 1
+---
+4137 (llama-bench) 3 1076 53
+4203 (llama-bench) 6 953 1
+4204 (llama-bench) 2 955 1
+4205 (llama-bench) 7 952 1
+---
+4137 (llama-bench) 2 1088 53
+4203 (llama-bench) 7 965 1
+4204 (llama-bench) 5 967 1
+4205 (llama-bench) 3 964 1
+---
+4137 (llama-bench) 1 1102 53
+4203 (llama-bench) 7 979 1
+4204 (llama-bench) 5 981 1
+4205 (llama-bench) 3 978 1
+---
+4137 (llama-bench) 4 1116 53
+4203 (llama-bench) 1 993 1
+4204 (llama-bench) 3 995 1
+4205 (llama-bench) 6 992 2
+---
+4137 (llama-bench) 3 1128 53
+4203 (llama-bench) 0 1005 1
+4204 (llama-bench) 5 1007 1
+4205 (llama-bench) 2 1004 2
+---
+4137 (llama-bench) 6 1140 53
+4203 (llama-bench) 4 1018 1
+4204 (llama-bench) 7 1019 1
+4205 (llama-bench) 3 1016 2
+---
+4137 (llama-bench) 6 1152 53
+4203 (llama-bench) 5 1030 1
+4204 (llama-bench) 1 1031 1
+4205 (llama-bench) 3 1028 2
+---
+4137 (llama-bench) 2 1165 53
+4203 (llama-bench) 5 1042 1
+4204 (llama-bench) 3 1043 1
+4205 (llama-bench) 6 1041 2
+---
+4137 (llama-bench) 6 1176 53
+4203 (llama-bench) 5 1053 1
+4204 (llama-bench) 3 1055 1
+4205 (llama-bench) 4 1052 2
+---
+4137 (llama-bench) 2 1189 53
+4203 (llama-bench) 6 1067 1
+4204 (llama-bench) 7 1068 1
+4205 (llama-bench) 5 1066 2
+---
+4137 (llama-bench) 0 1203 53
+4203 (llama-bench) 1 1080 1
+4204 (llama-bench) 4 1081 1
+4205 (llama-bench) 2 1079 2
+---
+4137 (llama-bench) 5 1215 53
+4203 (llama-bench) 3 1092 1
+4204 (llama-bench) 7 1094 1
+4205 (llama-bench) 4 1091 2
+---
+4137 (llama-bench) 3 1228 53
+4203 (llama-bench) 5 1104 1
+4204 (llama-bench) 7 1106 1
+4205 (llama-bench) 2 1104 2
+---
+4137 (llama-bench) 6 1229 62
+---
+4137 (llama-bench) 6 1238 64
+---

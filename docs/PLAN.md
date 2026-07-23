@@ -111,11 +111,11 @@ pg512+128 @ t=6: 31.98 ± 4.58 tok/s. Thermal never left NONE; skin +5.7 °C ove
 
 ### Phase 2 — Profiling & bottleneck selection (Jul 29–31 · ~7 h)
 
-- [ ] `simpleperf` sample of CPU decode (which kernels dominate; A78 vs A55 residency)
-- [ ] Perfetto trace of one benchmark run (sched + freq + thermal tracks)
-- [ ] Vulkan path: enable ggml Vulkan debug/perf logging; identify whether time goes to shaders, sync, or transfers
-- [ ] Check `test-backend-ops` pass/fail on Vulkan/BXM — **any failures are themselves reportable findings**
-- [ ] Write **one-page `docs/bottleneck-note.md`**: dominant cost, hypothesis, target metric + expected size of win
+- [x] ~~`simpleperf` sample of CPU decode~~ — **impossible on this device**: the MT6855 kernel refuses `perf_event_open` for every event type even at `perf_event_paranoid=-1`. Substituted `/proc/<pid>/task/*/stat` sampling (`tools/profile_decode.sh` + `tools/analyze_placement.py`), which gave the A78-vs-A55 residency answer anyway
+- [x] Perfetto trace of one benchmark run — `tools/perfetto/decode-trace.pbtxt`; trace at `benchmarks/results/profiles/20260723-105825/decode-t4.pftrace`
+- [x] Vulkan path — `GGML_VK_PERF_LOGGER` is a *runtime* env var, no rebuild needed. Superseded as a priority: the affinity experiments settled the bottleneck question without it
+- [x] `test-backend-ops` on Vulkan/BXM — **3 reportable findings**: bf16 pipeline-creation abort (kills the process, blocks the sweep from reaching MUL_MAT), `iq2_s` dequant corruption, Q4_0 `MUL_MAT` error up to ERR 191.8 at `n=512`
+- [x] **`docs/bottleneck-note.md`** written — decode is DRAM-bound at 65–75 % of LPDDR4X peak; **workstream C refuted**, D favoured
 
 **⛔ Gate G1 (31 Jul): choose exactly ONE workstream.** Decision table:
 
@@ -125,6 +125,17 @@ pg512+128 @ t=6: 31.98 ± 4.58 tok/s. Thermal never left NONE; skin +5.7 °C ove
 | Vulkan competitive but sync/dispatch-bound | **B: Vulkan dispatch/data-movement tuning** for BXM (fewer barriers, batch tuning, buffer reuse) |
 | CPU-bound in quantized matvec, 8-thread config loses to 2×A78 | **C: big.LITTLE-aware threading/core-pinning policy** (+ possibly Q4_0 dotprod repack tuning) |
 | Decode clearly memory-bandwidth-bound and speculation viable | **D: Adaptive speculative decoding** (needs 3B Q4 target ≈1.9 GB + 1B draft ≈0.7 GB — fits in 5.6 GB, but risky; only pick with strong evidence) |
+
+> **Phase 2 evidence (23 Jul) — read [bottleneck-note.md](bottleneck-note.md) before deciding.**
+> The last row now matches: decode is DRAM-bound at 11.1 GB/s ≈ 65–75 % of LPDDR4X peak, and six
+> A55s alone match the best full-SoC decode (14.36 vs 14.50 tok/s), so the A78s contribute nothing.
+> - **C is refuted for throughput** — the ceiling is already hit by the stock default; pinning buys
+>   variance and energy, not speed.
+> - **A is weak** — the GPU loses on all three workloads, so a router ships a switch always off.
+> - **B is dead** — `int dot: 0`, no matrix cores, 16 KB shared memory.
+> - **D's sizing in this row is wrong for this device.** Measured `MemAvailable` is **1.84 GB**, not
+>   5.6 GB, so a 3B target + 1B draft (2.6 GB) would spill to ZRAM. D is only viable **draft-model
+>   free**: native MTP (available at our pin per §2), prompt-lookup/n-gram, or self-speculation.
 
 ### Phase 3 — The optimization (Aug 1–7 · ~15 h)
 

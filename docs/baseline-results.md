@@ -70,10 +70,18 @@ Battery 67 % on USB throughout; thermal status never left `0 (NONE)`; battery te
    not bandwidth.
 
 3. **The non-monotonic decode anomaly survives re-baselining.** t=4 (10.89) is **worse than t=2**
-   (12.76) — a 15 % regression from *adding* two threads. This is the big.LITTLE straggler effect:
-   A55 threads stall the A78s at ggml's per-op barrier, so the slowest thread sets the pace. This
-   is the single strongest piece of evidence for **workstream C**, and it is now confirmed on
-   same-toolchain binaries.
+   (12.76) — a 15 % regression from *adding* two threads.
+
+   > **⚠️ Corrected by Phase 2 (23 Jul).** This observation originally attributed the anomaly to a
+   > big.LITTLE *straggler* effect — "A55 threads stall the A78s at ggml's per-op barrier" — and
+   > called it the strongest evidence for workstream C. **Profiling refuted that.** There is no
+   > stable big/LITTLE split to straggle against: every worker migrates continuously across both
+   > clusters (~59 % A78 residency at t=2, ~28 % at t=6), and the per-thread CPU-time spread is only
+   > 1.18–1.28× — far too small to cost 15 %. The actual mechanism is **DRAM saturation plus a
+   > spin-wait barrier** (`ggml-cpu.c:599`): decode is already at ~11.1 GB/s ≈ 65–75 % of LPDDR4X
+   > peak, so every added thread is a core spinning on `yield`, contending for the same memory
+   > controller. Six A55s alone match the best full-SoC decode (14.36 vs 14.50), proving the A78s
+   > add nothing. See [bottleneck-note.md](bottleneck-note.md).
 
 4. **Vulkan runs correctly but loses on every workload**, catastrophically so on decode (9.4×).
    The device capability readout explains it:
@@ -138,9 +146,15 @@ The live evidence instead points at **workstream C (big.LITTLE-aware threading)*
 8 threads, decode wants 6, and decode actively regresses at t=4 due to A55 stragglers. A
 phase-aware thread/affinity policy has a measurable target on this device.
 
-**Not yet decided** — Gate G1 is 31 Jul and Phase 2 profiling (simpleperf residency, per-op
-barrier cost, `test-backend-ops` on Vulkan) is still owed. Recorded here as the direction the
-data currently favours.
+> **⚠️ Superseded by Phase 2 (23 Jul).** Workstream C is **refuted for throughput**. Explicit
+> affinity experiments show the decode ceiling (≈14.5 tok/s) is *already reached by the stock
+> default*, because decode is DRAM-bound at ~65–75 % of LPDDR4X peak. Pinning buys variance
+> (±1.20 → ±0.03) and energy headroom, not speed. The evidence now favours **workstream D**
+> (speculative decoding — the only option that reduces bytes-per-token), though PLAN.md's 3B+1B
+> sizing does **not** fit the measured 1.84 GB `MemAvailable` and would need a draft-model-free
+> variant. Full reasoning and the G1 table: [bottleneck-note.md](bottleneck-note.md).
+
+**Not yet decided** — Gate G1 is 31 Jul.
 
 ---
 

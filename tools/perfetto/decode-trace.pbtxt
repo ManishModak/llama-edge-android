@@ -1,0 +1,69 @@
+# Perfetto config for profiling llama.cpp decode on big.LITTLE.
+#
+# Captures the tracks needed to test the "A55 straggler" hypothesis:
+#   - sched/switch + sched_waking -> which core each ggml worker thread lands on,
+#     and how long threads sit blocked at the per-op barrier
+#   - cpu_frequency / cpu_idle    -> DVFS state per core during the run
+#   - thermal / cdev              -> confirm no throttling contaminated the sample
+#
+# Usage (see tools/profile_decode.sh):
+#   adb push tools/perfetto/decode-trace.pbtxt /data/local/tmp/llama-edge/
+#   adb shell 'perfetto -c /data/local/tmp/llama-edge/decode-trace.pbtxt --txt -o /data/misc/perfetto-traces/decode.pftrace'
+#
+# Open the resulting .pftrace at https://ui.perfetto.dev
+
+buffers {
+  size_kb: 65536
+  fill_policy: RING_BUFFER
+}
+
+data_sources {
+  config {
+    name: "linux.ftrace"
+    ftrace_config {
+      ftrace_events: "sched/sched_switch"
+      ftrace_events: "sched/sched_waking"
+      ftrace_events: "sched/sched_wakeup_new"
+      ftrace_events: "sched/sched_process_exit"
+      ftrace_events: "sched/sched_process_free"
+      ftrace_events: "task/task_newtask"
+      ftrace_events: "task/task_rename"
+      ftrace_events: "power/cpu_frequency"
+      ftrace_events: "power/cpu_idle"
+      ftrace_events: "power/suspend_resume"
+      compact_sched { enabled: true }
+    }
+  }
+}
+
+data_sources {
+  config {
+    name: "linux.process_stats"
+    process_stats_config {
+      scan_all_processes_on_start: true
+      proc_stats_poll_ms: 1000
+    }
+  }
+}
+
+data_sources {
+  config {
+    name: "linux.sys_stats"
+    sys_stats_config {
+      stat_period_ms: 1000
+      stat_counters: STAT_CPU_TIMES
+      stat_counters: STAT_FORK_COUNT
+      cpufreq_period_ms: 200
+      meminfo_period_ms: 1000
+    }
+  }
+}
+
+data_sources {
+  config {
+    name: "android.thermal"
+  }
+}
+
+# Long enough to cover a full tg128 decode run plus startup.
+duration_ms: 60000

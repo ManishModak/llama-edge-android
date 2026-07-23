@@ -160,10 +160,10 @@ Benchmark hygiene notes: battery was 99 % and USB-charging (unavoidable with adb
 
 ## 9. Next actions, in order
 
-1. Finish Linux setup (§5) and rebuild CPU; re-run baseline suite → official baseline
-2. **Build Vulkan and answer the key question: does the PowerVR BXM driver run llama.cpp's Vulkan backend at all, and is it faster or slower than 2×A78?** This is the highest-information experiment in the project
-3. Phase 2: simpleperf + Perfetto on the slower/winning path; run `test-backend-ops` on Vulkan (failures are themselves reportable findings); write `docs/bottleneck-note.md`
-4. **Gate G1** — pick exactly one workstream (A adaptive routing / B Vulkan tuning / C big.LITTLE threading / D adaptive MTP). Evidence decides; see PLAN.md decision table
+1. ~~Finish Linux setup (§5) and rebuild CPU; re-run baseline suite~~ → **DONE**, official baseline in [baseline-results.md](baseline-results.md)
+2. ~~**Build Vulkan and answer the key question**~~ → **ANSWERED.** The BXM driver *does* run llama.cpp's Vulkan backend, and it **loses to CPU on every workload** — prefill 2.0×, decode 9.4×, combined 5.4×. Cause is in the device flags: `int dot: 0`, `matrix cores: none`, 16 KB shared memory
+3. ~~Phase 2~~ → **DONE**, see [bottleneck-note.md](bottleneck-note.md). Headline: **decode is DRAM-bound at 65–75 % of LPDDR4X peak and six A55s alone match the best full-SoC decode**, so no threading policy can make it faster. simpleperf is unusable on this device (kernel refuses `perf_event_open` entirely); substituted `/proc` sampling
+4. **Gate G1 (31 Jul) — NEXT.** Evidence now points at **D, draft-model-free** (native MTP / prompt-lookup / self-speculation). **C is refuted for throughput**; A ships an always-off switch; B is dead. Note PLAN.md's D sizing assumes 5.6 GB — measured `MemAvailable` is **1.84 GB**, so a 3B+1B pair does not fit
 5. Then Phase 3 implementation, with `baseline` vs `optimized` builds differing only in that change
 
 ## 10. Admin still outstanding
