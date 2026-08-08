@@ -1,0 +1,3882 @@
+{
+  "schemaVersion": 1,
+  "suite": "phase3-ngram",
+  "description": "Phase 3 zero-weight fallback A/B: Llama 3.2 1B Q4_0 with speculation disabled versus ngram-mod on the same target.",
+  "timestampUtc": "2026-07-27T15:20:01.756960+00:00",
+  "dryRun": false,
+  "provenance": {
+    "runnerFile": "tools/run_spec_ab.py",
+    "runnerFileSha256": "4424b0386c4bfaf8193a3c35a2fc5987cf50787694894c5ab50f4d862f1228a6",
+    "suiteFile": "benchmarks/suites/phase3-ngram.json",
+    "suiteFileSha256": "d043f54b545231e3915ae2169e43a66b61f3ff3d4fce94eccb6ab98f411376eb",
+    "manifestFile": "models/manifest.json",
+    "manifestFileSha256": "653e9d07d5e4493fd8d046723250436bc0d68ee584992f12c81a55fe1c487768",
+    "promptCanonicalization": "UTF-8 JSON of messages with sorted keys and compact separators",
+    "prompts": [
+      {
+        "id": "repetitive-sequence",
+        "category": "repetitive",
+        "messagesCanonicalSha256": "3282bed67146c1a72832336b21e3e1a21b04fa66ff50b7a09ccf234a43c39658"
+      },
+      {
+        "id": "code-continuation",
+        "category": "code",
+        "messagesCanonicalSha256": "b2e026023bbc0817766c86debf0ed43e570bde212b24b3ff6074c49c7f99562e"
+      },
+      {
+        "id": "ordinary-chat",
+        "category": "chat",
+        "messagesCanonicalSha256": "d9d3f122482847995096adc08791a190ec76c5630b2b90df17b54c799c6c9124"
+      }
+    ]
+  },
+  "device": {
+    "serial": "8DYTMRKF755TOBZD",
+    "model": "24094RAD4I",
+    "android": "16",
+    "soc": "MT6855"
+  },
+  "software": {
+    "appCommit": "54aabbde5b9c31340f685ba6075a00222b8908f8",
+    "llamaCppSource": {
+      "commit": "178a6c44937154dc4c4eff0d166f4a044c4fceba",
+      "dirty": true,
+      "status": [
+        " M common/speculative.cpp"
+      ],
+      "worktreeDiffSha256": "a344b3ab931e387838832ab7da8a1162e4614272f44caffd533ce8340a7c3afd"
+    },
+    "binary": "llama-server"
+  },
+  "models": {
+    "target": {
+      "id": "llama-3.2-1b-instruct-q4_0",
+      "role": "bring-up / primary benchmark",
+      "file": "Llama-3.2-1B-Instruct-Q4_0.gguf",
+      "source": "https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF",
+      "approxSizeGb": 0.73,
+      "quantization": "Q4_0",
+      "sha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
+      "license": "Llama 3.2 Community License"
+    }
+  },
+  "configuration": {
+    "binDir": "/data/local/tmp/llama-edge",
+    "modelsDir": "/data/local/tmp/llama-edge/models",
+    "binary": "llama-server",
+    "llamaCppBaseCommit": "178a6c44937154dc4c4eff0d166f4a044c4fceba",
+    "speculativeMode": "ngram",
+    "artifactFile": "ngram-ab.json",
+    "targetModel": "llama-3.2-1b-instruct-q4_0",
+    "contextSize": 512,
+    "threads": 6,
+    "threadsBatch": 8,
+    "nGpuLayers": 0,
+    "repetitions": 5,
+    "generatedTokens": 128,
+    "ngramMatch": 24,
+    "ngramMin": 4,
+    "ngramMax": 32,
+    "seed": 42,
+    "remotePort": 8094,
+    "startupTimeoutSeconds": 180,
+    "requestTimeoutSeconds": 180,
+    "telemetryIntervalSeconds": 2,
+    "cooldownSeconds": 0,
+    "modeCooldownSeconds": 120,
+    "modeOrder": [
+      "baseline",
+      "ngram"
+    ],
+    "minimumSpeedup": 1.03,
+    "maxZramGrowthBytes": 0,
+    "requireZramMetric": false,
+    "maxSwapFreeDropKb": 65536,
+    "maxSpeculativeRssIncreaseKb": 65536,
+    "maxBatteryTempC": 43.0,
+    "maxBatteryTempRiseC": 3.0,
+    "extraServerArgs": [],
+    "extraRequestFields": {}
+  },
+  "preflight": {
+    "ok": true,
+    "paths": {
+      "binary": "/data/local/tmp/llama-edge/llama-server",
+      "target": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf"
+    },
+    "sizesBytes": {
+      "target": 773025920
+    },
+    "sizeChecks": {
+      "target": null
+    },
+    "sha256": {
+      "target": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8"
+    },
+    "sha256Checks": {
+      "target": true
+    },
+    "binaryVersion": null,
+    "binarySha256": "41677f22d4bf9ec94270cb22b287f2e4356379c0cff7252e72d62739119b5743",
+    "requiredFlagChecks": {
+      "--spec-type": true,
+      "--spec-ngram-mod-n-match": true,
+      "--spec-ngram-mod-n-min": true,
+      "--spec-ngram-mod-n-max": true
+    },
+    "dryRun": false
+  },
+  "sessions": [
+    {
+      "mode": "baseline",
+      "pid": 15360,
+      "hostPort": 58415,
+      "remotePort": 8094,
+      "serverCommand": "/data/local/tmp/llama-edge/llama-server -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -c 512 -t 6 -tb 8 -ngl 0 -np 1 --host 127.0.0.1 --port 8094 --no-webui --spec-type none",
+      "serverLogPath": "/data/local/tmp/llama-edge/20260727-204314-baseline-llama-server.log",
+      "startedAt": "2026-07-27T15:13:15.120837+00:00",
+      "stateBeforeLoad": {
+        "capturedAt": "2026-07-27T15:13:14.861944+00:00",
+        "memAvailableKb": 1650964,
+        "swapFreeKb": 4310120,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": null,
+        "processVmHwmKb": null,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.8,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "ready": true,
+      "health": {
+        "status": "ok"
+      },
+      "stateAfterLoad": {
+        "capturedAt": "2026-07-27T15:13:21.637780+00:00",
+        "memAvailableKb": 1477424,
+        "swapFreeKb": 4158712,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1440488,
+        "processVmHwmKb": 1441320,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.5,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "stateBeforeStop": {
+        "capturedAt": "2026-07-27T15:16:24.494136+00:00",
+        "memAvailableKb": 1170804,
+        "swapFreeKb": 4130688,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 962904,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 39.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "telemetry": [
+        {
+          "capturedAt": "2026-07-27T15:13:14.861944+00:00",
+          "memAvailableKb": 1650964,
+          "swapFreeKb": 4310120,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": null,
+          "processVmHwmKb": null,
+          "zram": null,
+          "batteryLevel": 91,
+          "batteryTempC": 37.8,
+          "thermalStatus": "Thermal Status: 2"
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:15.241971+00:00",
+          "memAvailableKb": 1642044,
+          "swapFreeKb": 4310376,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 13364,
+          "processVmHwmKb": 13364,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:17.342020+00:00",
+          "memAvailableKb": 1580328,
+          "swapFreeKb": 4304232,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 348900,
+          "processVmHwmKb": 348900,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:19.480326+00:00",
+          "memAvailableKb": 1576148,
+          "swapFreeKb": 4268844,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1356072,
+          "processVmHwmKb": 1356072,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:21.639683+00:00",
+          "memAvailableKb": 1479756,
+          "swapFreeKb": 4158712,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1440488,
+          "processVmHwmKb": 1441320,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:23.796365+00:00",
+          "memAvailableKb": 1483720,
+          "swapFreeKb": 4152056,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1442480,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:25.995745+00:00",
+          "memAvailableKb": 1482492,
+          "swapFreeKb": 4152312,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1442604,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:28.173730+00:00",
+          "memAvailableKb": 1484160,
+          "swapFreeKb": 4145400,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1433760,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:30.363944+00:00",
+          "memAvailableKb": 1477964,
+          "swapFreeKb": 4146680,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1433276,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:32.539493+00:00",
+          "memAvailableKb": 1484980,
+          "swapFreeKb": 4143608,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1429168,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:34.746139+00:00",
+          "memAvailableKb": 1478728,
+          "swapFreeKb": 4143864,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1429320,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:36.945224+00:00",
+          "memAvailableKb": 1474372,
+          "swapFreeKb": 4144376,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1428156,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:39.114643+00:00",
+          "memAvailableKb": 1467468,
+          "swapFreeKb": 4141304,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1429260,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:41.278545+00:00",
+          "memAvailableKb": 1486676,
+          "swapFreeKb": 4138744,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1426564,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:43.456631+00:00",
+          "memAvailableKb": 1503124,
+          "swapFreeKb": 4121592,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1408668,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:45.599617+00:00",
+          "memAvailableKb": 1469804,
+          "swapFreeKb": 4121848,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1413208,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:47.790733+00:00",
+          "memAvailableKb": 1500068,
+          "swapFreeKb": 4113144,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1404504,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:49.950864+00:00",
+          "memAvailableKb": 1490252,
+          "swapFreeKb": 4113400,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1405076,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:52.125861+00:00",
+          "memAvailableKb": 1480700,
+          "swapFreeKb": 4113656,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1405580,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:54.315086+00:00",
+          "memAvailableKb": 1473108,
+          "swapFreeKb": 4113656,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1406088,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:56.473980+00:00",
+          "memAvailableKb": 1375876,
+          "swapFreeKb": 4102496,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1275004,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:13:58.665805+00:00",
+          "memAvailableKb": 1365264,
+          "swapFreeKb": 4084448,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1212780,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:00.763232+00:00",
+          "memAvailableKb": 1357816,
+          "swapFreeKb": 4085728,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1197436,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:02.949544+00:00",
+          "memAvailableKb": 1346956,
+          "swapFreeKb": 4088288,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1196948,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:05.125875+00:00",
+          "memAvailableKb": 1343640,
+          "swapFreeKb": 4088800,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1196928,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:07.318062+00:00",
+          "memAvailableKb": 1349764,
+          "swapFreeKb": 4089116,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1191536,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:09.525045+00:00",
+          "memAvailableKb": 1380980,
+          "swapFreeKb": 4078364,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1185620,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:11.723514+00:00",
+          "memAvailableKb": 1366780,
+          "swapFreeKb": 4078364,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1185736,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:13.889354+00:00",
+          "memAvailableKb": 1358976,
+          "swapFreeKb": 4078876,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1185724,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:16.007608+00:00",
+          "memAvailableKb": 1357116,
+          "swapFreeKb": 4074524,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1184528,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:18.194600+00:00",
+          "memAvailableKb": 1358576,
+          "swapFreeKb": 4074524,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1184784,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:20.365107+00:00",
+          "memAvailableKb": 1357936,
+          "swapFreeKb": 4074780,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1184640,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:22.483648+00:00",
+          "memAvailableKb": 1352216,
+          "swapFreeKb": 4074780,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182616,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:24.645964+00:00",
+          "memAvailableKb": 1361820,
+          "swapFreeKb": 4075292,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182352,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:26.832805+00:00",
+          "memAvailableKb": 1360080,
+          "swapFreeKb": 4075560,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182468,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:29.019791+00:00",
+          "memAvailableKb": 1357884,
+          "swapFreeKb": 4075824,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182340,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:31.196611+00:00",
+          "memAvailableKb": 1357948,
+          "swapFreeKb": 4075824,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182588,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:33.379996+00:00",
+          "memAvailableKb": 1361904,
+          "swapFreeKb": 4076080,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182576,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:35.586416+00:00",
+          "memAvailableKb": 1362700,
+          "swapFreeKb": 4076080,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182568,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:37.706922+00:00",
+          "memAvailableKb": 1355828,
+          "swapFreeKb": 4076336,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182020,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:39.863412+00:00",
+          "memAvailableKb": 1360600,
+          "swapFreeKb": 4077360,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1182124,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:42.072914+00:00",
+          "memAvailableKb": 1371024,
+          "swapFreeKb": 4075312,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1178632,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:44.230131+00:00",
+          "memAvailableKb": 1384832,
+          "swapFreeKb": 4073776,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1178484,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:46.392186+00:00",
+          "memAvailableKb": 1384612,
+          "swapFreeKb": 4066608,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1174756,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:48.557023+00:00",
+          "memAvailableKb": 1302704,
+          "swapFreeKb": 4067632,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1106148,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:50.734690+00:00",
+          "memAvailableKb": 1297924,
+          "swapFreeKb": 4069348,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1068244,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:52.949469+00:00",
+          "memAvailableKb": 1233816,
+          "swapFreeKb": 4102456,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1027912,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:55.181903+00:00",
+          "memAvailableKb": 1233156,
+          "swapFreeKb": 4126788,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1007248,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:57.331270+00:00",
+          "memAvailableKb": 1264028,
+          "swapFreeKb": 4118040,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1000464,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:14:59.511711+00:00",
+          "memAvailableKb": 1255728,
+          "swapFreeKb": 4118040,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1000456,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:01.633761+00:00",
+          "memAvailableKb": 1222368,
+          "swapFreeKb": 4118296,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1000320,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:03.836825+00:00",
+          "memAvailableKb": 1216472,
+          "swapFreeKb": 4118748,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974340,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:06.024968+00:00",
+          "memAvailableKb": 1210572,
+          "swapFreeKb": 4118748,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974576,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:08.198876+00:00",
+          "memAvailableKb": 1197868,
+          "swapFreeKb": 4119004,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974568,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:10.384519+00:00",
+          "memAvailableKb": 1193824,
+          "swapFreeKb": 4119004,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974420,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:12.559320+00:00",
+          "memAvailableKb": 1191988,
+          "swapFreeKb": 4119004,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974544,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:14.711984+00:00",
+          "memAvailableKb": 1203180,
+          "swapFreeKb": 4119772,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974660,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:16.864176+00:00",
+          "memAvailableKb": 1195740,
+          "swapFreeKb": 4119772,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 973868,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:19.069619+00:00",
+          "memAvailableKb": 1194824,
+          "swapFreeKb": 4120284,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 973860,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:21.220583+00:00",
+          "memAvailableKb": 1191240,
+          "swapFreeKb": 4120796,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 973728,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:23.383978+00:00",
+          "memAvailableKb": 1200236,
+          "swapFreeKb": 4121052,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 973852,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:25.542803+00:00",
+          "memAvailableKb": 1194384,
+          "swapFreeKb": 4121052,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 973848,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:27.714002+00:00",
+          "memAvailableKb": 1191660,
+          "swapFreeKb": 4121060,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 973840,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:29.838766+00:00",
+          "memAvailableKb": 1210192,
+          "swapFreeKb": 4119780,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974540,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:32.029567+00:00",
+          "memAvailableKb": 1200860,
+          "swapFreeKb": 4119780,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974788,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:34.221776+00:00",
+          "memAvailableKb": 1197060,
+          "swapFreeKb": 4119780,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 974776,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:36.354237+00:00",
+          "memAvailableKb": 1221196,
+          "swapFreeKb": 4120292,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 965036,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:38.569380+00:00",
+          "memAvailableKb": 1217340,
+          "swapFreeKb": 4120292,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964904,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:40.741235+00:00",
+          "memAvailableKb": 1212984,
+          "swapFreeKb": 4120292,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 965008,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:42.915557+00:00",
+          "memAvailableKb": 1206688,
+          "swapFreeKb": 4120292,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964748,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:45.078968+00:00",
+          "memAvailableKb": 1202288,
+          "swapFreeKb": 4120292,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 965132,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:47.256135+00:00",
+          "memAvailableKb": 1196668,
+          "swapFreeKb": 4129144,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 965000,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:49.403880+00:00",
+          "memAvailableKb": 1189216,
+          "swapFreeKb": 4129144,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 965124,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:51.582418+00:00",
+          "memAvailableKb": 1194736,
+          "swapFreeKb": 4129144,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964360,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:53.731788+00:00",
+          "memAvailableKb": 1191912,
+          "swapFreeKb": 4129144,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964480,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:55.898386+00:00",
+          "memAvailableKb": 1192784,
+          "swapFreeKb": 4129144,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964348,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:15:58.043287+00:00",
+          "memAvailableKb": 1195688,
+          "swapFreeKb": 4129400,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964460,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:00.217482+00:00",
+          "memAvailableKb": 1194616,
+          "swapFreeKb": 4129656,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964300,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:02.404600+00:00",
+          "memAvailableKb": 1194248,
+          "swapFreeKb": 4129912,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964172,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:04.522454+00:00",
+          "memAvailableKb": 1180908,
+          "swapFreeKb": 4129920,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 967004,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:06.716049+00:00",
+          "memAvailableKb": 1186252,
+          "swapFreeKb": 4129920,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 967132,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:08.898627+00:00",
+          "memAvailableKb": 1188092,
+          "swapFreeKb": 4129920,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 966988,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:11.021812+00:00",
+          "memAvailableKb": 1175216,
+          "swapFreeKb": 4130176,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964916,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:13.208781+00:00",
+          "memAvailableKb": 1173924,
+          "swapFreeKb": 4130176,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964636,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:15.388116+00:00",
+          "memAvailableKb": 1181416,
+          "swapFreeKb": 4130176,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964752,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:17.566048+00:00",
+          "memAvailableKb": 1180036,
+          "swapFreeKb": 4130176,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964868,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:19.749773+00:00",
+          "memAvailableKb": 1174916,
+          "swapFreeKb": 4130432,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964984,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:21.919525+00:00",
+          "memAvailableKb": 1176160,
+          "swapFreeKb": 4130688,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964836,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:24.095616+00:00",
+          "memAvailableKb": 1176712,
+          "swapFreeKb": 4130688,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 964952,
+          "processVmHwmKb": 1445748,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:16:24.494136+00:00",
+          "memAvailableKb": 1170804,
+          "swapFreeKb": 4130688,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 962904,
+          "processVmHwmKb": 1445748,
+          "zram": null,
+          "batteryLevel": 91,
+          "batteryTempC": 39.0,
+          "thermalStatus": "Thermal Status: 2"
+        }
+      ],
+      "memorySummary": {
+        "sampleCount": 90,
+        "minMemAvailableKb": 1170804,
+        "swapFreeStartKb": 4310120,
+        "minSwapFreeKb": 4066608,
+        "swapFreeDropKb": 243512,
+        "maxProcessVmHwmKb": 1445748,
+        "zramMemoryUsedStartBytes": null,
+        "zramMemoryUsedPeakBytes": null,
+        "zramGrowthBytes": null
+      },
+      "serverLogTail": "warning: no usable GPU found, --gpu-layers option will be ignored\nwarning: one possible reason is that llama.cpp was compiled without GPU support\nwarning: consult docs/build.md for compilation instructions\n0.00.013.177 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)\n0.00.013.417 I srv          init: The UI is disabled\n0.00.013.419 I srv          init: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable\n0.00.013.580 W srv  llama_server: -----------------\n0.00.013.588 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set\n0.00.013.589 W srv  llama_server: this can be a security risk (cross-origin attacks)\n0.00.013.590 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655\n0.00.013.591 W srv  llama_server: -----------------\n0.00.015.273 I srv    load_model: loading model '/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf'\n0.05.673.396 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 512, kv_unified = 'false'\n0.05.726.330 I srv  llama_server: model loaded\n0.05.726.417 I srv  llama_server: listening on http://127.0.0.1:8094\n0.06.993.507 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1\n0.06.993.942 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0\n0.19.012.483 I slot print_timing: id  0 | task 0 | n_decoded =    100, tg =   9.21 t/s, tg_3s =   9.21 t/s\n0.22.005.733 I slot print_timing: id  0 | task 0 | prompt eval time =    1157.98 ms /    76 tokens (   15.24 ms per token,    65.63 tokens per second)\n0.22.005.759 I slot print_timing: id  0 | task 0 |        eval time =   13853.64 ms /   128 tokens (  108.23 ms per token,     9.24 tokens per second)\n0.22.005.894 I slot print_timing: id  0 | task 0 |       total time =   15011.61 ms /   204 tokens\n0.22.005.936 I slot print_timing: id  0 | task 0 |    graphs reused =        127\n0.22.007.305 I slot      release: id  0 | task 0 | stop processing: n_tokens = 203, truncated = 0\n0.22.610.476 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n0.22.615.898 I slot launch_slot_: id  0 | task 129 | processing task, is_child = 0\n0.28.964.839 I slot print_timing: id  0 | task 129 | prompt eval time =     921.24 ms /    67 tokens (   13.75 ms per token,    72.73 tokens per second)\n0.28.964.850 I slot print_timing: id  0 | task 129 |        eval time =    5427.58 ms /    50 tokens (  108.55 ms per token,     9.21 tokens per second)\n0.28.964.853 I slot print_timing: id  0 | task 129 |       total time =    6348.82 ms /   117 tokens\n0.28.964.855 I slot print_timing: id  0 | task 129 |    graphs reused =        175\n0.28.965.034 I slot      release: id  0 | task 129 | stop processing: n_tokens = 116, truncated = 0\n0.29.577.253 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n0.29.580.541 I slot launch_slot_: id  0 | task 180 | processing task, is_child = 0\n0.42.654.326 I slot print_timing: id  0 | task 180 | n_decoded =    100, tg =   8.12 t/s, tg_3s =   8.12 t/s\n0.45.495.844 I slot print_timing: id  0 | task 180 | prompt eval time =     753.02 ms /    54 tokens (   13.94 ms per token,    71.71 tokens per second)\n0.45.495.852 I slot print_timing: id  0 | task 180 |        eval time =   15162.18 ms /   128 tokens (  118.45 ms per token,     8.44 tokens per second)\n0.45.495.856 I slot print_timing: id  0 | task 180 |       total time =   15915.20 ms /   182 tokens\n0.45.495.858 I slot print_timing: id  0 | task 180 |    graphs reused =        301\n0.45.496.014 I slot      release: id  0 | task 180 | stop processing: n_tokens = 181, truncated = 0\n0.46.000.516 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n0.46.007.865 I slot launch_slot_: id  0 | task 309 | processing task, is_child = 0\n0.57.001.918 I slot print_timing: id  0 | task 309 | n_decoded =    100, tg =  10.04 t/s, tg_3s =  10.04 t/s\n0.59.979.684 I slot print_timing: id  0 | task 309 | prompt eval time =    1034.33 ms /    76 tokens (   13.61 ms per token,    73.48 tokens per second)\n0.59.979.693 I slot print_timing: id  0 | task 309 |        eval time =   12937.38 ms /   128 tokens (  101.07 ms per token,     9.89 tokens per second)\n0.59.979.696 I slot print_timing: id  0 | task 309 |       total time =   13971.72 ms /   204 tokens\n0.59.979.698 I slot print_timing: id  0 | task 309 |    graphs reused =        427\n0.59.979.745 I slot      release: id  0 | task 309 | stop processing: n_tokens = 203, truncated = 0\n1.00.496.828 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n1.00.504.775 I slot launch_slot_: id  0 | task 438 | processing task, is_child = 0\n1.06.531.626 I slot print_timing: id  0 | task 438 | prompt eval time =    1020.26 ms /    67 tokens (   15.23 ms per token,    65.67 tokens per second)\n1.06.531.637 I slot print_timing: id  0 | task 438 |        eval time =    5006.46 ms /    50 tokens (  100.13 ms per token,     9.99 tokens per second)\n1.06.531.641 I slot print_timing: id  0 | task 438 |       total time =    6026.72 ms /   117 tokens\n1.06.531.644 I slot print_timing: id  0 | task 438 |    graphs reused =        475\n1.06.531.693 I slot      release: id  0 | task 438 | stop processing: n_tokens = 116, truncated = 0\n1.07.114.152 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n1.07.121.027 I slot launch_slot_: id  0 | task 489 | processing task, is_child = 0\n1.18.024.347 I slot print_timing: id  0 | task 489 | n_decoded =    100, tg =  10.00 t/s, tg_3s =  10.00 t/s\n1.20.876.933 I slot print_timing: id  0 | task 489 | prompt eval time =     903.25 ms /    54 tokens (   16.73 ms per token,    59.78 tokens per second)\n1.20.876.942 I slot print_timing: id  0 | task 489 |        eval time =   12852.55 ms /   128 tokens (  100.41 ms per token,     9.96 tokens per second)\n1.20.876.944 I slot print_timing: id  0 | task 489 |       total time =   13755.80 ms /   182 tokens\n1.20.876.946 I slot print_timing: id  0 | task 489 |    graphs reused =        601\n1.20.877.037 I slot      release: id  0 | task 489 | stop processing: n_tokens = 181, truncated = 0\n1.21.442.618 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n1.21.450.077 I slot launch_slot_: id  0 | task 618 | processing task, is_child = 0\n1.32.921.723 I slot print_timing: id  0 | task 618 | n_decoded =    100, tg =   9.65 t/s, tg_3s =   9.65 t/s\n1.36.136.738 I slot print_timing: id  0 | task 618 | n_decoded =    116, tg =   8.54 t/s, tg_3s =   4.98 t/s\n1.38.860.705 I slot print_timing: id  0 | task 618 | prompt eval time =    1109.76 ms /    76 tokens (   14.60 ms per token,    68.48 tokens per second)\n1.38.860.718 I slot print_timing: id  0 | task 618 |        eval time =   16300.77 ms /   128 tokens (  127.35 ms per token,     7.85 tokens per second)\n1.38.860.720 I slot print_timing: id  0 | task 618 |       total time =   17410.53 ms /   204 tokens\n1.38.860.723 I slot print_timing: id  0 | task 618 |    graphs reused =        727\n1.38.860.807 I slot      release: id  0 | task 618 | stop processing: n_tokens = 203, truncated = 0\n1.39.394.160 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n1.39.409.829 I slot launch_slot_: id  0 | task 747 | processing task, is_child = 0\n1.45.904.714 I slot print_timing: id  0 | task 747 | prompt eval time =    1769.65 ms /    67 tokens (   26.41 ms per token,    37.86 tokens per second)\n1.45.904.723 I slot print_timing: id  0 | task 747 |        eval time =    4725.17 ms /    50 tokens (   94.50 ms per token,    10.58 tokens per second)\n1.45.904.726 I slot print_timing: id  0 | task 747 |       total time =    6494.82 ms /   117 tokens\n1.45.904.727 I slot print_timing: id  0 | task 747 |    graphs reused =        775\n1.45.904.767 I slot      release: id  0 | task 747 | stop processing: n_tokens = 116, truncated = 0\n1.46.457.770 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n1.46.463.490 I slot launch_slot_: id  0 | task 798 | processing task, is_child = 0\n1.57.129.830 I slot print_timing: id  0 | task 798 | n_decoded =    100, tg =  10.82 t/s, tg_3s =  10.82 t/s\n1.59.812.478 I slot print_timing: id  0 | task 798 | prompt eval time =    1424.24 ms /    54 tokens (   26.37 ms per token,    37.92 tokens per second)\n1.59.812.487 I slot print_timing: id  0 | task 798 |        eval time =   11924.69 ms /   128 tokens (   93.16 ms per token,    10.73 tokens per second)\n1.59.812.491 I slot print_timing: id  0 | task 798 |       total time =   13348.92 ms /   182 tokens\n1.59.812.493 I slot print_timing: id  0 | task 798 |    graphs reused =        901\n1.59.812.529 I slot      release: id  0 | task 798 | stop processing: n_tokens = 181, truncated = 0\n2.00.354.293 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n2.00.362.074 I slot launch_slot_: id  0 | task 927 | processing task, is_child = 0\n2.11.192.515 I slot print_timing: id  0 | task 927 | n_decoded =    100, tg =  10.29 t/s, tg_3s =  10.29 t/s\n2.13.937.789 I slot print_timing: id  0 | task 927 | prompt eval time =    1109.87 ms /    76 tokens (   14.60 ms per token,    68.48 tokens per second)\n2.13.937.798 I slot print_timing: id  0 | task 927 |        eval time =   12465.77 ms /   128 tokens (   97.39 ms per token,    10.27 tokens per second)\n2.13.937.800 I slot print_timing: id  0 | task 927 |       total time =   13575.63 ms /   204 tokens\n2.13.937.801 I slot print_timing: id  0 | task 927 |    graphs reused =       1027\n2.13.937.840 I slot      release: id  0 | task 927 | stop processing: n_tokens = 203, truncated = 0\n2.14.538.528 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n2.14.545.668 I slot launch_slot_: id  0 | task 1056 | processing task, is_child = 0\n2.20.262.632 I slot print_timing: id  0 | task 1056 | prompt eval time =    1023.68 ms /    67 tokens (   15.28 ms per token,    65.45 tokens per second)\n2.20.262.650 I slot print_timing: id  0 | task 1056 |        eval time =    4693.16 ms /    50 tokens (   93.86 ms per token,    10.65 tokens per second)\n2.20.262.652 I slot print_timing: id  0 | task 1056 |       total time =    5716.84 ms /   117 tokens\n2.20.262.654 I slot print_timing: id  0 | task 1056 |    graphs reused =       1075\n2.20.262.694 I slot      release: id  0 | task 1056 | stop processing: n_tokens = 116, truncated = 0\n2.20.800.188 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n2.20.805.625 I slot launch_slot_: id  0 | task 1107 | processing task, is_child = 0\n2.31.291.708 I slot print_timing: id  0 | task 1107 | n_decoded =    100, tg =  10.36 t/s, tg_3s =  10.36 t/s\n2.34.093.497 I slot print_timing: id  0 | task 1107 | prompt eval time =     830.91 ms /    54 tokens (   15.39 ms per token,    64.99 tokens per second)\n2.34.093.507 I slot print_timing: id  0 | task 1107 |        eval time =   12456.88 ms /   128 tokens (   97.32 ms per token,    10.28 tokens per second)\n2.34.093.509 I slot print_timing: id  0 | task 1107 |       total time =   13287.79 ms /   182 tokens\n2.34.093.564 I slot print_timing: id  0 | task 1107 |    graphs reused =       1201\n2.34.093.622 I slot      release: id  0 | task 1107 | stop processing: n_tokens = 181, truncated = 0\n2.34.651.065 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n2.34.658.336 I slot launch_slot_: id  0 | task 1236 | processing task, is_child = 0\n2.45.644.146 I slot print_timing: id  0 | task 1236 | n_decoded =    100, tg =  10.16 t/s, tg_3s =  10.16 t/s\n2.48.286.500 I slot print_timing: id  0 | task 1236 | prompt eval time =    1146.46 ms /    76 tokens (   15.08 ms per token,    66.29 tokens per second)\n2.48.286.510 I slot print_timing: id  0 | task 1236 |        eval time =   12481.62 ms /   128 tokens (   97.51 ms per token,    10.26 tokens per second)\n2.48.286.512 I slot print_timing: id  0 | task 1236 |       total time =   13628.07 ms /   204 tokens\n2.48.286.515 I slot print_timing: id  0 | task 1236 |    graphs reused =       1327\n2.48.286.551 I slot      release: id  0 | task 1236 | stop processing: n_tokens = 203, truncated = 0\n2.48.868.133 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n2.48.875.979 I slot launch_slot_: id  0 | task 1365 | processing task, is_child = 0\n2.54.670.536 I slot print_timing: id  0 | task 1365 | prompt eval time =    1049.30 ms /    67 tokens (   15.66 ms per token,    63.85 tokens per second)\n2.54.670.546 I slot print_timing: id  0 | task 1365 |        eval time =    4745.15 ms /    50 tokens (   94.90 ms per token,    10.54 tokens per second)\n2.54.670.549 I slot print_timing: id  0 | task 1365 |       total time =    5794.45 ms /   117 tokens\n2.54.670.551 I slot print_timing: id  0 | task 1365 |    graphs reused =       1375\n2.54.670.598 I slot      release: id  0 | task 1365 | stop processing: n_tokens = 116, truncated = 0\n2.55.263.325 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n2.55.268.882 I slot launch_slot_: id  0 | task 1416 | processing task, is_child = 0\n3.06.111.592 I slot print_timing: id  0 | task 1416 | n_decoded =    100, tg =   9.99 t/s, tg_3s =   9.99 t/s\n3.08.967.804 I slot print_timing: id  0 | task 1416 | prompt eval time =     829.07 ms /    54 tokens (   15.35 ms per token,    65.13 tokens per second)\n3.08.967.818 I slot print_timing: id  0 | task 1416 |        eval time =   12869.74 ms /   128 tokens (  100.54 ms per token,     9.95 tokens per second)\n3.08.967.821 I slot print_timing: id  0 | task 1416 |       total time =   13698.81 ms /   182 tokens\n3.08.967.823 I slot print_timing: id  0 | task 1416 |    graphs reused =       1501\n3.08.967.862 I slot      release: id  0 | task 1416 | stop processing: n_tokens = 181, truncated = 0",
+      "finishedAt": "2026-07-27T15:16:25.279124+00:00"
+    },
+    {
+      "mode": "ngram",
+      "pid": 25171,
+      "hostPort": 44201,
+      "remotePort": 8094,
+      "serverCommand": "/data/local/tmp/llama-edge/llama-server -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -c 512 -t 6 -tb 8 -ngl 0 -np 1 --host 127.0.0.1 --port 8094 --no-webui --spec-type ngram-mod --spec-ngram-mod-n-match 24 --spec-ngram-mod-n-min 4 --spec-ngram-mod-n-max 32",
+      "serverLogPath": "/data/local/tmp/llama-edge/20260727-204314-ngram-llama-server.log",
+      "startedAt": "2026-07-27T15:18:25.565875+00:00",
+      "stateBeforeLoad": {
+        "capturedAt": "2026-07-27T15:18:25.417512+00:00",
+        "memAvailableKb": 1977540,
+        "swapFreeKb": 4205716,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": null,
+        "processVmHwmKb": null,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "ready": true,
+      "health": {
+        "status": "ok"
+      },
+      "stateAfterLoad": {
+        "capturedAt": "2026-07-27T15:18:29.893659+00:00",
+        "memAvailableKb": 1286988,
+        "swapFreeKb": 4189844,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1575484,
+        "processVmHwmKb": 1575484,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "stateBeforeStop": {
+        "capturedAt": "2026-07-27T15:20:00.984915+00:00",
+        "memAvailableKb": 1250188,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1465064,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "telemetry": [
+        {
+          "capturedAt": "2026-07-27T15:18:25.417512+00:00",
+          "memAvailableKb": 1977540,
+          "swapFreeKb": 4205716,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": null,
+          "processVmHwmKb": null,
+          "zram": null,
+          "batteryLevel": 91,
+          "batteryTempC": 38.4,
+          "thermalStatus": "Thermal Status: 2"
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:25.693777+00:00",
+          "memAvailableKb": 1963876,
+          "swapFreeKb": 4205716,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 12740,
+          "processVmHwmKb": 12740,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:27.810132+00:00",
+          "memAvailableKb": 1883324,
+          "swapFreeKb": 4205716,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 365904,
+          "processVmHwmKb": 365904,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:29.910855+00:00",
+          "memAvailableKb": 1286296,
+          "swapFreeKb": 4188052,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1575484,
+          "processVmHwmKb": 1575484,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:32.058424+00:00",
+          "memAvailableKb": 1283556,
+          "swapFreeKb": 4168852,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1585528,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:34.217844+00:00",
+          "memAvailableKb": 1291148,
+          "swapFreeKb": 4163220,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1580144,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:36.414924+00:00",
+          "memAvailableKb": 1274696,
+          "swapFreeKb": 4163220,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1579112,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:38.598883+00:00",
+          "memAvailableKb": 1289144,
+          "swapFreeKb": 4162964,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1573992,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:40.763567+00:00",
+          "memAvailableKb": 1271948,
+          "swapFreeKb": 4162964,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1572584,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:42.952937+00:00",
+          "memAvailableKb": 1280204,
+          "swapFreeKb": 4161940,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1567336,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:45.114303+00:00",
+          "memAvailableKb": 1276216,
+          "swapFreeKb": 4166036,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1516192,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:47.277810+00:00",
+          "memAvailableKb": 1274040,
+          "swapFreeKb": 4166036,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1516320,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:49.456856+00:00",
+          "memAvailableKb": 1265500,
+          "swapFreeKb": 4166036,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1516428,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:51.593096+00:00",
+          "memAvailableKb": 1275820,
+          "swapFreeKb": 4155284,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1507860,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:53.785881+00:00",
+          "memAvailableKb": 1258684,
+          "swapFreeKb": 4155284,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1512012,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:55.961437+00:00",
+          "memAvailableKb": 1283016,
+          "swapFreeKb": 4156052,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1497804,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:18:58.115313+00:00",
+          "memAvailableKb": 1267772,
+          "swapFreeKb": 4156052,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1497932,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:00.286814+00:00",
+          "memAvailableKb": 1288652,
+          "swapFreeKb": 4150676,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1490556,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:02.465945+00:00",
+          "memAvailableKb": 1272004,
+          "swapFreeKb": 4150676,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1490688,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:04.647122+00:00",
+          "memAvailableKb": 1263824,
+          "swapFreeKb": 4150676,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1491112,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:06.827308+00:00",
+          "memAvailableKb": 1264876,
+          "swapFreeKb": 4146580,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1485048,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:08.954415+00:00",
+          "memAvailableKb": 1265400,
+          "swapFreeKb": 4122260,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1497208,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:11.129505+00:00",
+          "memAvailableKb": 1256324,
+          "swapFreeKb": 4122260,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1497064,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:13.248576+00:00",
+          "memAvailableKb": 1242460,
+          "swapFreeKb": 4122260,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1498520,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:15.371858+00:00",
+          "memAvailableKb": 1254680,
+          "swapFreeKb": 4117908,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1494812,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:17.537606+00:00",
+          "memAvailableKb": 1251736,
+          "swapFreeKb": 4118164,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1494812,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:19.661024+00:00",
+          "memAvailableKb": 1240760,
+          "swapFreeKb": 4118164,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1494548,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:21.885705+00:00",
+          "memAvailableKb": 1262324,
+          "swapFreeKb": 4114324,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1489480,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:24.019987+00:00",
+          "memAvailableKb": 1261184,
+          "swapFreeKb": 4127524,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1491008,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:26.256833+00:00",
+          "memAvailableKb": 1269268,
+          "swapFreeKb": 4125988,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1485424,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:28.419271+00:00",
+          "memAvailableKb": 1261528,
+          "swapFreeKb": 4125988,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1486692,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:30.572993+00:00",
+          "memAvailableKb": 1273396,
+          "swapFreeKb": 4121124,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1479080,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:32.754612+00:00",
+          "memAvailableKb": 1267192,
+          "swapFreeKb": 4121124,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1479068,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:34.868134+00:00",
+          "memAvailableKb": 1273300,
+          "swapFreeKb": 4126500,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1462696,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:37.032684+00:00",
+          "memAvailableKb": 1271944,
+          "swapFreeKb": 4126500,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464232,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:39.171449+00:00",
+          "memAvailableKb": 1268288,
+          "swapFreeKb": 4126500,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464232,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:41.308769+00:00",
+          "memAvailableKb": 1260664,
+          "swapFreeKb": 4126500,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1465672,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:43.468947+00:00",
+          "memAvailableKb": 1256688,
+          "swapFreeKb": 4126500,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464908,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:45.614853+00:00",
+          "memAvailableKb": 1266560,
+          "swapFreeKb": 4126500,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464908,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:47.722905+00:00",
+          "memAvailableKb": 1253092,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464896,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:49.892037+00:00",
+          "memAvailableKb": 1259180,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464188,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:52.052732+00:00",
+          "memAvailableKb": 1261504,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464176,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:54.216370+00:00",
+          "memAvailableKb": 1262076,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1465384,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:56.330005+00:00",
+          "memAvailableKb": 1261564,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1463408,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:19:58.529206+00:00",
+          "memAvailableKb": 1258972,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1464816,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:20:00.674556+00:00",
+          "memAvailableKb": 1261404,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1465064,
+          "processVmHwmKb": 1585528,
+          "zram": null
+        },
+        {
+          "capturedAt": "2026-07-27T15:20:00.984915+00:00",
+          "memAvailableKb": 1250188,
+          "swapFreeKb": 4126756,
+          "swapTotalKb": 6291452,
+          "processVmRssKb": 1465064,
+          "processVmHwmKb": 1585528,
+          "zram": null,
+          "batteryLevel": 91,
+          "batteryTempC": 38.6,
+          "thermalStatus": "Thermal Status: 2"
+        }
+      ],
+      "memorySummary": {
+        "sampleCount": 47,
+        "minMemAvailableKb": 1240760,
+        "swapFreeStartKb": 4205716,
+        "minSwapFreeKb": 4114324,
+        "swapFreeDropKb": 91392,
+        "maxProcessVmHwmKb": 1585528,
+        "zramMemoryUsedStartBytes": null,
+        "zramMemoryUsedPeakBytes": null,
+        "zramGrowthBytes": null
+      },
+      "serverLogTail": "warning: no usable GPU found, --gpu-layers option will be ignored\nwarning: one possible reason is that llama.cpp was compiled without GPU support\nwarning: consult docs/build.md for compilation instructions\n0.00.016.115 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)\n0.00.018.030 I srv          init: The UI is disabled\n0.00.018.088 I srv          init: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable\n0.00.018.528 W srv  llama_server: -----------------\n0.00.018.583 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set\n0.00.018.588 W srv  llama_server: this can be a security risk (cross-origin attacks)\n0.00.018.592 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655\n0.00.018.595 W srv  llama_server: -----------------\n0.00.020.519 I srv    load_model: loading model '/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf'\n0.04.082.596 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 512, kv_unified = 'false'\n0.04.104.423 I srv  llama_server: model loaded\n0.04.104.471 I srv  llama_server: listening on http://127.0.0.1:8094\n0.04.736.000 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1\n0.04.736.279 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0\n0.15.655.979 I slot print_timing: id  0 | task 0 | n_decoded =    100, tg =  10.08 t/s, tg_3s =  10.08 t/s\n0.18.619.778 I slot print_timing: id  0 | task 0 | prompt eval time =    1001.00 ms /    76 tokens (   13.17 ms per token,    75.92 tokens per second)\n0.18.619.798 I slot print_timing: id  0 | task 0 |        eval time =   12882.36 ms /   128 tokens (  100.64 ms per token,     9.94 tokens per second)\n0.18.619.801 I slot print_timing: id  0 | task 0 |       total time =   13883.36 ms /   204 tokens\n0.18.619.803 I slot print_timing: id  0 | task 0 |    graphs reused =        127\n0.18.619.860 I slot      release: id  0 | task 0 | stop processing: n_tokens = 203, truncated = 0\n0.19.203.814 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n0.19.211.538 I slot launch_slot_: id  0 | task 129 | processing task, is_child = 0\n0.25.445.892 I slot print_timing: id  0 | task 129 | prompt eval time =    1151.08 ms /    67 tokens (   17.18 ms per token,    58.21 tokens per second)\n0.25.445.903 I slot print_timing: id  0 | task 129 |        eval time =    5083.19 ms /    50 tokens (  101.66 ms per token,     9.84 tokens per second)\n0.25.445.906 I slot print_timing: id  0 | task 129 |       total time =    6234.27 ms /   117 tokens\n0.25.445.907 I slot print_timing: id  0 | task 129 |    graphs reused =        175\n0.25.445.964 I slot      release: id  0 | task 129 | stop processing: n_tokens = 116, truncated = 0\n0.26.056.107 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n0.26.059.925 I slot launch_slot_: id  0 | task 180 | processing task, is_child = 0\n0.37.058.428 I slot print_timing: id  0 | task 180 | n_decoded =    100, tg =   9.79 t/s, tg_3s =   9.79 t/s\n0.40.049.160 I slot print_timing: id  0 | task 180 | prompt eval time =     779.30 ms /    54 tokens (   14.43 ms per token,    69.29 tokens per second)\n0.40.049.171 I slot print_timing: id  0 | task 180 |        eval time =   13209.82 ms /   128 tokens (  103.20 ms per token,     9.69 tokens per second)\n0.40.049.173 I slot print_timing: id  0 | task 180 |       total time =   13989.12 ms /   182 tokens\n0.40.049.175 I slot print_timing: id  0 | task 180 |    graphs reused =        301\n0.40.049.262 I slot      release: id  0 | task 180 | stop processing: n_tokens = 181, truncated = 0\n0.40.664.607 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n0.40.673.568 I slot launch_slot_: id  0 | task 309 | processing task, is_child = 0\n0.44.827.839 I slot print_timing: id  0 | task 309 | n_decoded =    119, tg =  39.27 t/s, tg_3s =  39.27 t/s\n0.45.739.808 I slot print_timing: id  0 | task 309 | prompt eval time =    1123.51 ms /    76 tokens (   14.78 ms per token,    67.65 tokens per second)\n0.45.739.821 I slot print_timing: id  0 | task 309 |        eval time =    3942.60 ms /   128 tokens (   30.80 ms per token,    32.47 tokens per second)\n0.45.739.824 I slot print_timing: id  0 | task 309 |       total time =    5066.11 ms /   204 tokens\n0.45.739.827 I slot print_timing: id  0 | task 309 |    graphs reused =        312\n0.45.739.874 I slot print_timing: id  0 | task 309 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n0.45.739.987 I slot      release: id  0 | task 309 | stop processing: n_tokens = 203, truncated = 0\n0.46.298.868 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n0.46.305.873 I slot launch_slot_: id  0 | task 325 | processing task, is_child = 0\n0.48.753.213 I slot print_timing: id  0 | task 325 | prompt eval time =     976.94 ms /    67 tokens (   14.58 ms per token,    68.58 tokens per second)\n0.48.753.239 I slot print_timing: id  0 | task 325 |        eval time =    1470.26 ms /    50 tokens (   29.41 ms per token,    34.01 tokens per second)\n0.48.753.245 I slot print_timing: id  0 | task 325 |       total time =    2447.20 ms /   117 tokens\n0.48.753.249 I slot print_timing: id  0 | task 325 |    graphs reused =        315\n0.48.753.345 I slot print_timing: id  0 | task 325 | draft acceptance = 1.00000 (   43 accepted /    43 generated), mean len = 22.50\n0.48.753.515 I slot      release: id  0 | task 325 | stop processing: n_tokens = 116, truncated = 0\n0.49.309.808 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n0.49.315.914 I slot launch_slot_: id  0 | task 333 | processing task, is_child = 0\n0.53.177.754 I slot print_timing: id  0 | task 333 | n_decoded =    122, tg =  39.77 t/s, tg_3s =  39.77 t/s\n0.53.803.690 I slot print_timing: id  0 | task 333 | prompt eval time =     793.90 ms /    54 tokens (   14.70 ms per token,    68.02 tokens per second)\n0.53.803.716 I slot print_timing: id  0 | task 333 |        eval time =    3693.75 ms /   128 tokens (   28.86 ms per token,    34.65 tokens per second)\n0.53.803.719 I slot print_timing: id  0 | task 333 |       total time =    4487.65 ms /   182 tokens\n0.53.803.721 I slot print_timing: id  0 | task 333 |    graphs reused =        326\n0.53.803.755 I slot print_timing: id  0 | task 333 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n0.53.803.818 I slot      release: id  0 | task 333 | stop processing: n_tokens = 181, truncated = 0\n0.54.353.755 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n0.54.362.307 I slot launch_slot_: id  0 | task 349 | processing task, is_child = 0\n0.58.644.491 I slot print_timing: id  0 | task 349 | n_decoded =    118, tg =  37.17 t/s, tg_3s =  37.17 t/s\n0.59.584.357 I slot print_timing: id  0 | task 349 | prompt eval time =    1107.82 ms /    76 tokens (   14.58 ms per token,    68.60 tokens per second)\n0.59.584.369 I slot print_timing: id  0 | task 349 |        eval time =    4114.17 ms /   128 tokens (   32.14 ms per token,    31.11 tokens per second)\n0.59.584.376 I slot print_timing: id  0 | task 349 |       total time =    5221.98 ms /   204 tokens\n0.59.584.380 I slot print_timing: id  0 | task 349 |    graphs reused =        337\n0.59.584.425 I slot print_timing: id  0 | task 349 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n0.59.584.497 I slot      release: id  0 | task 349 | stop processing: n_tokens = 203, truncated = 0\n1.00.144.079 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n1.00.152.352 I slot launch_slot_: id  0 | task 365 | processing task, is_child = 0\n1.02.757.843 I slot print_timing: id  0 | task 365 | prompt eval time =    1141.46 ms /    67 tokens (   17.04 ms per token,    58.70 tokens per second)\n1.02.757.857 I slot print_timing: id  0 | task 365 |        eval time =    1463.95 ms /    50 tokens (   29.28 ms per token,    34.15 tokens per second)\n1.02.757.863 I slot print_timing: id  0 | task 365 |       total time =    2605.41 ms /   117 tokens\n1.02.757.867 I slot print_timing: id  0 | task 365 |    graphs reused =        340\n1.02.757.927 I slot print_timing: id  0 | task 365 | draft acceptance = 1.00000 (   43 accepted /    43 generated), mean len = 22.50\n1.02.758.032 I slot      release: id  0 | task 365 | stop processing: n_tokens = 116, truncated = 0\n1.03.350.335 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n1.03.356.887 I slot launch_slot_: id  0 | task 373 | processing task, is_child = 0\n1.07.317.204 I slot print_timing: id  0 | task 373 | n_decoded =    122, tg =  39.42 t/s, tg_3s =  39.42 t/s\n1.07.843.310 I slot print_timing: id  0 | task 373 | prompt eval time =     865.44 ms /    54 tokens (   16.03 ms per token,    62.40 tokens per second)\n1.07.843.331 I slot print_timing: id  0 | task 373 |        eval time =    3620.89 ms /   128 tokens (   28.29 ms per token,    35.35 tokens per second)\n1.07.843.333 I slot print_timing: id  0 | task 373 |       total time =    4486.33 ms /   182 tokens\n1.07.843.335 I slot print_timing: id  0 | task 373 |    graphs reused =        351\n1.07.843.368 I slot print_timing: id  0 | task 373 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n1.07.843.434 I slot      release: id  0 | task 373 | stop processing: n_tokens = 181, truncated = 0\n1.08.317.012 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n1.08.325.372 I slot launch_slot_: id  0 | task 389 | processing task, is_child = 0\n1.12.759.507 I slot print_timing: id  0 | task 389 | n_decoded =    122, tg =  40.22 t/s, tg_3s =  40.21 t/s\n1.13.383.284 I slot print_timing: id  0 | task 389 | prompt eval time =    1400.34 ms /    76 tokens (   18.43 ms per token,    54.27 tokens per second)\n1.13.383.296 I slot print_timing: id  0 | task 389 |        eval time =    3657.46 ms /   128 tokens (   28.57 ms per token,    35.00 tokens per second)\n1.13.383.303 I slot print_timing: id  0 | task 389 |       total time =    5057.81 ms /   204 tokens\n1.13.383.306 I slot print_timing: id  0 | task 389 |    graphs reused =        362\n1.13.383.349 I slot print_timing: id  0 | task 389 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n1.13.383.421 I slot      release: id  0 | task 389 | stop processing: n_tokens = 203, truncated = 0\n1.13.962.870 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n1.13.971.993 I slot launch_slot_: id  0 | task 405 | processing task, is_child = 0\n1.16.422.737 I slot print_timing: id  0 | task 405 | prompt eval time =    1001.76 ms /    67 tokens (   14.95 ms per token,    66.88 tokens per second)\n1.16.422.748 I slot print_timing: id  0 | task 405 |        eval time =    1448.88 ms /    50 tokens (   28.98 ms per token,    34.51 tokens per second)\n1.16.422.752 I slot print_timing: id  0 | task 405 |       total time =    2450.64 ms /   117 tokens\n1.16.422.754 I slot print_timing: id  0 | task 405 |    graphs reused =        365\n1.16.422.802 I slot print_timing: id  0 | task 405 | draft acceptance = 1.00000 (   43 accepted /    43 generated), mean len = 22.50\n1.16.422.884 I slot      release: id  0 | task 405 | stop processing: n_tokens = 116, truncated = 0\n1.16.965.463 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n1.16.971.025 I slot launch_slot_: id  0 | task 413 | processing task, is_child = 0\n1.20.799.751 I slot print_timing: id  0 | task 413 | n_decoded =    121, tg =  40.07 t/s, tg_3s =  40.07 t/s\n1.21.538.461 I slot print_timing: id  0 | task 413 | prompt eval time =     808.86 ms /    54 tokens (   14.98 ms per token,    66.76 tokens per second)\n1.21.538.486 I slot print_timing: id  0 | task 413 |        eval time =    3758.36 ms /   128 tokens (   29.36 ms per token,    34.06 tokens per second)\n1.21.538.492 I slot print_timing: id  0 | task 413 |       total time =    4567.23 ms /   182 tokens\n1.21.538.496 I slot print_timing: id  0 | task 413 |    graphs reused =        376\n1.21.538.591 I slot print_timing: id  0 | task 413 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n1.21.538.738 I slot      release: id  0 | task 413 | stop processing: n_tokens = 181, truncated = 0\n1.22.078.025 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.395 (> 0.100 thold), f_keep = 0.166\n1.22.085.874 I slot launch_slot_: id  0 | task 429 | processing task, is_child = 0\n1.26.256.499 I slot print_timing: id  0 | task 429 | n_decoded =    122, tg =  40.07 t/s, tg_3s =  40.07 t/s\n1.26.811.288 I slot print_timing: id  0 | task 429 | prompt eval time =    1125.72 ms /    76 tokens (   14.81 ms per token,    67.51 tokens per second)\n1.26.811.308 I slot print_timing: id  0 | task 429 |        eval time =    3599.39 ms /   128 tokens (   28.12 ms per token,    35.56 tokens per second)\n1.26.811.311 I slot print_timing: id  0 | task 429 |       total time =    4725.10 ms /   204 tokens\n1.26.811.313 I slot print_timing: id  0 | task 429 |    graphs reused =        387\n1.26.811.347 I slot print_timing: id  0 | task 429 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n1.26.811.411 I slot      release: id  0 | task 429 | stop processing: n_tokens = 203, truncated = 0\n1.27.390.454 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.448 (> 0.100 thold), f_keep = 0.148\n1.27.398.204 I slot launch_slot_: id  0 | task 445 | processing task, is_child = 0\n1.29.851.361 I slot print_timing: id  0 | task 445 | prompt eval time =    1001.17 ms /    67 tokens (   14.94 ms per token,    66.92 tokens per second)\n1.29.851.377 I slot print_timing: id  0 | task 445 |        eval time =    1451.87 ms /    50 tokens (   29.04 ms per token,    34.44 tokens per second)\n1.29.851.382 I slot print_timing: id  0 | task 445 |       total time =    2453.04 ms /   117 tokens\n1.29.851.384 I slot print_timing: id  0 | task 445 |    graphs reused =        390\n1.29.851.418 I slot print_timing: id  0 | task 445 | draft acceptance = 1.00000 (   43 accepted /    43 generated), mean len = 22.50\n1.29.851.480 I slot      release: id  0 | task 445 | stop processing: n_tokens = 116, truncated = 0\n1.30.445.403 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, sim_best = 0.556 (> 0.100 thold), f_keep = 0.259\n1.30.451.003 I slot launch_slot_: id  0 | task 453 | processing task, is_child = 0\n1.34.281.353 I slot print_timing: id  0 | task 453 | n_decoded =    121, tg =  40.06 t/s, tg_3s =  40.06 t/s\n1.34.981.674 I slot print_timing: id  0 | task 453 | prompt eval time =     809.80 ms /    54 tokens (   15.00 ms per token,    66.68 tokens per second)\n1.34.981.682 I slot print_timing: id  0 | task 453 |        eval time =    3720.78 ms /   128 tokens (   29.07 ms per token,    34.40 tokens per second)\n1.34.981.684 I slot print_timing: id  0 | task 453 |       total time =    4530.58 ms /   182 tokens\n1.34.981.686 I slot print_timing: id  0 | task 453 |    graphs reused =        401\n1.34.981.721 I slot print_timing: id  0 | task 453 | draft acceptance = 1.00000 (  113 accepted /   113 generated), mean len = 29.25\n1.34.981.781 I slot      release: id  0 | task 453 | stop processing: n_tokens = 181, truncated = 0",
+      "finishedAt": "2026-07-27T15:20:01.756137+00:00"
+    }
+  ],
+  "runs": [
+    {
+      "mode": "baseline",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 1,
+      "startedAt": "2026-07-27T15:13:22.106264+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:13:21.979097+00:00",
+        "memAvailableKb": 1460056,
+        "swapFreeKb": 4158968,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1440488,
+        "processVmHwmKb": 1441320,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.5,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1216.3602720029303,
+      "endToEndMs": 15072.03160499921,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1157.98,
+        "prompt_per_token_ms": 15.236578947368422,
+        "prompt_per_second": 65.6315307690979,
+        "predicted_n": 128,
+        "predicted_ms": 13853.635,
+        "predicted_per_token_ms": 108.2315234375,
+        "predicted_per_second": 9.239452317027263
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:13:37.314834+00:00",
+        "memAvailableKb": 1490244,
+        "swapFreeKb": 4140536,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1424176,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.5,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:13:37.461471+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 1,
+      "startedAt": "2026-07-27T15:13:37.727908+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:13:37.600606+00:00",
+        "memAvailableKb": 1476140,
+        "swapFreeKb": 4140536,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1424176,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.5,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 984.7212439999566,
+      "endToEndMs": 6407.176998000068,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 921.24,
+        "prompt_per_token_ms": 13.749850746268656,
+        "prompt_per_second": 72.7280621770657,
+        "predicted_n": 50,
+        "predicted_ms": 5427.584,
+        "predicted_per_token_ms": 108.55167999999999,
+        "predicted_per_second": 9.212201966841969
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:13:44.266720+00:00",
+        "memAvailableKb": 1493816,
+        "swapFreeKb": 4121592,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1408820,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.5,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:13:44.410484+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 1,
+      "startedAt": "2026-07-27T15:13:44.694957+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:13:44.547960+00:00",
+        "memAvailableKb": 1481004,
+        "swapFreeKb": 4121592,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1408820,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 37.5,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 809.1620010018232,
+      "endToEndMs": 15971.478494997427,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 753.023,
+        "prompt_per_token_ms": 13.94487037037037,
+        "prompt_per_second": 71.71095703584086,
+        "predicted_n": 128,
+        "predicted_ms": 15162.182,
+        "predicted_per_token_ms": 118.454546875,
+        "predicted_per_second": 8.442056690785007
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:14:00.773037+00:00",
+        "memAvailableKb": 1354512,
+        "swapFreeKb": 4085728,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1197436,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:14:00.876772+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 2,
+      "startedAt": "2026-07-27T15:14:01.120639+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:14:00.984099+00:00",
+        "memAvailableKb": 1348856,
+        "swapFreeKb": 4087776,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1197436,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1092.1224679987063,
+      "endToEndMs": 14030.26287999819,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1034.334,
+        "prompt_per_token_ms": 13.609657894736843,
+        "prompt_per_second": 73.47723269272788,
+        "predicted_n": 128,
+        "predicted_ms": 12937.384,
+        "predicted_per_token_ms": 101.0733125,
+        "predicted_per_second": 9.893808516466699
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:14:15.266702+00:00",
+        "memAvailableKb": 1354004,
+        "swapFreeKb": 4079132,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1185852,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:14:15.381583+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 2,
+      "startedAt": "2026-07-27T15:14:15.632752+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:14:15.500845+00:00",
+        "memAvailableKb": 1375860,
+        "swapFreeKb": 4074524,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1181756,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1063.0509770053322,
+      "endToEndMs": 6069.159594000666,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1020.262,
+        "prompt_per_token_ms": 15.227791044776119,
+        "prompt_per_second": 65.66940648578503,
+        "predicted_n": 50,
+        "predicted_ms": 5006.46,
+        "predicted_per_token_ms": 100.1292,
+        "predicted_per_second": 9.987096671100938
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:14:21.837687+00:00",
+        "memAvailableKb": 1359472,
+        "swapFreeKb": 4074780,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1184640,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.2,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:14:21.986105+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 2,
+      "startedAt": "2026-07-27T15:14:22.233797+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:14:22.124598+00:00",
+        "memAvailableKb": 1349736,
+        "swapFreeKb": 4074780,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1184640,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.2,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 960.839056999248,
+      "endToEndMs": 13813.476840005023,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 903.254,
+        "prompt_per_token_ms": 16.726925925925926,
+        "prompt_per_second": 59.783848175596226,
+        "predicted_n": 128,
+        "predicted_ms": 12852.548,
+        "predicted_per_token_ms": 100.41053125,
+        "predicted_per_second": 9.95911472184348
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:14:36.157915+00:00",
+        "memAvailableKb": 1363544,
+        "swapFreeKb": 4076336,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1182568,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.2,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:14:36.305935+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 3,
+      "startedAt": "2026-07-27T15:14:36.562014+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:14:36.442446+00:00",
+        "memAvailableKb": 1358512,
+        "swapFreeKb": 4076336,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1182568,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.2,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1168.0658170007518,
+      "endToEndMs": 17469.897199000116,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1109.76,
+        "prompt_per_token_ms": 14.602105263157895,
+        "prompt_per_second": 68.48327566320647,
+        "predicted_n": 128,
+        "predicted_ms": 16300.767,
+        "predicted_per_token_ms": 127.3497421875,
+        "predicted_per_second": 7.852391240240413
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:14:54.140941+00:00",
+        "memAvailableKb": 1187148,
+        "swapFreeKb": 4104760,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1007304,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.2,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:14:54.268072+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 3,
+      "startedAt": "2026-07-27T15:14:54.521994+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:14:54.375574+00:00",
+        "memAvailableKb": 1185584,
+        "swapFreeKb": 4112276,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1007304,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.2,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1827.476692997152,
+      "endToEndMs": 6552.863871002046,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1769.65,
+        "prompt_per_token_ms": 26.41268656716418,
+        "prompt_per_second": 37.86059390274913,
+        "predicted_n": 50,
+        "predicted_ms": 4725.168,
+        "predicted_per_token_ms": 94.50335999999999,
+        "predicted_per_second": 10.581634346122721
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:15:01.189092+00:00",
+        "memAvailableKb": 1251704,
+        "swapFreeKb": 4118296,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1000320,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:15:01.319837+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 3,
+      "startedAt": "2026-07-27T15:15:01.573366+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:15:01.441979+00:00",
+        "memAvailableKb": 1232520,
+        "swapFreeKb": 4118296,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1000320,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1484.3173819972435,
+      "endToEndMs": 13412.305113997718,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 1424.238,
+        "prompt_per_token_ms": 26.37477777777778,
+        "prompt_per_second": 37.91501139556731,
+        "predicted_n": 128,
+        "predicted_ms": 11924.687,
+        "predicted_per_token_ms": 93.1616171875,
+        "predicted_per_second": 10.734034360818024
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:15:15.119270+00:00",
+        "memAvailableKb": 1196808,
+        "swapFreeKb": 4119772,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 974660,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:15:15.260448+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 4,
+      "startedAt": "2026-07-27T15:15:15.474123+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:15:15.348873+00:00",
+        "memAvailableKb": 1192496,
+        "swapFreeKb": 4119772,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 974660,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1167.5297830006457,
+      "endToEndMs": 13634.148204997473,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1109.866,
+        "prompt_per_token_ms": 14.6035,
+        "prompt_per_second": 68.4767350292738,
+        "predicted_n": 128,
+        "predicted_ms": 12465.766,
+        "predicted_per_token_ms": 97.388796875,
+        "predicted_per_second": 10.268121509741158
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:15:29.245102+00:00",
+        "memAvailableKb": 1189128,
+        "swapFreeKb": 4121060,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 973552,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.7,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:15:29.393523+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 4,
+      "startedAt": "2026-07-27T15:15:29.658911+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:15:29.523536+00:00",
+        "memAvailableKb": 1185636,
+        "swapFreeKb": 4121060,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 973552,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.7,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1080.380884995975,
+      "endToEndMs": 5774.316742994415,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1023.68,
+        "prompt_per_token_ms": 15.278805970149254,
+        "prompt_per_second": 65.45014066895905,
+        "predicted_n": 50,
+        "predicted_ms": 4693.158,
+        "predicted_per_token_ms": 93.86316000000001,
+        "predicted_per_second": 10.653807095350293
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:15:35.554187+00:00",
+        "memAvailableKb": 1197480,
+        "swapFreeKb": 4120548,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 974640,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.7,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:15:35.694432+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 4,
+      "startedAt": "2026-07-27T15:15:35.920199+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:15:35.804728+00:00",
+        "memAvailableKb": 1192060,
+        "swapFreeKb": 4120548,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 974640,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.7,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 886.1825960048009,
+      "endToEndMs": 13347.683186999348,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 830.909,
+        "prompt_per_token_ms": 15.387203703703703,
+        "prompt_per_second": 64.98906619136392,
+        "predicted_n": 128,
+        "predicted_ms": 12456.884,
+        "predicted_per_token_ms": 97.31940625,
+        "predicted_per_second": 10.2754428796158
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:15:49.384716+00:00",
+        "memAvailableKb": 1186864,
+        "swapFreeKb": 4129144,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 965124,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.7,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:15:49.520037+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 5,
+      "startedAt": "2026-07-27T15:15:49.770173+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:15:49.632883+00:00",
+        "memAvailableKb": 1183600,
+        "swapFreeKb": 4129144,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 965124,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.7,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1204.38852100051,
+      "endToEndMs": 13687.281332000566,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1146.457,
+        "prompt_per_token_ms": 15.084960526315792,
+        "prompt_per_second": 66.29119103463977,
+        "predicted_n": 128,
+        "predicted_ms": 12481.616,
+        "predicted_per_token_ms": 97.512625,
+        "predicted_per_second": 10.255082354720734
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:16:03.577822+00:00",
+        "memAvailableKb": 1189640,
+        "swapFreeKb": 4129920,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 964172,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 39.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:16:03.730532+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 5,
+      "startedAt": "2026-07-27T15:16:03.986922+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:16:03.845697+00:00",
+        "memAvailableKb": 1183388,
+        "swapFreeKb": 4129920,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 964172,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 39.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1108.2195850030985,
+      "endToEndMs": 5854.858147999039,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1049.299,
+        "prompt_per_token_ms": 15.661179104477611,
+        "prompt_per_second": 63.852152722913104,
+        "predicted_n": 50,
+        "predicted_ms": 4745.147,
+        "predicted_per_token_ms": 94.90294,
+        "predicted_per_second": 10.537081359123333
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:16:09.965594+00:00",
+        "memAvailableKb": 1184156,
+        "swapFreeKb": 4129920,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 966984,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 39.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:16:10.101942+00:00"
+    },
+    {
+      "mode": "baseline",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 5,
+      "startedAt": "2026-07-27T15:16:10.383217+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:16:10.237517+00:00",
+        "memAvailableKb": 1177100,
+        "swapFreeKb": 4129920,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 966984,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 39.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 884.5934799974202,
+      "endToEndMs": 13754.455885995412,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 829.067,
+        "prompt_per_token_ms": 15.353092592592592,
+        "prompt_per_second": 65.13345724772546,
+        "predicted_n": 128,
+        "predicted_ms": 12869.743,
+        "predicted_per_token_ms": 100.5448671875,
+        "predicted_per_second": 9.94580855266496
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:16:24.252898+00:00",
+        "memAvailableKb": 1174608,
+        "swapFreeKb": 4130688,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 964952,
+        "processVmHwmKb": 1445748,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 39.0,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:16:24.402248+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 1,
+      "startedAt": "2026-07-27T15:18:30.301884+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:18:30.149645+00:00",
+        "memAvailableKb": 1299748,
+        "swapFreeKb": 4169876,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1575484,
+        "processVmHwmKb": 1575484,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1063.7170900008641,
+      "endToEndMs": 13952.510290000646,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1001.002,
+        "prompt_per_token_ms": 13.17107894736842,
+        "prompt_per_second": 75.92392422792362,
+        "predicted_n": 128,
+        "predicted_ms": 12882.361,
+        "predicted_per_token_ms": 100.6434453125,
+        "predicted_per_second": 9.936066843647682
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:18:44.380264+00:00",
+        "memAvailableKb": 1272864,
+        "swapFreeKb": 4161940,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1567472,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:18:44.515489+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 1,
+      "startedAt": "2026-07-27T15:18:44.779388+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:18:44.648297+00:00",
+        "memAvailableKb": 1281200,
+        "swapFreeKb": 4161684,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1560560,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1211.3723239963292,
+      "endToEndMs": 6295.429675999912,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1151.078,
+        "prompt_per_token_ms": 17.180268656716418,
+        "prompt_per_second": 58.20630747872864,
+        "predicted_n": 50,
+        "predicted_ms": 5083.19,
+        "predicted_per_token_ms": 101.6638,
+        "predicted_per_second": 9.836342926390712
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:18:51.206579+00:00",
+        "memAvailableKb": 1289468,
+        "swapFreeKb": 4155284,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1507860,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:18:51.354521+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 1,
+      "startedAt": "2026-07-27T15:18:51.636386+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:18:51.493832+00:00",
+        "memAvailableKb": 1278588,
+        "swapFreeKb": 4155284,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1507860,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 831.7786249972414,
+      "endToEndMs": 14042.151037996518,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 779.296,
+        "prompt_per_token_ms": 14.431407407407407,
+        "prompt_per_second": 69.29331088572249,
+        "predicted_n": 128,
+        "predicted_ms": 13209.824,
+        "predicted_per_token_ms": 103.20175,
+        "predicted_per_second": 9.689758167860525
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:05.811629+00:00",
+        "memAvailableKb": 1284116,
+        "swapFreeKb": 4146580,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1485732,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:05.960555+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 2,
+      "startedAt": "2026-07-27T15:19:06.242941+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:06.096150+00:00",
+        "memAvailableKb": 1271732,
+        "swapFreeKb": 4146580,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1485732,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1182.7041869983077,
+      "endToEndMs": 5125.141464995977,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1123.511,
+        "prompt_per_token_ms": 14.78303947368421,
+        "prompt_per_second": 67.64508758703742,
+        "predicted_n": 128,
+        "predicted_ms": 3942.602,
+        "predicted_per_token_ms": 30.801578125,
+        "predicted_per_second": 32.46586898702938,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:11.485755+00:00",
+        "memAvailableKb": 1248912,
+        "swapFreeKb": 4122260,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1497064,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:11.609702+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 2,
+      "startedAt": "2026-07-27T15:19:11.877534+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:11.760544+00:00",
+        "memAvailableKb": 1244460,
+        "swapFreeKb": 4122260,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1497064,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1034.1607419977663,
+      "endToEndMs": 2504.4822440031567,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 976.943,
+        "prompt_per_token_ms": 14.581238805970148,
+        "prompt_per_second": 68.58127853928019,
+        "predicted_n": 50,
+        "predicted_ms": 1470.257,
+        "predicted_per_token_ms": 29.405140000000003,
+        "predicted_per_second": 34.00765988531257,
+        "draft_n": 43,
+        "draft_n_accepted": 43
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:14.508114+00:00",
+        "memAvailableKb": 1236552,
+        "swapFreeKb": 4122260,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1500056,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:14.619314+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 2,
+      "startedAt": "2026-07-27T15:19:14.887900+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:14.754976+00:00",
+        "memAvailableKb": 1262008,
+        "swapFreeKb": 4117908,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1496856,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 850.7590959998197,
+      "endToEndMs": 4545.380722003756,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 793.9,
+        "prompt_per_token_ms": 14.70185185185185,
+        "prompt_per_second": 68.01864214636605,
+        "predicted_n": 128,
+        "predicted_ms": 3693.746,
+        "predicted_per_token_ms": 28.857390625,
+        "predicted_per_second": 34.65316781392115,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:19.570047+00:00",
+        "memAvailableKb": 1246288,
+        "swapFreeKb": 4118164,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1494548,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:19.695769+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 3,
+      "startedAt": "2026-07-27T15:19:19.932219+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:19.830257+00:00",
+        "memAvailableKb": 1237116,
+        "swapFreeKb": 4118164,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1494548,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.4,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1166.6903579971404,
+      "endToEndMs": 5280.8801630017115,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1107.817,
+        "prompt_per_token_ms": 14.57653947368421,
+        "prompt_per_second": 68.6033884657845,
+        "predicted_n": 128,
+        "predicted_ms": 4114.168,
+        "predicted_per_token_ms": 32.1419375,
+        "predicted_per_second": 31.112001260036052,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:25.333132+00:00",
+        "memAvailableKb": 1255852,
+        "swapFreeKb": 4127524,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1491264,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:25.461275+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 3,
+      "startedAt": "2026-07-27T15:19:25.721548+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:25.578653+00:00",
+        "memAvailableKb": 1248472,
+        "swapFreeKb": 4127524,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1491264,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1200.1540069977636,
+      "endToEndMs": 2665.0890730015817,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1141.458,
+        "prompt_per_token_ms": 17.036686567164182,
+        "prompt_per_second": 58.696859630402514,
+        "predicted_n": 50,
+        "predicted_ms": 1463.952,
+        "predicted_per_token_ms": 29.27904,
+        "predicted_per_second": 34.15412527186684,
+        "draft_n": 43,
+        "draft_n_accepted": 43
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:28.520628+00:00",
+        "memAvailableKb": 1258244,
+        "swapFreeKb": 4125988,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1486692,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:28.648667+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 3,
+      "startedAt": "2026-07-27T15:19:28.927782+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:28.776165+00:00",
+        "memAvailableKb": 1245120,
+        "swapFreeKb": 4125988,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1486692,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 922.844951004663,
+      "endToEndMs": 4544.664200002444,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 865.444,
+        "prompt_per_token_ms": 16.02674074074074,
+        "prompt_per_second": 62.39571826715536,
+        "predicted_n": 128,
+        "predicted_ms": 3620.887,
+        "predicted_per_token_ms": 28.2881796875,
+        "predicted_per_second": 35.35045418429241,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:33.583201+00:00",
+        "memAvailableKb": 1253360,
+        "swapFreeKb": 4122660,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1479192,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:33.694352+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 4,
+      "startedAt": "2026-07-27T15:19:33.914181+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:33.825111+00:00",
+        "memAvailableKb": 1248684,
+        "swapFreeKb": 4122916,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1479192,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1439.369475003332,
+      "endToEndMs": 5098.528135000379,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1400.342,
+        "prompt_per_token_ms": 18.42555263157895,
+        "prompt_per_second": 54.272456299961,
+        "predicted_n": 128,
+        "predicted_ms": 3657.463,
+        "predicted_per_token_ms": 28.5739296875,
+        "predicted_per_second": 34.996936400997086,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:39.132329+00:00",
+        "memAvailableKb": 1271012,
+        "swapFreeKb": 4126500,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1464232,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:39.274374+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 4,
+      "startedAt": "2026-07-27T15:19:39.541117+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:39.396458+00:00",
+        "memAvailableKb": 1259712,
+        "swapFreeKb": 4126500,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1464232,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1060.9450160045526,
+      "endToEndMs": 2511.0552570040454,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1001.758,
+        "prompt_per_token_ms": 14.951611940298507,
+        "prompt_per_second": 66.88242070440165,
+        "predicted_n": 50,
+        "predicted_ms": 1448.882,
+        "predicted_per_token_ms": 28.97764,
+        "predicted_per_second": 34.50936653226419,
+        "draft_n": 43,
+        "draft_n_accepted": 43
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:42.183810+00:00",
+        "memAvailableKb": 1255448,
+        "swapFreeKb": 4126500,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1466944,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:42.314444+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 4,
+      "startedAt": "2026-07-27T15:19:42.543786+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:42.435648+00:00",
+        "memAvailableKb": 1256020,
+        "swapFreeKb": 4126500,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1466944,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 865.0226650061086,
+      "endToEndMs": 4623.580475003109,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 808.863,
+        "prompt_per_token_ms": 14.978944444444446,
+        "prompt_per_second": 66.76037845716765,
+        "predicted_n": 128,
+        "predicted_ms": 3758.365,
+        "predicted_per_token_ms": 29.3622265625,
+        "predicted_per_second": 34.05736270958249,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:47.290664+00:00",
+        "memAvailableKb": 1263260,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1464896,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:47.433472+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "repetitive-sequence",
+      "category": "repetitive",
+      "repetition": 5,
+      "startedAt": "2026-07-27T15:19:47.661619+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:47.551284+00:00",
+        "memAvailableKb": 1257524,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1464896,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "red-1, blue-2, green-3, red-4, blue-5, green-6, purple-7, blue-8, green-9, red-10, blue-11, green-12, purple-13, blue-14, green-15, red-16, blue-17, green-18, purple-19, blue-20, green-21, red-22, blue-23, green-24, purple-25, blue-26, green-27, red-28, blue-29, green-30, purple-31, blue-32,",
+      "contentSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 1178.5457209989545,
+      "endToEndMs": 4779.490722001356,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 76,
+        "prompt_ms": 1125.717,
+        "prompt_per_token_ms": 14.812065789473685,
+        "prompt_per_second": 67.51252757131677,
+        "predicted_n": 128,
+        "predicted_ms": 3599.387,
+        "predicted_per_token_ms": 28.1202109375,
+        "predicted_per_second": 35.56161090763511,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:52.571356+00:00",
+        "memAvailableKb": 1268188,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1464040,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:52.719029+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "code-continuation",
+      "category": "code",
+      "repetition": 5,
+      "startedAt": "2026-07-27T15:19:52.968984+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:52.831611+00:00",
+        "memAvailableKb": 1262048,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1464040,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "```python\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n    return [sum(values[i-window+1:i+1]) / window for i in range(len(values))]\n```",
+      "contentSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+      "tokens": [],
+      "events": 51,
+      "timeToFirstTokenMs": 1058.4461990001728,
+      "endToEndMs": 2511.6145860010874,
+      "finishReason": "stop",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 67,
+        "prompt_ms": 1001.167,
+        "prompt_per_token_ms": 14.94279104477612,
+        "prompt_per_second": 66.92190214020238,
+        "predicted_n": 50,
+        "predicted_ms": 1451.872,
+        "predicted_per_token_ms": 29.03744,
+        "predicted_per_second": 34.438297590972205,
+        "draft_n": 43,
+        "draft_n_accepted": 43
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:19:55.604350+00:00",
+        "memAvailableKb": 1266652,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1466920,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:19:55.742390+00:00"
+    },
+    {
+      "mode": "ngram",
+      "promptId": "ordinary-chat",
+      "category": "chat",
+      "repetition": 5,
+      "startedAt": "2026-07-27T15:19:56.022609+00:00",
+      "request": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+          }
+        ],
+        "max_tokens": 128,
+        "stream": true,
+        "temperature": 0.0,
+        "top_k": 1,
+        "top_p": 1.0,
+        "min_p": 0.0,
+        "seed": 42,
+        "cache_prompt": false,
+        "timings_per_token": false
+      },
+      "stateBefore": {
+        "capturedAt": "2026-07-27T15:19:55.876637+00:00",
+        "memAvailableKb": 1256196,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1466920,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "content": "The sky can appear red near sunset due to a phenomenon called scattering, where shorter wavelengths of light (like blue and violet) are scattered more than longer wavelengths (like red and orange) by the atmosphere. This is known as Rayleigh scattering, named after the British physicist Lord Rayleigh. As the sun sets, the sun's rays have to travel through more of the Earth's atmosphere to reach our eyes, which scatters the shorter wavelengths, making the sky appear red. In contrast, during the day, the sun's rays have less opportunity to scatter, resulting in a blue sky.\n\nAt noon, the sun is directly overhead, and",
+      "contentSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+      "tokens": [],
+      "events": 130,
+      "timeToFirstTokenMs": 866.4508889996796,
+      "endToEndMs": 4589.610558003187,
+      "finishReason": "length",
+      "timings": {
+        "cache_n": 0,
+        "prompt_n": 54,
+        "prompt_ms": 809.803,
+        "prompt_per_token_ms": 14.996351851851852,
+        "prompt_per_second": 66.68288460279845,
+        "predicted_n": 128,
+        "predicted_ms": 3720.779,
+        "predicted_per_token_ms": 29.0685859375,
+        "predicted_per_second": 34.401398201828165,
+        "draft_n": 113,
+        "draft_n_accepted": 113
+      },
+      "ok": true,
+      "stateAfter": {
+        "capturedAt": "2026-07-27T15:20:00.740748+00:00",
+        "memAvailableKb": 1256464,
+        "swapFreeKb": 4126756,
+        "swapTotalKb": 6291452,
+        "processVmRssKb": 1465064,
+        "processVmHwmKb": 1585528,
+        "zram": null,
+        "batteryLevel": 91,
+        "batteryTempC": 38.6,
+        "thermalStatus": "Thermal Status: 2"
+      },
+      "finishedAt": "2026-07-27T15:20:00.862895+00:00"
+    }
+  ],
+  "comparison": {
+    "modes": {
+      "baseline": {
+        "successfulRuns": 15,
+        "failedRuns": 0,
+        "predictedTokensPerSecond": {
+          "mean": 9.855808972164187,
+          "stddev": 0.8344589739351853,
+          "samples": [
+            9.239452317027263,
+            9.212201966841969,
+            8.442056690785007,
+            9.893808516466699,
+            9.987096671100938,
+            9.95911472184348,
+            7.852391240240413,
+            10.581634346122721,
+            10.734034360818024,
+            10.268121509741158,
+            10.653807095350293,
+            10.2754428796158,
+            10.255082354720734,
+            10.537081359123333,
+            9.94580855266496
+          ]
+        },
+        "timeToFirstTokenMs": {
+          "mean": 1129.160717400373,
+          "stddev": 254.81592657373693,
+          "samples": [
+            1216.3602720029303,
+            984.7212439999566,
+            809.1620010018232,
+            1092.1224679987063,
+            1063.0509770053322,
+            960.839056999248,
+            1168.0658170007518,
+            1827.476692997152,
+            1484.3173819972435,
+            1167.5297830006457,
+            1080.380884995975,
+            886.1825960048009,
+            1204.38852100051,
+            1108.2195850030985,
+            884.5934799974202
+          ]
+        },
+        "endToEndMs": {
+          "mean": 11656.759739799114,
+          "stddev": 4190.357227570793,
+          "samples": [
+            15072.03160499921,
+            6407.176998000068,
+            15971.478494997427,
+            14030.26287999819,
+            6069.159594000666,
+            13813.476840005023,
+            17469.897199000116,
+            6552.863871002046,
+            13412.305113997718,
+            13634.148204997473,
+            5774.316742994415,
+            13347.683186999348,
+            13687.281332000566,
+            5854.858147999039,
+            13754.455885995412
+          ]
+        },
+        "draftTokens": 0,
+        "acceptedDraftTokens": 0,
+        "acceptanceRate": null
+      },
+      "ngram": {
+        "successfulRuns": 15,
+        "failedRuns": 0,
+        "predictedTokensPerSecond": {
+          "mean": 29.27802784557577,
+          "stddev": 10.129534216358188,
+          "samples": [
+            9.936066843647682,
+            9.836342926390712,
+            9.689758167860525,
+            32.46586898702938,
+            34.00765988531257,
+            34.65316781392115,
+            31.112001260036052,
+            34.15412527186684,
+            35.35045418429241,
+            34.996936400997086,
+            34.50936653226419,
+            34.05736270958249,
+            35.56161090763511,
+            34.438297590972205,
+            34.401398201828165
+          ]
+        },
+        "timeToFirstTokenMs": {
+          "mean": 1062.1974230001797,
+          "stddev": 172.73807648226074,
+          "samples": [
+            1063.7170900008641,
+            1211.3723239963292,
+            831.7786249972414,
+            1182.7041869983077,
+            1034.1607419977663,
+            850.7590959998197,
+            1166.6903579971404,
+            1200.1540069977636,
+            922.844951004663,
+            1439.369475003332,
+            1060.9450160045526,
+            865.0226650061086,
+            1178.5457209989545,
+            1058.4461990001728,
+            866.4508889996796
+          ]
+        },
+        "endToEndMs": {
+          "mean": 5537.9739069345915,
+          "stddev": 3627.161105490087,
+          "samples": [
+            13952.510290000646,
+            6295.429675999912,
+            14042.151037996518,
+            5125.141464995977,
+            2504.4822440031567,
+            4545.380722003756,
+            5280.8801630017115,
+            2665.0890730015817,
+            4544.664200002444,
+            5098.528135000379,
+            2511.0552570040454,
+            4623.580475003109,
+            4779.490722001356,
+            2511.6145860010874,
+            4589.610558003187
+          ]
+        },
+        "draftTokens": 1076,
+        "acceptedDraftTokens": 1076,
+        "acceptanceRate": 1.0
+      }
+    },
+    "decodeSpeedup": 2.970636700474396,
+    "pairedOutputs": [
+      {
+        "promptId": "code-continuation",
+        "repetition": 1,
+        "outputMatches": true,
+        "baselineSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+        "ngramSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58"
+      },
+      {
+        "promptId": "code-continuation",
+        "repetition": 2,
+        "outputMatches": true,
+        "baselineSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+        "ngramSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58"
+      },
+      {
+        "promptId": "code-continuation",
+        "repetition": 3,
+        "outputMatches": true,
+        "baselineSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+        "ngramSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58"
+      },
+      {
+        "promptId": "code-continuation",
+        "repetition": 4,
+        "outputMatches": true,
+        "baselineSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+        "ngramSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58"
+      },
+      {
+        "promptId": "code-continuation",
+        "repetition": 5,
+        "outputMatches": true,
+        "baselineSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58",
+        "ngramSha256": "8e6db7932399ffd5df824c56a71739b6129fc18b929bda90bfde56b1edc87d58"
+      },
+      {
+        "promptId": "ordinary-chat",
+        "repetition": 1,
+        "outputMatches": true,
+        "baselineSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+        "ngramSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4"
+      },
+      {
+        "promptId": "ordinary-chat",
+        "repetition": 2,
+        "outputMatches": true,
+        "baselineSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+        "ngramSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4"
+      },
+      {
+        "promptId": "ordinary-chat",
+        "repetition": 3,
+        "outputMatches": true,
+        "baselineSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+        "ngramSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4"
+      },
+      {
+        "promptId": "ordinary-chat",
+        "repetition": 4,
+        "outputMatches": true,
+        "baselineSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+        "ngramSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4"
+      },
+      {
+        "promptId": "ordinary-chat",
+        "repetition": 5,
+        "outputMatches": true,
+        "baselineSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4",
+        "ngramSha256": "a6e75b74aaa938d0e1ccbd3e1e8d04bbb6074c30361f0964b283a08becb343f4"
+      },
+      {
+        "promptId": "repetitive-sequence",
+        "repetition": 1,
+        "outputMatches": true,
+        "baselineSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+        "ngramSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd"
+      },
+      {
+        "promptId": "repetitive-sequence",
+        "repetition": 2,
+        "outputMatches": true,
+        "baselineSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+        "ngramSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd"
+      },
+      {
+        "promptId": "repetitive-sequence",
+        "repetition": 3,
+        "outputMatches": true,
+        "baselineSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+        "ngramSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd"
+      },
+      {
+        "promptId": "repetitive-sequence",
+        "repetition": 4,
+        "outputMatches": true,
+        "baselineSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+        "ngramSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd"
+      },
+      {
+        "promptId": "repetitive-sequence",
+        "repetition": 5,
+        "outputMatches": true,
+        "baselineSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd",
+        "ngramSha256": "acb131e48287cfb1cca88325afce5acff7730479850f843b298a4a1230abf4dd"
+      }
+    ],
+    "resources": {
+      "baseline": {
+        "memory": {
+          "sampleCount": 90,
+          "minMemAvailableKb": 1170804,
+          "swapFreeStartKb": 4310120,
+          "minSwapFreeKb": 4066608,
+          "swapFreeDropKb": 243512,
+          "maxProcessVmHwmKb": 1445748,
+          "zramMemoryUsedStartBytes": null,
+          "zramMemoryUsedPeakBytes": null,
+          "zramGrowthBytes": null
+        },
+        "thermal": {
+          "startBatteryTempC": 37.8,
+          "peakBatteryTempC": 39.0,
+          "batteryTempRiseC": 1.2000000000000028,
+          "thermalStatuses": [
+            "Thermal Status: 2"
+          ]
+        }
+      },
+      "ngram": {
+        "memory": {
+          "sampleCount": 47,
+          "minMemAvailableKb": 1240760,
+          "swapFreeStartKb": 4205716,
+          "minSwapFreeKb": 4114324,
+          "swapFreeDropKb": 91392,
+          "maxProcessVmHwmKb": 1585528,
+          "zramMemoryUsedStartBytes": null,
+          "zramMemoryUsedPeakBytes": null,
+          "zramGrowthBytes": null
+        },
+        "thermal": {
+          "startBatteryTempC": 38.4,
+          "peakBatteryTempC": 38.6,
+          "batteryTempRiseC": 0.20000000000000284,
+          "thermalStatuses": [
+            "Thermal Status: 2"
+          ]
+        },
+        "rssIncreaseVsBaselineKb": 139780
+      }
+    },
+    "gates": {
+      "bothModesLoaded": true,
+      "allRunsSucceeded": true,
+      "allOutputsNonEmpty": true,
+      "allPairsPresent": true,
+      "outputsMatch": true,
+      "speculationActive": true,
+      "noZramGrowth": true,
+      "noSwapUse": false,
+      "minimumSpeedupMet": true,
+      "rssIncreaseWithinLimit": false,
+      "batteryTempWithinLimit": true,
+      "batteryTempRiseWithinLimit": true
+    },
+    "verdict": "fail"
+  }
+}

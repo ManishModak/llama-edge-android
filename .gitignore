@@ -1,5 +1,6 @@
 # Android / Gradle
 .gradle/
+.kotlin/
 build/
 local.properties
 *.apk
@@ -11,6 +12,10 @@ captures/
 .idea/
 *.iml
 .vscode/
+
+# Python tooling
+__pycache__/
+*.py[cod]
 
 # Native build output
 out/
@@ -24,7 +29,15 @@ dist/
 *.safetensors
 
 # Large raw benchmark bundles (keep small summaries only)
-benchmarks/results/raw/
+benchmarks/results/raw/*
+# Final promoted phase-aware sweep. This single report contains every raw
+# sample, command, stderr/exit classification, gate, and provenance field.
+!benchmarks/results/raw/20260807-232905-autotune/
+!benchmarks/results/raw/20260807-232905-autotune/autotune.json
+
+# Autotuner profile cache — machine-local state keyed by (device, model).
+# The curated, shareable table is benchmarks/profiles/known-profiles.json.
+benchmarks/results/autotune-cache.json
 
 # OS junk
 Thumbs.db

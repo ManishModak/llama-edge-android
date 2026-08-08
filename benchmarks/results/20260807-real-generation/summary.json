@@ -1,0 +1,447 @@
+{
+  "schemaVersion": 1,
+  "tool": "tools/summarize_real_generation.py",
+  "scope": "Redmi Note 14 5G / MT6855 / frozen Llama 3.2 1B Q4_0 workload only",
+  "traceability": {
+    "appCommit": "54aabbde5b9c",
+    "llamaCommit": "178a6c449371",
+    "modelSha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
+    "modelName": "Llama-3.2-1B-Instruct-Q4_0.gguf",
+    "phasePolicyIdentitySha256": "fabc6b3dd1fb6f2eea7c0fe48fd5ce0b0a45ae2fa244d8fa16622ddb1557f0e6",
+    "deviceFingerprintSha256": "21af563364372fb1a807f56aa981a621f76791a43e9e148249a90ea546c08b38",
+    "benchmarkBinarySha256": "459de42359a7abc37ac1e8b0df0ef20b54175d6e09b1d65dbeedd873846fc68b",
+    "sourceReportSha256": "7afd9ae000d57bf1bce0e3d38de13d99ffd779a34bbb591f9e41dabffc56a7ab",
+    "baselineDecodeThreads": 8,
+    "baselinePrefillThreads": 8,
+    "decodeThreads": 2,
+    "prefillThreads": 8
+  },
+  "config": {
+    "prompt": "Write a compact Kotlin function that computes a SHA-256 digest.",
+    "repetitions": 5,
+    "maxTokens": 128,
+    "temperature": 0.0,
+    "seed": 42
+  },
+  "sources": [
+    {
+      "role": "confirmation",
+      "file": "benchmarks/results/20260807-real-generation/mobilespec-1786126555507.json",
+      "sha256": "b6d9713a0c7b4cd93c84218db4bf9f5eb5434d479f8ef8ddbccb3d3a1340de4b"
+    },
+    {
+      "role": "sustained",
+      "file": "benchmarks/results/20260807-real-generation/mobilespec-1786128376471.json",
+      "sha256": "c27a62bbce9f587c1b2b3926f576a73ca1a3d44f12b3c52bf80c8e71e3a892d0"
+    },
+    {
+      "role": "sustained",
+      "file": "benchmarks/results/20260807-real-generation/mobilespec-1786128714979.json",
+      "sha256": "b6222e8eae92d8ac98e6884fd69771c1895d160d9f9a08ae1979337e8d1ec762"
+    },
+    {
+      "role": "sustained",
+      "file": "benchmarks/results/20260807-real-generation/mobilespec-1786129049935.json",
+      "sha256": "81dead6408c82a52806eb69d04b6b3e4c6c613af760b8925361bca81840239f4"
+    }
+  ],
+  "confirmation": {
+    "sampleCountPerMode": 5,
+    "modes": {
+      "BASELINE": {
+        "decodeTokensPerSecond": {
+          "count": 5,
+          "mean": 6.18906,
+          "stddev": 0.509076775152825,
+          "coefficientOfVariation": 0.08225429631524417,
+          "min": 5.3025,
+          "max": 6.612,
+          "p99NearestRank": 6.612
+        },
+        "timeToFirstTokenMs": {
+          "count": 5,
+          "mean": 558.4069999999999,
+          "stddev": 105.44631687024447,
+          "coefficientOfVariation": 0.18883416015602328,
+          "min": 438.931,
+          "max": 673.363,
+          "p99NearestRank": 673.363
+        },
+        "endToEndDurationMs": {
+          "count": 5,
+          "mean": 21364.071600000003,
+          "stddev": 1929.683496205738,
+          "coefficientOfVariation": 0.09032377031566108,
+          "min": 19814.056,
+          "max": 24732.342,
+          "p99NearestRank": 24732.342
+        },
+        "outputSha256Values": [
+          "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+        ]
+      },
+      "OPTIMIZED": {
+        "decodeTokensPerSecond": {
+          "count": 5,
+          "mean": 11.52194,
+          "stddev": 0.10933854763988837,
+          "coefficientOfVariation": 0.009489595297310034,
+          "min": 11.3593,
+          "max": 11.6452,
+          "p99NearestRank": 11.6452
+        },
+        "timeToFirstTokenMs": {
+          "count": 5,
+          "mean": 456.145,
+          "stddev": 84.91435318307501,
+          "coefficientOfVariation": 0.18615649230633902,
+          "min": 396.825,
+          "max": 599.159,
+          "p99NearestRank": 599.159
+        },
+        "endToEndDurationMs": {
+          "count": 5,
+          "mean": 11565.4818,
+          "stddev": 180.75216379396412,
+          "coefficientOfVariation": 0.015628589186311645,
+          "min": 11389.598,
+          "max": 11866.456,
+          "p99NearestRank": 11866.456
+        },
+        "outputSha256Values": [
+          "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+        ]
+      }
+    },
+    "correctnessMatched": true
+  },
+  "sustained": {
+    "suiteCount": 3,
+    "sampleCountPerMode": 15,
+    "sessionDurationMinutes": 14.366266666666666,
+    "modes": {
+      "BASELINE": {
+        "decodeTokensPerSecond": {
+          "count": 15,
+          "mean": 5.3896733333333335,
+          "stddev": 0.8676700899261083,
+          "coefficientOfVariation": 0.16098751005183523,
+          "min": 3.1682,
+          "max": 6.3322,
+          "p99NearestRank": 6.3322
+        },
+        "timeToFirstTokenMs": {
+          "count": 15,
+          "mean": 690.4227333333333,
+          "stddev": 483.7967021024528,
+          "coefficientOfVariation": 0.7007253364423586,
+          "min": 380.878,
+          "max": 2318.921,
+          "p99NearestRank": 2318.921
+        },
+        "endToEndDurationMs": {
+          "count": 15,
+          "mean": 25244.936400000002,
+          "stddev": 5700.309350511437,
+          "coefficientOfVariation": 0.22580010740337758,
+          "min": 20659.895,
+          "max": 40913.661,
+          "p99NearestRank": 40913.661
+        },
+        "outputSha256Values": [
+          "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+        ]
+      },
+      "OPTIMIZED": {
+        "decodeTokensPerSecond": {
+          "count": 15,
+          "mean": 11.177713333333333,
+          "stddev": 0.1908169237278296,
+          "coefficientOfVariation": 0.017071194978564155,
+          "min": 10.8511,
+          "max": 11.5451,
+          "p99NearestRank": 11.5451
+        },
+        "timeToFirstTokenMs": {
+          "count": 15,
+          "mean": 546.6111333333333,
+          "stddev": 148.50430659790246,
+          "coefficientOfVariation": 0.27168181828331306,
+          "min": 398.083,
+          "max": 964.763,
+          "p99NearestRank": 964.763
+        },
+        "endToEndDurationMs": {
+          "count": 15,
+          "mean": 12000.467,
+          "stddev": 292.93686576974227,
+          "coefficientOfVariation": 0.024410455507251697,
+          "min": 11612.348,
+          "max": 12575.339,
+          "p99NearestRank": 12575.339
+        },
+        "outputSha256Values": [
+          "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+        ]
+      }
+    },
+    "decodeMeanSpeedupRatio": 2.0739129520527526,
+    "ttftMeanImprovementRatio": 0.20829499530770568,
+    "endToEndMeanImprovementRatio": 0.5246386518921871,
+    "thermal": {
+      "startBatteryTemperatureC": 35.5,
+      "endBatteryTemperatureC": 38.7,
+      "peakBatteryTemperatureC": 38.7,
+      "thermalStatuses": [
+        "MODERATE"
+      ]
+    },
+    "memory": {
+      "minimumAvailableMemoryBytes": 1018224640,
+      "lowMemoryObserved": false,
+      "processPeakRssAvailable": false,
+      "swapFreeAvailable": false
+    },
+    "perSuite": [
+      {
+        "file": "mobilespec-1786128376471.json",
+        "sha256": "c27a62bbce9f587c1b2b3926f576a73ca1a3d44f12b3c52bf80c8e71e3a892d0",
+        "resultId": "156538ad-24b4-4811-a832-a6a6abbb211d",
+        "correctnessMatched": true,
+        "BASELINE": {
+          "decodeTokensPerSecond": {
+            "count": 5,
+            "mean": 6.03132,
+            "stddev": 0.19034052905253798,
+            "coefficientOfVariation": 0.031558685172157666,
+            "min": 5.8275,
+            "max": 6.3322,
+            "p99NearestRank": 6.3322
+          },
+          "timeToFirstTokenMs": {
+            "count": 5,
+            "mean": 450.823,
+            "stddev": 62.82810889641674,
+            "coefficientOfVariation": 0.1393631400714177,
+            "min": 380.878,
+            "max": 522.039,
+            "p99NearestRank": 522.039
+          },
+          "endToEndDurationMs": {
+            "count": 5,
+            "mean": 21689.4874,
+            "stddev": 666.641727662843,
+            "coefficientOfVariation": 0.030735706905772375,
+            "min": 20659.895,
+            "max": 22486.501,
+            "p99NearestRank": 22486.501
+          },
+          "outputSha256Values": [
+            "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+          ]
+        },
+        "OPTIMIZED": {
+          "decodeTokensPerSecond": {
+            "count": 5,
+            "mean": 11.4087,
+            "stddev": 0.07911121917907703,
+            "coefficientOfVariation": 0.006934288672598721,
+            "min": 11.3382,
+            "max": 11.5451,
+            "p99NearestRank": 11.5451
+          },
+          "timeToFirstTokenMs": {
+            "count": 5,
+            "mean": 445.48900000000003,
+            "stddev": 58.449534827062564,
+            "coefficientOfVariation": 0.13120309329088387,
+            "min": 398.083,
+            "max": 526.495,
+            "p99NearestRank": 526.495
+          },
+          "endToEndDurationMs": {
+            "count": 5,
+            "mean": 11664.841400000001,
+            "stddev": 45.70525552165762,
+            "coefficientOfVariation": 0.003918206339407033,
+            "min": 11612.348,
+            "max": 11730.763,
+            "p99NearestRank": 11730.763
+          },
+          "outputSha256Values": [
+            "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+          ]
+        },
+        "thermal": {
+          "startBatteryTemperatureC": 35.5,
+          "endBatteryTemperatureC": 36.5,
+          "peakBatteryTemperatureC": 36.5,
+          "thermalStatuses": [
+            "MODERATE"
+          ]
+        }
+      },
+      {
+        "file": "mobilespec-1786128714979.json",
+        "sha256": "b6222e8eae92d8ac98e6884fd69771c1895d160d9f9a08ae1979337e8d1ec762",
+        "resultId": "ac69dc29-578f-49e6-9eba-ce30db05b825",
+        "correctnessMatched": true,
+        "BASELINE": {
+          "decodeTokensPerSecond": {
+            "count": 5,
+            "mean": 5.09816,
+            "stddev": 1.1089478360139398,
+            "coefficientOfVariation": 0.21751922968560025,
+            "min": 3.1682,
+            "max": 5.8134,
+            "p99NearestRank": 5.8134
+          },
+          "timeToFirstTokenMs": {
+            "count": 5,
+            "mean": 627.4872,
+            "stddev": 206.81432568780141,
+            "coefficientOfVariation": 0.3295913059068,
+            "min": 459.083,
+            "max": 963.538,
+            "p99NearestRank": 963.538
+          },
+          "endToEndDurationMs": {
+            "count": 5,
+            "mean": 27096.756400000002,
+            "stddev": 7832.0564900324425,
+            "coefficientOfVariation": 0.28904036979246867,
+            "min": 22476.728,
+            "max": 40913.661,
+            "p99NearestRank": 40913.661
+          },
+          "outputSha256Values": [
+            "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+          ]
+        },
+        "OPTIMIZED": {
+          "decodeTokensPerSecond": {
+            "count": 5,
+            "mean": 11.10184,
+            "stddev": 0.07025480766467154,
+            "coefficientOfVariation": 0.006328212950706509,
+            "min": 11.0241,
+            "max": 11.1997,
+            "p99NearestRank": 11.1997
+          },
+          "timeToFirstTokenMs": {
+            "count": 5,
+            "mean": 617.0706,
+            "stddev": 214.126265519436,
+            "coefficientOfVariation": 0.3470044846074922,
+            "min": 421.46,
+            "max": 964.763,
+            "p99NearestRank": 964.763
+          },
+          "endToEndDurationMs": {
+            "count": 5,
+            "mean": 12146.5806,
+            "stddev": 259.21485893424386,
+            "coefficientOfVariation": 0.021340562210095892,
+            "min": 11890.012,
+            "max": 12575.339,
+            "p99NearestRank": 12575.339
+          },
+          "outputSha256Values": [
+            "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+          ]
+        },
+        "thermal": {
+          "startBatteryTemperatureC": 36.5,
+          "endBatteryTemperatureC": 38.7,
+          "peakBatteryTemperatureC": 38.7,
+          "thermalStatuses": [
+            "MODERATE"
+          ]
+        }
+      },
+      {
+        "file": "mobilespec-1786129049935.json",
+        "sha256": "81dead6408c82a52806eb69d04b6b3e4c6c613af760b8925361bca81840239f4",
+        "resultId": "305c4f24-8e21-46a7-af0b-6afb50dcaba2",
+        "correctnessMatched": true,
+        "BASELINE": {
+          "decodeTokensPerSecond": {
+            "count": 5,
+            "mean": 5.039540000000001,
+            "stddev": 0.7712848066700133,
+            "coefficientOfVariation": 0.15304666828123464,
+            "min": 3.8081,
+            "max": 5.765,
+            "p99NearestRank": 5.765
+          },
+          "timeToFirstTokenMs": {
+            "count": 5,
+            "mean": 992.958,
+            "stddev": 762.4743985000414,
+            "coefficientOfVariation": 0.7678818222926261,
+            "min": 491.04,
+            "max": 2318.921,
+            "p99NearestRank": 2318.921
+          },
+          "endToEndDurationMs": {
+            "count": 5,
+            "mean": 26948.5654,
+            "stddev": 5312.797287886609,
+            "coefficientOfVariation": 0.19714582980682932,
+            "min": 22912.937,
+            "max": 35931.137,
+            "p99NearestRank": 35931.137
+          },
+          "outputSha256Values": [
+            "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+          ]
+        },
+        "OPTIMIZED": {
+          "decodeTokensPerSecond": {
+            "count": 5,
+            "mean": 11.0226,
+            "stddev": 0.11081441693209361,
+            "coefficientOfVariation": 0.010053382771042549,
+            "min": 10.8511,
+            "max": 11.1368,
+            "p99NearestRank": 11.1368
+          },
+          "timeToFirstTokenMs": {
+            "count": 5,
+            "mean": 577.2738,
+            "stddev": 88.07905137829313,
+            "coefficientOfVariation": 0.15257760074732843,
+            "min": 487.805,
+            "max": 680.126,
+            "p99NearestRank": 680.126
+          },
+          "endToEndDurationMs": {
+            "count": 5,
+            "mean": 12189.979000000001,
+            "stddev": 136.656705431896,
+            "coefficientOfVariation": 0.011210577592618986,
+            "min": 12061.053,
+            "max": 12334.903,
+            "p99NearestRank": 12334.903
+          },
+          "outputSha256Values": [
+            "1c64dfbcb980f8cecf3ef5b9e95a8e7a5261eb978c9264b9d7c1d31a418c495e"
+          ]
+        },
+        "thermal": {
+          "startBatteryTemperatureC": 38.7,
+          "endBatteryTemperatureC": 38.7,
+          "peakBatteryTemperatureC": 38.7,
+          "thermalStatuses": [
+            "MODERATE"
+          ]
+        }
+      }
+    ],
+    "correctnessMatched": true
+  },
+  "claimScope": {
+    "general": "MobileSpec derives and measures phase-specific llama.cpp CPU policies from Arm Android topology and retains stock defaults unless all gates pass.",
+    "deviceSpecific": "The measured pp8-tg2 policy is specific to this device, model, binary, context, and workload identity."
+  }
+}
