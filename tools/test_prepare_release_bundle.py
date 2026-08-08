@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 
@@ -58,6 +59,22 @@ class PrepareReleaseBundleTest(unittest.TestCase):
             self.assertEqual(commit[:12], release.verify_embedded_commit(apk, commit))
             with self.assertRaisesRegex(release.ReleaseBundleError, "does not embed"):
                 release.verify_embedded_commit(apk, "b" * 40)
+
+    @mock.patch.object(
+        release.subprocess,
+        "run",
+        return_value=release.subprocess.CompletedProcess([], 0, "patches applied", ""),
+    )
+    @mock.patch.object(
+        release,
+        "output",
+        return_value=release.ALLOWED_PATCHED_SUBMODULE_STATUS,
+    )
+    def test_expected_unstaged_submodule_patch_state_is_allowed(self, _output, _run):
+        status, eligible = release.validate_release_tree(False)
+
+        self.assertTrue(eligible)
+        self.assertEqual([release.ALLOWED_PATCHED_SUBMODULE_STATUS], status)
 
 
 if __name__ == "__main__":

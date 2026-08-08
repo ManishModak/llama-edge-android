@@ -19,7 +19,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_APK = ROOT / "app/build/outputs/apk/release/app-release.apk"
 DEFAULT_VERSION = "v1.0.0-arm-challenge"
-ALLOWED_PATCHED_SUBMODULE_STATUS = " m third_party/llama.cpp"
+ALLOWED_PATCHED_SUBMODULE_STATUS = " M third_party/llama.cpp"
 
 
 class ReleaseBundleError(RuntimeError):
