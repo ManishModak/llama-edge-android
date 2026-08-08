@@ -371,9 +371,9 @@ worth more than an unproven late optimization.
       repository placeholder, and the required overview/functionality/setup fields.
 - [ ] Confirm the account is eligible and the draft can reach the final submission screen. Do not
       wait for the video or public-repo flip to discover an account/form problem.
-- [ ] Commit the audited plan, open/review the repository PR, and merge the current proven
-      `agent/phase-aware-autotuner` work into default `main` **before** experimental kernel/backend
-      work. The public repo is not judge-ready while `main` ends at the older Phase 1 commit.
+- [x] Commit the audited plan and publish the current proven `agent/phase-aware-autotuner` work to
+      default `main` through repository PR #1 before experimental kernel/backend work — completed
+      8 Aug. The external Kilo review check was non-actionable (`model unavailable`, zero findings).
 - [ ] Create KleidiAI and GPU/hybrid work on separate branches from the landed known-good baseline.
       Merge either only after its own gates pass; a failed experiment must leave `main` releasable.
 
