@@ -23,7 +23,7 @@ performance, correctness, memory, or demo evidence.
 | Sustained baseline/optimized run | Three no-cooldown suites, 14.37 min, 15 runs/mode, exact hashes; separate final VmHWM/SwapFree supplement | Proven with scoped supplement |
 | Android debug build/launch | SAF import/hash/load, generation, A/B, export, cancellation/reuse verified on Redmi | Proven |
 | Android release/model generation | Final debug/release build and v2 signing pass; debug full flow proven; final release full flow not repeated | Partially proven |
-| Fresh-clone build record | Not run end-to-end | Blocked |
+| Fresh-clone build record | Authenticated shallow recursive clone and Android `test assembleRelease` pass; native/model/device sequence pending | Partial |
 | Headline chart | `docs/assets/mobilespec-phase-policy.png`, generated from checked-in JSON | Proven |
 | Screenshots/demo video | Not recorded | Blocked |
 | Public repository/release | Repository documented as private | Blocked |
@@ -387,7 +387,7 @@ Video URL:
 Run on a clean path, not the development worktree.
 
 - [ ] Public clone works without private credentials.
-- [ ] Recursive submodules resolve.
+- [x] Recursive shallow submodules resolve at the documented pins.
 - [ ] README model download/hash step passes.
 - [ ] CPU and Vulkan build commands pass.
 - [ ] Smoke generation is coherent.
@@ -395,14 +395,16 @@ Run on a clean path, not the development worktree.
 - [ ] Historical MTP and n-gram rejection artifacts remain inspectable; rerunning them is not a
       submission prerequisite.
 - [ ] Phase-aware autotuner runs as documented and either selects a gated winner or retains stock.
-- [ ] Android release command produces the documented APK.
+- [x] Android release command produces an APK from the clean clone.
 - [ ] Exported result can be traced to code, model, device, and raw samples.
 - [ ] Temporary stay-awake state is cleared after the device test.
 
 Fresh-clone environment, date, commit, and log:
 
 ```text
-________________________________________
+8 Aug 2026, `/tmp/llama-edge-shallow.QAqcVr`
+commit `c854112163e1`; llama.cpp `178a6c449371`; Vulkan-Headers `8864cdc896bb`
+`./gradlew --no-daemon test assembleRelease`: BUILD SUCCESSFUL in 54s, 146 tasks
 ```
 
 ## Release and submission

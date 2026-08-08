@@ -101,7 +101,8 @@ work.
 The repository must be public before submission. Until then, cloning requires repository access.
 
 ```bash
-git clone --branch agent/phase-aware-autotuner --recurse-submodules \
+git clone --depth 1 --shallow-submodules \
+  --branch agent/phase-aware-autotuner --recurse-submodules \
   https://github.com/ManishModak/llama-edge-android.git
 cd llama-edge-android
 git submodule update --init --recursive

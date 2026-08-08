@@ -68,7 +68,8 @@ The repository is private at the time of this documentation snapshot. Cloning re
 until it is made public for submission.
 
 ```bash
-git clone --branch agent/phase-aware-autotuner --recurse-submodules \
+git clone --depth 1 --shallow-submodules \
+  --branch agent/phase-aware-autotuner --recurse-submodules \
   https://github.com/ManishModak/llama-edge-android.git
 cd llama-edge-android
 git submodule update --init --recursive
@@ -626,14 +627,14 @@ misrepresented as peak-RSS/swap evidence.
 
 A final fresh clone passes only when all of the following are evidenced:
 
-- [ ] clone and recursive submodule checkout succeed;
-- [ ] both submodule hashes match the documented pins;
+- [x] authenticated shallow clone and recursive submodule checkout succeed;
+- [x] both submodule hashes match the documented pins;
 - [ ] model download produces the documented size and SHA-256;
 - [ ] CPU and Vulkan binaries build from the documented commands;
 - [ ] smoke generation is coherent at `-c 512`;
 - [ ] the standard suite produces 12 non-dry-run JSON files;
 - [ ] the summarizer renders all 12 cases;
-- [ ] the Android release build succeeds from the documented command;
+- [x] the Android release build succeeds from the documented command;
 - [ ] the app can load the verified model, generate, cancel, and export a benchmark result;
 - [x] native-MTP feasibility A/B runs as documented and records a failed verdict;
 - [x] zero-weight n-gram fallback A/B runs as documented and is retained as rejection evidence;
@@ -641,8 +642,8 @@ A final fresh clone passes only when all of the following are evidenced:
 - [x] performance/correctness claim inputs trace to retained immutable artifacts;
 - [x] supplemental VmHWM/SwapFree and new source/JNI provenance export is retained.
 
-The first six items have prior committed evidence, but this checklist has **not** yet been executed
-end-to-end from a new clone. Final A/B and Android functional flows now have device evidence;
-fresh-clone execution and release/publication remain open. An isolated source-copy test excluding
-`.git`, build outputs, and result artifacts passed `test assembleRelease` on 8 Aug; this is useful
-but is not relabeled as a true post-commit clone.
+On 8 Aug, an authenticated shallow recursive clone of commit `c854112163e1` checked out llama.cpp
+`178a6c449371` and Vulkan-Headers `8864cdc896bb`, then passed `test assembleRelease` in 54 seconds
+(146 tasks: 118 executed, 28 from cache). Public logged-out cloning, native CPU/Vulkan rebuilding,
+model acquisition, and the complete device-suite sequence remain open and are not inferred from
+the Android build.

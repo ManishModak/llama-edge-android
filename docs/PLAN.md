@@ -321,7 +321,8 @@ all other device/model/build/context/workload combinations still fail closed to 
 - [x] README in judge order: 1-sentence pitch → headline chart → demo link → what changed & why → reproduction steps (exact commits, model sha256, commands) → methodology → limitations/fallbacks → upstream plan
 - [x] `CHANGES_FOR_CHALLENGE.md` — exact work done during the submission window
 - [x] `docs/reproducibility.md` complete: JDK/NDK/CMake/AGP versions, build commands, ADB steps
-- [ ] Fresh-clone test: **follow your own README on a clean checkout** and fix gaps
+- [ ] Fresh-clone test: authenticated shallow clone + Android release pass; public clone,
+      native/model/device-suite sequence still pending
 - [x] License headers/file verified (Apache-2.0)
 
 **Demo video (<3 min, script from Part I §9)**
