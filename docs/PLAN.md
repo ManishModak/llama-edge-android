@@ -1,9 +1,11 @@
 # MobileSpec — Execution Plan & Checklist
 
 **Arm Create: AI Optimization Challenge — Mobile AI track**
-Plan date: 20 July 2026 (strategy updated 5 Aug for the phase-aware autotuner pivot) · Deadline: **14 Aug 2026, 4:00 PM PDT** (= **15 Aug, 4:30 AM IST** — treat **13 Aug evening** as the real deadline)
+Plan date: 20 July 2026 (strategy updated 8 Aug after the final strategy audit) · Deadline: **14 Aug 2026, 4:00 PM PDT** (= **15 Aug, 4:30 AM IST** — treat **12 Aug evening** as the feature freeze and **13 Aug** as submission buffer)
 Constraints: **solo**, **2–3 h/day → ~55–65 total hours**, balanced ambition (competition first, upstream PR if it falls out naturally).
-Repo: **https://github.com/ManishModak/llama-edge-android** (private until submission — flip public by 12 Aug). Canonical copy of this plan: `docs/PLAN.md` in the repo.
+Repo: **https://github.com/ManishModak/llama-edge-android** (public; GitHub detects Apache-2.0).
+Canonical copy of this plan: `docs/PLAN.md` in the repo. P0 lands the completed
+`agent/phase-aware-autotuner` work on the judge-facing default `main` branch before new experiments.
 
 ---
 
@@ -25,9 +27,46 @@ Repo: **https://github.com/ManishModak/llama-edge-android** (private until submi
 - Standalone ninja/cmake **not on PATH** (use SDK CMake; install ninja if NDK builds need it)
 - Python 3.12 ✓, Git ✓
 
-### Challenge (confirmed on Devpost 20 Jul 2026)
+### Challenge (reconfirmed on Devpost 8 Aug 2026)
 - Prizes: $3,000 overall / $2,000 runner-up / $1,000 best-in-track. Judging: **Tech 40 / WOW 25 / Impact 20 / DX 15**.
-- Requirements: public GitHub repo, **MIT or Apache-2.0 visible**, docs + build instructions, demo video **optional but <3 min** (YouTube/Vimeo).
+- Target: Devpost's **Mobile AI** track (listed as Track 3 on the track-details page): fully
+  on-device inference on an Arm-powered phone, optimized for latency, responsiveness, memory,
+  privacy, and offline use.
+- Requirements: public GitHub repo, **MIT or Apache-2.0 visible**, project description, setup and
+  validation instructions, and access to a working project/test build. A demo video is **optional**;
+  if supplied it must be public on YouTube/Vimeo/Youku and judges need not watch beyond 3 minutes.
+- The official rules do **not** require Arm Performix, a Performix JSON schema, PMU counters, or a
+  video. Do not turn invented requirements into deadline work.
+
+### 8 Aug audit of the agent-generated “winning strategy” report
+
+The report is useful as a brainstorming input, not as a competition verdict. Its `85%`, `97/100`,
+and `VICTORY CONFIRMED` labels have no judge, competitor, or scoring evidence and must never appear
+in the submission. The following corrections govern the remaining work:
+
+- **Accept, but gate: KleidiAI experiment.** The pinned llama.cpp contains an Android-compatible
+  KleidiAI path for Q4_0 with NEON dot-product kernels. The correct CMake option is
+  `GGML_CPU_KLEIDIAI=ON`, not the report's `GGML_KLEIDIAI=ON`. It may improve Q4_0 GEMM/GEMV, but
+  it also repacks weights and can change load time, memory, and the winning thread pair. It earns
+  no claim unless a same-device A/B passes the gates below.
+- **Reject: “Performix JSON v2 exporter.”** Arm Performix is documented for profiling remote Arm
+  Neoverse Linux systems over SSH. No official Android submission schema or challenge requirement
+  was found. The existing provenance-bound JSON is more relevant and already captures the judged
+  metrics.
+- **Correct: video is optional, but high leverage.** Keep it because judges may judge from the
+  description, images, and video without testing. It is presentation work, not a compliance gate.
+- **Reject: speculative competitor score table.** No matched device/model/workload measurements
+  support the MLC, ExecuTorch, or upstream comparisons. Compare MobileSpec only with its frozen
+  stock-default control.
+- **Scope the mechanism.** The evidence supports DRAM saturation plus synchronization/spin-wait
+  overhead as the explanation on this device; it does not prove zero contention or energy savings.
+  Six A55 cores matching an unpinned six-thread run is diagnostic evidence, not a power result.
+- **Scope the statistics.** The 15-run sustained result supports `2.0739x` mean decode throughput
+  and lower observed variance. With only 15 observations, nearest-rank “p99” equals the sample
+  maximum; present it as observed max / nearest-rank p99, not a population-grade tail estimate.
+- **Do not rerun good evidence gratuitously.** The 15-per-mode sustained result and final
+  VmHWM/SwapFree supplement remain valid for the frozen current binary. Repeat them only if the
+  KleidiAI binary is accepted or the measurement contract changes.
 
 ### Key research finding
 PowerVR BXM Vulkan on Android has **documented driver problems** (llama.cpp community + IMG forums report slow or broken Vulkan on non-Adreno mobile GPUs, including BXM display/compute issues). This is **the project's opportunity and its biggest risk**: expect Vulkan to possibly lose to CPU or misbehave. That outcome is *evidence for the adaptive-routing story*, not failure — but Phase 1 must test it in the first week.
@@ -38,10 +77,11 @@ PowerVR BXM Vulkan on Android has **documented driver problems** (llama.cpp comm
 
 ### Submission goal after Gate G2
 
-> **Build and prove a phase-aware CPU policy autotuner for llama.cpp GGUF inference on Arm
+> **Build and prove a fail-closed execution-policy autotuner for llama.cpp GGUF inference on Arm
 > Android.** MobileSpec discovers heterogeneous CPU topology, measures stock defaults, searches
-> separate prefill and decode thread policies, and promotes a policy only when counterbalanced,
-> thermally gated measurements show a reproducible improvement without a correctness regression.
+> separate prefill and decode thread policies, qualifies available GPU backends and partial layer
+> offload, and promotes a policy only when counterbalanced, thermally gated measurements show a
+> reproducible improvement without a correctness or resource regression.
 
 The novelty is the reusable, evidence-gated policy selection—not a new model and not a remembered
 thread constant. The performance goal is still mandatory: the final submission needs a measured
@@ -51,20 +91,28 @@ clearly scoped combination of those metrics.
 **Submission support boundary:**
 
 - Arm64 Android devices reachable through ADB.
-- CPU inference in the pinned llama.cpp runtime.
+- CPU inference in the pinned llama.cpp runtime is the proven, always-available path.
+- Vulkan inference may be enabled on devices exposing a compatible Android Vulkan driver. Candidate
+  execution modes are `CPU`, `VULKAN`, `HYBRID`, and `AUTO`; unavailable, stale, incorrect, unstable,
+  or slower GPU policies fail closed to the proven CPU path.
 - GGUF models supported by that runtime and registered in `models/manifest.json`.
 - Topology-derived thread count and affinity candidates, with separate prefill
-  (`n_threads_batch`) and decode (`n_threads`) policies as the final target.
-- Physical performance validation on the Redmi Note 14 5G. Other topologies are supported by
-  generic discovery logic and tests, but are not claimed as physically validated.
+  (`n_threads_batch`) and decode (`n_threads`) policies, plus bounded GPU-layer placement candidates.
+- Physical performance validation is limited to the Redmi Note 14 5G. It can prove that Auto rejects
+  this device's slow/problematic PowerVR path; it cannot prove speed on Adreno, Mali, or other GPUs
+  that are not physically tested.
 
-Do **not** describe the submission as tuning “any model on any device.” Linux SBC/cloud adapters,
-GPU/backend tuning, Arm kernel selection, and cross-device validation belong to Future Work.
+Do **not** describe the submission as tuning “any model on any device.” GPU capability can be
+implemented generically, but every selected policy remains bound to the exact device, GPU driver,
+model, binary, context, workload, and scoring identity. Linux SBC/cloud adapters, other accelerator
+backends, and cross-device performance validation remain Future Work.
 
 The two source PDFs assume more hours than we have. Cuts made deliberately:
 
 1. **llama-bench over ADB first, app second.** All Phase 1–3 evidence comes from cross-compiled `llama-bench`/`llama-cli` pushed to `/data/local/tmp` — no app needed to start measuring. The app is built only after the optimization direction is locked.
-2. **One optimization, not two.** Pick exactly one workstream at Gate G1. The adaptive controller is only built if Phase 3 evidence justifies it *or* Phase 3 fails (then the controller becomes the headline).
+2. **One proven optimization plus bounded backend qualification.** Phase-aware CPU tuning remains
+   the submission headline. GPU/hybrid support may extend the controller, but cannot invalidate or
+   delay the known-good CPU release.
 3. **LiteRT-LM baseline is a stretch goal**, not a requirement. One comparable number is nice for the README; skip if behind schedule.
 4. **Upstream PR = prepared branch + evidence, not a merged PR.** llama.cpp restricts AI-generated PRs; you must author, understand, and disclose. A clean branch + llama-bench data documented in `docs/upstream-contribution.md` scores the Impact points even unmerged.
 5. **Submission target is 12 Aug**, leaving 13 Aug as pure buffer.
@@ -80,16 +128,17 @@ The two source PDFs assume more hours than we have. Cuts made deliberately:
    count from core topology is an optimization. The challenge asks for Arm phones/tablets/laptops,
    so anything that only works on MT6855 is scored as a fraction of what it could be.
 
-**Guaranteed minimum deliverable** (even if the phase split does not beat stock): reproducible
-CPU/Vulkan evidence, a topology-derived autotuner that safely retains stock defaults when no
-candidate passes its gates, and a working demo app with an A/B benchmark screen.
+**Guaranteed minimum deliverable:** reproducible CPU/Vulkan evidence, a topology-derived CPU
+autotuner that safely retains stock defaults when no candidate passes, and a working demo app with
+an A/B benchmark screen. GPU/Hybrid/Auto code ships only if its build, fallback, and correctness
+gates pass; stronger-GPU performance is not a submission blocker.
 
 **Mapping to the challenge's stated criteria** (added 27 Jul — judge on these, not on our internal phases):
 | Criterion | What we have | Gap |
 |---|---|---|
-| Arm-specific optimization | Heterogeneous-core discovery plus measured prefill/decode policy selection | Implement and prove the phase-pair policy, not a constant |
-| Developer experience | Gated, provenance-fingerprinted harness that refuses to promote a failed run | One command/app action and a reusable cached profile |
-| Model speed | Absolute tok/s and TTFT across a thread sweep | Complete the immutable stock-vs-phase-aware A/B |
+| Arm-specific optimization | Heterogeneous-core discovery plus proven prefill/decode policy selection | Bounded KleidiAI and Vulkan/hybrid qualification; ship each only if its measured trade-off is safe |
+| Developer experience | Gated, provenance-fingerprinted harness, app action, and reusable fail-closed profile | Public-clone and test-build proof |
+| Model speed | Frozen stock-vs-phase-aware A/B: 15 runs/mode, exact outputs, sustained evidence | Preserve claim scope; refresh only if the shipped binary changes |
 | Model size | Nothing | Not pursuing |
 | Model quality | Exact-output verification only | Not pursuing |
 
@@ -101,7 +150,8 @@ candidate passes its gates, and a working demo app with an A/B benchmark screen.
 
 **Admin**
 - [ ] Register for the challenge on Devpost (Mobile AI track)
-- [x] Create repo `llama-edge-android` with **Apache-2.0 license in root** — done 20 Jul as **private**; ⚠ must be public before submission (12 Aug)
+- [x] Create repo `llama-edge-android` with **Apache-2.0 license in root** — public visibility and
+      GitHub license detection verified 8 Aug
 - [x] Add `third_party/llama.cpp` submodule — pinned to **upstream `178a6c4`** (b10069, 19 Jul, shallow clone; `git fetch --unshallow` if history needed)
 - ~~Fork llama.cpp now~~ → **deferred to Phase 3**: submodule pins upstream directly until we patch it. If repo is still private then, push the patched llama.cpp to a standalone private repo (forks can't be private) and swap the submodule URL; proper fork + PR only when going public.
 
@@ -306,34 +356,136 @@ all other device/model/build/context/workload combinations still fail closed to 
 - [x] Thermal (`PowerManager.getThermalStatus`) + battery + memory telemetry recorded into every in-app run
 - [x] Release build variant with signing for the demo
 
-### Phase 5 — Evidence, docs, demo, submission (Aug 8–13 · ~12 h)
+### Phase 5 — Evidence, backend expansion, demo, submission (Aug 8–13 · ~18–22 h stretch budget)
+
+Execute in this order. Stop feature work after the 12 Aug freeze; a green, testable submission is
+worth more than an unproven late optimization.
+
+> **Current execution stop:** this update authorizes planning only. No full autotuner, GPU matrix,
+> sustained benchmark, or final evidence rerun may start without first reporting the expected
+> duration and receiving explicit user approval. Preserve the known-good CPU artifacts meanwhile.
+
+**P0 — registration, publication, and submission shell (mixed ownership, do first; ~45 min)**
+- [ ] Join/register for the challenge and select **Mobile AI**.
+- [ ] Create the Devpost draft now; fill project name, one-sentence pitch, track, team/author,
+      repository placeholder, and the required overview/functionality/setup fields.
+- [ ] Confirm the account is eligible and the draft can reach the final submission screen. Do not
+      wait for the video or public-repo flip to discover an account/form problem.
+- [ ] Commit the audited plan, open/review the repository PR, and merge the current proven
+      `agent/phase-aware-autotuner` work into default `main` **before** experimental kernel/backend
+      work. The public repo is not judge-ready while `main` ends at the older Phase 1 commit.
+- [ ] Create KleidiAI and GPU/hybrid work on separate branches from the landed known-good baseline.
+      Merge either only after its own gates pass; a failed experiment must leave `main` releasable.
+
+**P1 — bounded KleidiAI go/no-go spike (Codex can implement; 2–4 h plus device time)**
+- [ ] Create an experimental build with `GGML_CPU_KLEIDIAI=ON` while retaining
+      `armv8.2-a+dotprod+fp16`; record the fetched KleidiAI version (`v1.24.0` in the pinned tree),
+      source/archive identity, license, and resulting JNI SHA-256.
+- [ ] Prove activation at three levels: CMake reports `Using KleidiAI optimized kernels`, the JNI
+      library contains `GGML_USE_CPU_KLEIDIAI`/`kai_*` evidence, and device logs report a compatible
+      DOTPROD Q4 kernel. Symbol presence alone is not runtime use.
+- [ ] Smoke model load and greedy correctness, then run a counterbalanced current-vs-KleidiAI A/B
+      on the same phone/model/workload. Start with 3 scored repetitions per mode; expand only if the
+      signal is positive and thermally credible.
+- [ ] **Accept only if** exact outputs match, there is no crash/unsupported instruction, no low-memory
+      event or material sustained SwapFree regression, model-load/TTFT/end-to-end do not regress by
+      more than 3%, and at least one primary metric improves by at least 3% beyond run noise.
+- [ ] If rejected, keep the current binary/policy and document one concise negative result. If the
+      short gate passes, mark KleidiAI **provisionally accepted** but do not start the full phase-pair
+      sweep yet: P2 may change the binary again. After the final shipped feature set freezes, run one
+      approved full autotuner, export the policy, rerun final app A/B evidence, and refresh hashes,
+      chart, and docs. **Budget cap: stop the KleidiAI decision by 10 Aug evening.**
+
+**P2 — Vulkan GPU, hybrid offload, and Auto policy (Codex can implement; ~1 focused day before validation)**
+- [ ] Build the Android JNI engine with `GGML_VULKAN=ON` while retaining the CPU backend and its
+      phase-aware policy. Package the pinned Vulkan headers/shaders reproducibly and record shader
+      compiler, llama.cpp, native-library, and APK identities.
+- [ ] Extend the engine/app contract with explicit `CPU`, `VULKAN`, `HYBRID`, and `AUTO` modes.
+      `CPU` sets `n_gpu_layers=0`; `VULKAN` requests all supported layers; `HYBRID` uses a bounded
+      layer count; `AUTO` may select only a fully qualified cached policy.
+- [ ] Enumerate the Vulkan device and export vendor/device name, driver/API version, UMA status,
+      FP16, integer-dot, cooperative/matrix capability, and supported operation information. Treat
+      capability detection as candidate generation, never as proof that the backend is faster or
+      correct.
+- [ ] Add bounded layer-placement candidates derived from model layer count: CPU-only, approximately
+      25%, 50%, 75%, and full offload. Remove duplicates for small models and reject candidates that
+      exceed the measured memory budget.
+- [ ] Bind GPU profiles to device fingerprint, Vulkan driver/capabilities, llama.cpp/source and JNI
+      hashes, model hash, context/shape, layer placement, CPU phase pair, workload, and scoring
+      policy. Unknown/stale GPU profiles use a valid CPU profile when available, otherwise stock CPU.
+- [ ] Add fast qualification gates before timing: model load, non-empty greedy output, exact-output
+      agreement with CPU, required official Q4_0 shapes, cancellation/reuse, memory/SwapFree, and no
+      driver/device loss. The known PowerVR bf16/Q4_0 failures remain rejection evidence.
+- [ ] Run only a short counterbalanced qualification initially (one discarded warm-up and 3 scored
+      repetitions per surviving mode). Require at least 3% end-to-end improvement beyond noise with
+      non-regressing correctness, memory, thermal, and stability before considering a GPU policy.
+- [ ] Treat `GGML_OP_OFFLOAD_MIN_BATCH` as an **experimental phase-sensitive candidate** that may
+      keep small decode operations on CPU while offloading larger batched work. Do not call it true
+      GPU-prefill/CPU-decode switching unless traces prove the intended placement and the result
+      beats CPU. Standard partial `n_gpu_layers` offload is the supported hybrid baseline.
+- [ ] On Redmi, a safe expected outcome is `AUTO -> CPU` with Vulkan/Hybrid rejected. The generic
+      modes may still ship for other devices if they fail closed correctly, but no Adreno/Mali speed
+      claim is permitted without physical evidence from such hardware.
+- [ ] **Long-run authorization gate:** after implementation, build, and short qualification, stop and
+      report surviving candidates, exact expected duration, device temperature requirements, and
+      whether the shipped binary changed. Do not start a full GPU matrix, CPU re-sweep, sustained
+      session, or final evidence rerun until the user explicitly approves it.
+- [ ] If GPU support is unfinished or unsafe by **11 Aug evening**, do not merge it. Keep the proven
+      CPU app on `main`, document the measured PowerVR rejection, and retain GPU Auto routing as
+      post-submission work.
 
 **Final evidence bundle**
 - [x] Complete the three-round topology-derived sweep, including measured stock defaults.
-- [ ] Clean-device final benchmark session: stock-default vs phase-aware policy, full matrix, raw JSON committed/attached to a GitHub Release
+- [ ] Clean-device final benchmark session: stock-default vs phase-aware CPU policy and any accepted
+      GPU/hybrid policy, full matrix, raw
+      JSON committed/attached to a GitHub Release. Existing 15-per-mode evidence satisfies the
+      sustained requirement for the current binary; rerun only if P1/P2 changes the shipped binary.
 - [x] Headline chart (stock-default vs autotuned decode tok/s + TTFT + **variance/p99**) as PNG for README
 - [x] Two claims, scoped differently and both stated:
   - *General:* "MobileSpec derives and measures phase-specific llama.cpp CPU policies from Arm Android topology, and keeps stock defaults unless a candidate passes performance, variance, and thermal gates."
   - *Device-specific:* "On Redmi Note 14 5G (Dimensity 7025), with the frozen Llama 3.2 1B Q4_0 build and workload, the selected prefill/decode pair changed X from A to B across N samples, correctness preserved."
 - [x] State the single-device limitation plainly, and invite others to run the harness and add a row
+- [ ] If P2 ships, add a third scoped claim: "MobileSpec qualifies CPU, Vulkan, and partial-layer
+      policies and fails closed to CPU; on the tested PowerVR device, GPU candidates were rejected."
+      Do not imply a measured win on untested GPUs.
 
 **Repository/docs**
 - [x] README in judge order: 1-sentence pitch → headline chart → demo link → what changed & why → reproduction steps (exact commits, model sha256, commands) → methodology → limitations/fallbacks → upstream plan
+- [ ] After the binary freezes, update README with the execution-policy story: proven phase-aware
+      CPU result; explicit CPU/Vulkan/Hybrid/Auto modes if P2 ships; driver-bound qualification;
+      PowerVR rejection; and CPU fallback. Do not present Vulkan as universally faster.
+- [ ] Document the one-command CPU build/ADB benchmark and, if P2 ships, the reproducible Vulkan
+      toolchain/shader build plus a command that prints the selected or rejected backend policy.
 - [x] `CHANGES_FOR_CHALLENGE.md` — exact work done during the submission window
 - [x] `docs/reproducibility.md` complete: JDK/NDK/CMake/AGP versions, build commands, ADB steps
-- [ ] Fresh-clone test: authenticated shallow clone + Android release pass; public clone,
-      native/model/device-suite sequence still pending
-- [x] License headers/file verified (Apache-2.0)
+- [x] Authenticated shallow recursive clone + Android release build passed on commit `02c369b`.
+- [ ] Because the repo is already public, immediately audit tracked files and Git history for
+      secrets, personal paths, device serial exposure, model redistribution, third-party notices,
+      and submodule reproducibility.
+- [ ] Publish a GitHub Release with the testable release APK, source/commit identity, checksums,
+      model acquisition instructions (do not redistribute restricted weights), and final evidence.
+- [x] Public visibility and GitHub Apache-2.0 detection verified 8 Aug.
+- [ ] After the final branch lands on `main`, perform an unauthenticated shallow recursive clone and
+      release build from the default branch.
+- [ ] From that public clone, perform the documented model acquisition/import and one standard
+      device run. This is the remaining end-to-end reproducibility gate.
+- [x] Root Apache-2.0 file is present and detected; per-file headers are not a challenge requirement.
+      Preserve and audit third-party license/notice files before release.
 
-**Demo video (<3 min, script from Part I §9)**
+**Demo video (optional but high-value, <3 min)**
 - [ ] 0:00–0:20 problem · 0:20–0:45 device+model · 0:45–1:35 live stock vs phase-aware A/B · 1:35–2:10 topology discovery and separate prefill/decode selection · 2:10–2:40 sustained result + variance · 2:40–3:00 repo + one-command reproduction
-- [ ] Screen-record via `adb` / scrcpy; voiceover; upload YouTube (unlisted is fine)
+- [ ] Screen-record via `adb` / scrcpy; voiceover; upload to a publicly visible supported host and
+      verify playback while logged out
 
 **Submission**
-- [ ] Devpost form complete with video link + repo — **submit 12 Aug**
-- [ ] 13 Aug: buffer for Devpost issues only. Do not code.
+- [ ] Finish the write-up in judge order: measurable before/after, why phase-aware scheduling is
+      reusable, exact device/model scope, live/testable app, reproduction link, and limitations.
+- [ ] Add public repo, GitHub Release/test APK, chart/screenshots, and optional video; run every link
+      in a logged-out/private browser window.
+- [ ] Submit by **12 Aug evening IST**, then save screenshots/PDF of the submitted entry.
+- [ ] 13 Aug: buffer for Devpost or broken-link issues only. Do not add features.
 
-**Upstream (only if G2 = Yes and time remains)**
+**Upstream (not on the submission critical path; only after submission unless explicitly chosen)**
 - [ ] Rebase branch on upstream master; self-authored PR text; `docs/upstream-contribution.md` with llama-bench evidence
 - [ ] Open an upstream *issue/discussion* describing the finding even if the PR isn't ready — costs 30 min, adds Impact evidence
 
@@ -351,9 +503,11 @@ all other device/model/build/context/workload combinations still fail closed to 
 4. **Additional runtime knobs.** Explore `n_batch`/`n_ubatch`, KV-cache type, flash attention,
    mmap/mlock policy, and context sizing only after the thread-policy search is stable. Use a
    bounded/Pareto search so first-run tuning remains practical.
-5. **Backend routing.** Generalise the controller to CPU, Vulkan, OpenCL, or accelerator backends
-   when correctness gates pass. The current PowerVR Vulkan failures remain a documented test case,
-   not a backend to ship.
+5. **Backend expansion and independent GPU validation.** If P2 does not ship, finish
+   CPU/Vulkan/Hybrid/Auto routing. In either case, validate it on recent Adreno and Mali devices,
+   explore OpenCL/NPU backends, and publish driver-scoped profiles only after exact-output, resource,
+   and sustained gates pass. The current PowerVR result is a rejection/fallback case, not evidence
+   about other GPUs.
 6. **Arm capability-aware kernels.** Detect and evaluate dotprod, i8mm, SVE/SVE2, SME, and FP16/BF16
    paths on hardware that actually exposes them. Kernel work requires roofline evidence; do not
    rewrite arithmetic on a path already limited by DRAM bandwidth.
@@ -371,6 +525,9 @@ all other device/model/build/context/workload combinations still fail closed to 
 | Risk | Likelihood | Mitigation |
 |---|---|---|
 | Vulkan broken/slow on BXM driver | **High** (documented) | Test in first Phase 1 session; failure = evidence for workstream A; CPU path is always the fallback |
+| GPU/hybrid scope threatens the submission freeze | High | Land proven CPU work first; isolate P2 on a branch; short qualification first; hard 11 Aug cutoff; never block the CPU release |
+| Vulkan capability is mistaken for speed/correctness | High | Capability only creates candidates; require exact output, official shapes, resource gates, and measured A/B before selection |
+| Adding KleidiAI/Vulkan makes evidence stale | High | Bind profiles to source/binary/driver identity; stop before long reruns; re-sweep only after approval when the shipped binary changes |
 | 60 h budget slips | High | Gates G1/G2 are hard cut lines; app screens cut bottom-up; LiteRT-LM and upstream PR pre-declared as stretch |
 | Thermal noise hides gains | Medium | Fixed starting temp, airplane mode, screen-min, cooling gaps between reps, report variance; sustained runs decide |
 | Phase-pair gain disappears end to end | High | Require real generation and sustained confirmation after synthetic pp/tg selection |
@@ -383,7 +540,8 @@ all other device/model/build/context/workload combinations still fail closed to 
 
 ## 4. Definition of done (submission-blocking)
 
-- [ ] Clean checkout builds with documented toolchain
+- [x] Authenticated clean checkout builds with documented Android toolchain
+- [ ] Public unauthenticated clone builds and completes one documented model/device validation run
 - [x] One command/app action runs the standard suite
 - [x] Every result traceable: device, app commit, llama.cpp commit, model sha256, backend, config
 - [x] Baseline vs optimized differ only in the intended change, and **baseline = stock defaults**
@@ -394,7 +552,13 @@ all other device/model/build/context/workload combinations still fail closed to 
       as a general result
 - [x] Correctness checks pass; unsupported-device fallback works
 - [x] App demos chat + A/B benchmark without log-diving
-- [ ] Repo flipped **private → public**, Apache-2.0 visible, README judge-ordered, video <3 min
+- [ ] Proven CPU mode remains independently releasable regardless of KleidiAI/GPU experiment status
+- [ ] If P2 is merged: CPU/Vulkan/Hybrid/Auto are explicit; unknown/stale/failed GPU policies fall
+      back to CPU; PowerVR rejection is device-verified; no untested-GPU speed claim appears
+- [ ] Public repo and test build are accessible, Apache-2.0 is detected, README is judge-ordered,
+      required Devpost fields are complete, and all logged-out links work
+- [ ] If a video is submitted, it is public and under 3 minutes; absence of a video is not a rules
+      failure, but should be treated as a presentation-quality risk
 
 ## 5. Weekly cadence (2–3 h/day)
 
@@ -403,4 +567,7 @@ all other device/model/build/context/workload combinations still fail closed to 
 | 1 | Jul 20–26 | Phase 0 + Phase 1 (Vulkan answer by Jul 25) | ~15 |
 | 2 | Jul 27–Aug 2 | Phase 2, Gate G1, start Phase 3 | ~15 |
 | 3 | Aug 3–9 | Phase 3 finish, Gate G2, Phase 4 app | ~18 |
-| 4 | Aug 10–13 | Phase 5: evidence, README, video, **submit Aug 12** | ~12 |
+| 4 | Aug 8–9 | Land proven CPU work; bounded KleidiAI decision | ~4 |
+| 5 | Aug 9–11 | GPU/hybrid implementation and short qualification; stop at long-run approval gate | ~6–10 |
+| 6 | Aug 11–12 | Freeze accepted binary, approved final evidence, public-clone proof, release, write-up/video, submit | ~8 |
+| Buffer | Aug 13 | Broken links/forms only; no new code | ~1 |

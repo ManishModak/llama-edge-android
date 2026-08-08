@@ -17,6 +17,10 @@ captures/
 __pycache__/
 *.py[cod]
 
+# Local agent orchestration and generated strategy audit
+.agents/
+ARM_AI_CHALLENGE_AUDIT_AND_WINNING_STRATEGY.md
+
 # Native build output
 out/
 build-android-*/
