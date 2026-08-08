@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "suite": "autotune",
+  "description": "Defaults for tools/autotune.py. Unlike phase1-baseline.json this suite has no `cases` array: the candidate configurations are DERIVED from the device's CPU topology at run time (that is the point of the tool), so only the invocation defaults and the scoring policy live here. See docs/PLAN.md Phase 3B.",
+  "defaults": {
+    "binDir": "/data/local/tmp/llama-edge",
+    "modelsDir": "/data/local/tmp/llama-edge/models",
+    "binary": "llama-bench",
+    "model": "llama-3.2-1b-instruct-q4_0",
+    "workloadClass": "interactive-chat-decode-weighted",
+    "nGpuLayers": 0,
+    "warmup": true,
+
+    "promptTokens": 64,
+    "genTokens": 32,
+    "contextSize": 512,
+    "repetitions": 2,
+    "rounds": 3,
+
+    "cooldownSeconds": 120,
+    "thermalMaxWaitSeconds": 300,
+    "tempSlackC": 1.0,
+    "maxTempRiseC": 3.0,
+    "maxThermalStatus": null,
+
+    "scoring": {
+      "stabilityK": 1.0,
+      "tgWeight": 0.7,
+      "maxRelStddev": 0.10,
+      "minImprovement": 0.03,
+      "maxOrderDrift": 0.10
+    }
+  },
+  "notes": [
+    "pp64/tg32 x 2 reps x 3 rounds keeps each llama-bench invocation to a few seconds; the wall clock is dominated by the cooldowns, not the benchmark.",
+    "cooldownSeconds matches tools/run_suite.py's --cooldown default (120 s). Do not set it to 0: back-to-back candidates on the test device produced a 2.5x apparent difference (pp512 76.30 -> 30.70) that was entirely thermal throttling, i.e. larger than any real effect the tool is looking for.",
+    "The cooldown is a floor, not the whole gate: after idling, the tool polls dumpsys battery and only starts the next candidate once temperature is back within tempSlackC of the sweep's own starting temperature.",
+    "maxThermalStatus is null on purpose: android.os.PowerManager thermal status is RECORDED but does not gate. On the test device (Redmi Note 14 5G / MT6855) status 2 (MODERATE) is the resting state while USB-charging, and runs that sat at status 2 throughout were thermally quiet by temperature (the 27 Jul ngram A/B rose 0.2 C). Gating on status there would return 'inconclusive' on every sweep forever and never cache a profile. Set it to 1 on a device where the status is actually meaningful.",
+    "rounds >= 2 is what makes the order counterbalancing work (forward, reversed, forward ...). With rounds = 1 the tool still runs, but run-order drift lands entirely on the last candidate and the orderDrift gate cannot fire.",
+    "scoring.stabilityK = 1.0 scores each candidate at mean - 1 stddev; maxRelStddev disqualifies anything noisier than 10 % outright. See the score_rows docstring in tools/autotune.py for the reasoning."
+  ]
+}

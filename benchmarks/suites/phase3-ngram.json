@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "suite": "phase3-ngram",
+  "description": "Phase 3 zero-weight fallback A/B: Llama 3.2 1B Q4_0 with speculation disabled versus ngram-mod on the same target.",
+  "defaults": {
+    "binDir": "/data/local/tmp/llama-edge",
+    "modelsDir": "/data/local/tmp/llama-edge/models",
+    "binary": "llama-server",
+    "llamaCppBaseCommit": "178a6c44937154dc4c4eff0d166f4a044c4fceba",
+    "speculativeMode": "ngram",
+    "artifactFile": "ngram-ab.json",
+    "targetModel": "llama-3.2-1b-instruct-q4_0",
+    "contextSize": 512,
+    "threads": 6,
+    "threadsBatch": 8,
+    "nGpuLayers": 0,
+    "repetitions": 5,
+    "generatedTokens": 128,
+    "ngramMatch": 24,
+    "ngramMin": 4,
+    "ngramMax": 32,
+    "seed": 42,
+    "remotePort": 8094,
+    "startupTimeoutSeconds": 180,
+    "requestTimeoutSeconds": 180,
+    "telemetryIntervalSeconds": 2,
+    "cooldownSeconds": 0,
+    "modeCooldownSeconds": 120,
+    "modeOrder": ["baseline", "ngram"],
+    "minimumSpeedup": 1.03,
+    "maxZramGrowthBytes": 0,
+    "requireZramMetric": false,
+    "maxSwapFreeDropKb": 65536,
+    "maxSpeculativeRssIncreaseKb": 65536,
+    "maxBatteryTempC": 43.0,
+    "maxBatteryTempRiseC": 3.0,
+    "extraServerArgs": [],
+    "extraRequestFields": {}
+  },
+  "prompts": [
+    {
+      "id": "repetitive-sequence",
+      "category": "repetitive",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+        }
+      ]
+    },
+    {
+      "id": "code-continuation",
+      "category": "code",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+        }
+      ]
+    },
+    {
+      "id": "ordinary-chat",
+      "category": "chat",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+        }
+      ]
+    }
+  ]
+}

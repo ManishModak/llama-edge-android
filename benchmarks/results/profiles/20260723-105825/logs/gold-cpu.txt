@@ -1,0 +1,9 @@
+user
+
+The capital city of France is Paris. The capital city of Japan is Tokyo. The capital city of Italy isassistant
+
+Actually, the capital city of Italy is Rome, not Tokyo. Rome is the largest city in Italy and is the country's capital.
+
+> EOF by user
+
+

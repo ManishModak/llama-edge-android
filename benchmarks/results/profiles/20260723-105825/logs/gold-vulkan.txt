@@ -1,0 +1,12 @@
+user
+
+The capital city of France is Paris. The capital city of Japan is Tokyo. The capital city of Italy isassistant
+
+I can help you complete the sentence. Here's a possible completion:
+
+"The capital city of France is Paris, the capital city of Japan is Tokyo, and the capital city of Italy is Rome."
+
+Let
+> EOF by user
+
+

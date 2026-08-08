@@ -1,20 +1,24 @@
-# Phase 1 baseline — CPU thread sweep (Llama 3.2 1B Q4_0)
+# Phase 1 baseline — CPU thread sweep + Vulkan comparison (Llama 3.2 1B Q4_0)
 
-**Date:** 2026-07-22 · **Suite:** `benchmarks/suites/phase1-baseline.json` (CPU cases only)
+> **This is the OFFICIAL baseline.** Measured 23 Jul 2026 with Linux-built binaries.
+> It supersedes the 22 Jul Windows-built run, which is retained at the bottom for
+> comparison. One Windows finding did **not** reproduce — see
+> [§ Overturned finding](#overturned-finding-t8-does-not-collapse).
+
+**Date:** 2026-07-23 · **Suite:** `benchmarks/suites/phase1-baseline.json` (all 12 cases)
 **Device:** Redmi Note 14 5G (`24094RAD4I`, serial `8DYTMRKF755TOBZD`) — MediaTek Dimensity 7025 (MT6855),
-2× Cortex-A78 (cpu6/7 @ 2.5 GHz) + 6× Cortex-A55 (cpu0–5 @ 2.0 GHz), arm64-v8a, Android 16, 5.6 GB RAM.
-**Binary:** `llama-bench`, CPU-only static build from pinned llama.cpp `178a6c4`, NDK 28.2.13676358,
-`-march=armv8.2-a+dotprod+fp16`. **Repo commit:** `0fcd0ea`.
+2× Cortex-A78 (cpu6/7) + 6× Cortex-A55 (cpu0–5), arm64-v8a, Android 16, 5.6 GB RAM.
+GPU: PowerVR B-Series BXM-8-256, Vulkan 1.3.
+**Binaries:** `llama-bench` (CPU) and `llama-bench-vulkan` (Vulkan), static, pinned llama.cpp `178a6c4`,
+**NDK r28c 28.2.13676358 on Linux (CachyOS, GCC 16.1.1 host)**, `-march=armv8.2-a+dotprod+fp16`.
+**Repo commit:** `4462c70`.
 **Model:** `llama-3.2-1b-instruct-q4_0`, Q4_0, sha256 `fa0390e7…97a8be8`, 729.75 MiB tensors, mmap on, KV f16.
 **Protocol:** 5 repetitions per case, warmup on, 120 s idle cooldown between cases, unpinned
 (no `cpuMask` — the scheduler places threads).
 
-**Raw results (git-ignored):** `benchmarks/results/raw/20260722-210643-phase1-baseline/`
-(9 files, ~40 KB; each carries the full `llama-bench` payload under `rawBench`, including per-repetition
-`samples_ts`, plus thermal/battery/memory snapshots either side of the case).
-
-**Total runtime:** 25 min 29 s wall (15:36:44 → 16:02:13 UTC), of which 16 min was cooldown and
-~9.5 min actual benchmarking. 9/9 cases completed, no failures, no JSON parse errors.
+**Raw results:** `benchmarks/results/raw/20260723-135809-phase1-baseline/` (12 files).
+**Total runtime:** 48 min 17 s wall (08:28:10 → 09:16:26 UTC). **12/12 cases clean**, no failures.
+Battery 67 % on USB throughout; thermal status never left `0 (NONE)`; battery temp 34.7 → 38.2 °C.
 
 ---
 
@@ -22,145 +26,154 @@
 
 | case | backend | threads | pp tok/s | tg tok/s | pg tok/s | thermal (batt) |
 |---|---|---|---|---|---|---|
-| cpu-t2-pp512 | cpu | 2 | 66.11 +/- 6.77 | - | - | 33.3C -> 34.0C |
-| cpu-t2-tg128 | cpu | 2 | - | 12.80 +/- 0.16 | - | 34.3C -> 34.9C |
-| cpu-t4-pp512 | cpu | 4 | 63.41 +/- 2.65 | - | - | 35.3C -> 35.5C |
-| cpu-t4-tg128 | cpu | 4 | - | 11.19 +/- 0.53 | - | 35.6C -> 36.5C |
-| cpu-t6-pg512-128 | cpu | 6 | - | - | 31.98 +/- 4.58 | 37.8C -> 38.7C |
-| cpu-t6-pp512 | cpu | 6 | 68.20 +/- 0.77 | - | - | 36.2C -> 36.7C |
-| cpu-t6-tg128 | cpu | 6 | - | 14.16 +/- 0.20 | - | 36.4C -> 36.9C |
-| cpu-t8-pp512 | cpu | 8 | 58.62 +/- 26.74 | - | - | 36.7C -> 37.8C |
-| cpu-t8-tg128 | cpu | 8 | - | 9.48 +/- 2.31 | - | 37.5C -> 37.9C |
+| cpu-t2-pp512 | cpu | 2 | 46.87 +/- 10.73 | - | - | 34.7C -> 35.9C |
+| cpu-t2-tg128 | cpu | 2 | - | 12.76 +/- 0.12 | - | 35.7C -> 35.8C |
+| cpu-t4-pp512 | cpu | 4 | 60.26 +/- 0.94 | - | - | 36.2C -> 36.1C |
+| cpu-t4-tg128 | cpu | 4 | - | 10.89 +/- 1.04 | - | 36.6C -> 36.9C |
+| cpu-t6-pp512 | cpu | 6 | 70.72 +/- 0.37 | - | - | 36.8C -> 36.7C |
+| cpu-t6-tg128 | cpu | 6 | - | 14.16 +/- 0.34 | - | 36.8C -> 37.1C |
+| cpu-t8-pp512 | cpu | 8 | **80.04 +/- 1.34** | - | - | 37.1C -> 37.4C |
+| cpu-t8-tg128 | cpu | 8 | - | 13.87 +/- 0.90 | - | 37.1C -> 37.5C |
+| cpu-t6-pg512-128 | cpu | 6 | - | - | 34.67 +/- 2.44 | 37.3C -> 37.8C |
+| vulkan-pp512 | vulkan | 4 | 39.78 +/- 0.03 | - | - | 37.7C -> 37.3C |
+| vulkan-tg128 | vulkan | 4 | - | 1.50 +/- 0.00 | - | 37.1C -> 38.2C |
+| vulkan-pg512-128 | vulkan | 4 | - | - | 6.37 +/- 0.04 | 37.7C -> 38.2C |
 
-Rearranged as a sweep (mean ± stddev over 5 reps):
+### CPU thread sweep
 
 | threads | pp512 tok/s | tg128 tok/s |
 |---:|---:|---:|
-| 2 | 66.11 ± 6.77 | 12.80 ± 0.16 |
-| 4 | 63.41 ± 2.65 | 11.19 ± 0.53 |
-| **6** | **68.20 ± 0.77** | **14.16 ± 0.20** |
-| 8 | 58.62 ± 26.74 | 9.48 ± 2.31 |
+| 2 | 46.87 ± 10.73 | 12.76 ± 0.12 |
+| 4 | 60.26 ± 0.94 | 10.89 ± 1.04 |
+| 6 | 70.72 ± 0.37 | **14.16 ± 0.34** |
+| 8 | **80.04 ± 1.34** | 13.87 ± 0.90 |
 
-Combined prefill+decode, `-pg 512,128` at t=6: **31.98 ± 4.58 tok/s** over the 640-token workload.
+**Prefill and decode want different thread counts.** Prefill is best at t=8, decode at t=6.
 
-Per-repetition samples (tok/s), from `rawBench[].samples_ts`:
+### CPU vs Vulkan
 
-| case | rep 1 | rep 2 | rep 3 | rep 4 | rep 5 |
-|---|---:|---:|---:|---:|---:|
-| t2 pp512 | 75.05 | 70.28 | 66.14 | 59.67 | 59.43 |
-| t4 pp512 | 67.50 | 61.67 | 64.30 | 62.86 | 60.72 |
-| t6 pp512 | 67.31 | 67.92 | 67.98 | 68.40 | 69.39 |
-| t8 pp512 | 74.79 | 78.86 | 78.12 | 19.59 | 41.73 |
-| t2 tg128 | 12.62 | 12.98 | 12.76 | 12.67 | 12.94 |
-| t4 tg128 | 10.75 | 10.83 | 11.68 | 11.85 | 10.82 |
-| t6 tg128 | 14.17 | 13.81 | 14.20 | 14.25 | 14.34 |
-| t8 tg128 | 12.27 | 8.80 | 6.00 | 10.21 | 10.12 |
-| t6 pg512+128 | 34.89 | 23.87 | 33.08 | 34.09 | 33.97 |
-
----
-
-## Device state
-
-| | start (15:36:44 UTC) | end (16:02:13 UTC) | drift |
-|---|---|---|---|
-| Thermal status | 0 (NONE) | 0 (NONE) | none — never left NONE |
-| Battery temp | 33.3 °C | 38.7 °C | **+5.4 °C** |
-| Skin temp (HAL) | 36.5 °C | 42.2 °C | +5.7 °C |
-| Battery level | 99 % | 99 % | 0 (USB-attached) |
-| MemAvailable | 1.67 GB | 1.86 GB | flat, 1.39–2.07 GB across all 18 samples |
-
-Prep performed: `adb shell svc power stayon usb`; `adb shell am kill-all` (background apps);
-confirmed idle foreground (Settings), <15 % aggregate CPU before the run.
-
-**Caveats against the `docs/reproducibility.md` checklist:**
-- Airplane mode / Wi-Fi could not be toggled reliably over adb — radios were left as-is.
-- Screen brightness was not changed (avoided touching system settings).
-- Battery was at **99 % and USB-attached (`status: 2`, charging, 500 mA cap)**, not the prescribed
-  60–80 % on battery. The device is charging whenever adb is the transport, so the battery-delta
-  column is meaningless for this run and thermal readings are mildly pessimistic (charger heat).
-  Thermal status still never left NONE, so no cooldown escalation was needed.
-- Runs were **unpinned** — the suite carries no `cpuMask`, so `-t N` is a thread-count sweep, not a
-  core-affinity sweep. See observation 2.
+| workload | CPU (best) | Vulkan | CPU advantage |
+|---|---:|---:|---:|
+| pp512 | 80.04 (t=8) | 39.78 | **2.0×** |
+| tg128 | 14.16 (t=6) | 1.50 | **9.4×** |
+| pg512+128 | 34.67 (t=6) | 6.37 | **5.4×** |
 
 ---
 
 ## Observations
 
-**1. t=6 is the optimal thread count for both prefill and decode — and also the most stable.**
-It wins outright on prefill (68.20 tok/s) and decode (14.16 tok/s), and it has by far the tightest
-spread (±0.77 and ±0.20, i.e. ~1 % relative stddev, versus 10 % at t=2 and 46 % at t=8). The
-Phase 0 default of `-t 2` leaves **11 % of decode throughput** on the table. Recommendation for
-Phase 2+: default to 6 threads on this SoC, and treat t=6 as the CPU reference line the Vulkan and
-optimization work must beat.
+1. **Prefill scales monotonically to all 8 cores** (46.9 → 60.3 → 70.7 → 80.0). The six A55s
+   do contribute real throughput to compute-bound prefill; this is not a big-core-only workload.
 
-**2. Scaling is non-monotonic — 4 threads is *worse* than 2. This is a big.LITTLE straggler effect.**
-pp512 goes 66.11 → 63.41 → 68.20 → 58.62 and tg128 goes 12.80 → 11.19 → 14.16 → 9.48 as threads
-go 2 → 4 → 6 → 8. Adding the first two A55 threads (t=4) *loses* ~4 % prefill and ~13 % decode
-versus t=2. ggml splits work evenly per thread and joins on a barrier each op, so A55 threads
-(~2.0 GHz, in-order) become stragglers the two A78s wait on; two extra slow workers cost more in
-barrier stall than they contribute. By t=6 there are enough A55 lanes for the aggregate to finally
-overtake t=2, but only by 3 % on prefill. **Note this is thread count, not affinity** — with no
-`cpuMask`, "t=2" is not the same as "A78-only". As a cross-check, Phase 0's `taskset c0`-pinned
-(genuinely A78-only) run measured 12.16 tok/s tg32 versus 12.80 tok/s for unpinned t=2 here — close
-enough that unpinned t=2 is landing mostly on the big cores. A true `cpuMask` A78-only-vs-all-core
-comparison is a Phase 2 item; the mere 3 % headroom that six threads buy over two suggests explicit
-big-core pinning (`-C c0`) may well beat the all-core configuration once barrier costs are removed.
+2. **Decode does not** — it peaks at t=6 (14.16) and *regresses* at t=8 (13.87), consistent with
+   decode being memory-bandwidth bound rather than compute bound. Extra threads add contention,
+   not bandwidth.
 
-**3. t=8 oversubscribes the device and collapses, unpredictably.**
-Eight benchmark threads on eight cores leaves nothing for `system_server` and the adb shell, and the
-result is the worst mean *and* catastrophic variance: pp512 reps ran 74.79, 78.86, 78.12, then
-**19.59**, then 41.73 — a 4× swing within one case. Decode is the same story (12.27 down to 6.00).
-Note that the first three t=8 prefill reps are the fastest single measurements in the whole run
-(78.9 tok/s, +14 % over t=6's best) — the hardware *can* do it, but only until the scheduler preempts
-a worker and the whole barrier group stalls. Do not ship `-t 8` on this device; the tail latency is
-indefensible even though the peak is attractive.
+3. **The non-monotonic decode anomaly survives re-baselining.** t=4 (10.89) is **worse than t=2**
+   (12.76) — a 15 % regression from *adding* two threads.
 
-**4. Prefill is ~4.8× decode, and decode is the bottleneck for user-visible latency.**
-At t=6, prefill runs at 68.20 tok/s and decode at 14.16 tok/s. Decode is memory-bandwidth-bound on a
-Q4_0 1B model (every token streams the full 730 MiB of weights), which is why it responds so weakly to
-extra compute — t=2 → t=6 gains only 10.6 % on decode and 3.2 % on prefill. Practical consequence:
-a 512-token prompt costs ~7.5 s of prefill, and each subsequent token ~71 ms. Phase 2 optimization
-effort is worth far more on the decode path than on prefill.
+   > **⚠️ Corrected by Phase 2 (23 Jul).** This observation originally attributed the anomaly to a
+   > big.LITTLE *straggler* effect — "A55 threads stall the A78s at ggml's per-op barrier" — and
+   > called it the strongest evidence for workstream C. **Profiling refuted that.** There is no
+   > stable big/LITTLE split to straggle against: every worker migrates continuously across both
+   > clusters (~59 % A78 residency at t=2, ~28 % at t=6), and the per-thread CPU-time spread is only
+   > 1.18–1.28× — far too small to cost 15 %. The actual mechanism is **DRAM saturation plus a
+   > spin-wait barrier** (`ggml-cpu.c:599`): decode is already at ~11.1 GB/s ≈ 65–75 % of LPDDR4X
+   > peak, so every added thread is a core spinning on `yield`, contending for the same memory
+   > controller. Six A55s alone match the best full-SoC decode (14.36 vs 14.50), proving the A78s
+   > add nothing. See [bottleneck-note.md](bottleneck-note.md).
 
-**5. The combined pg512+128 case runs 17 % below the naive composition of the separate numbers.**
-Predicted from the isolated t=6 measurements: 512/68.20 + 128/14.16 = 7.51 + 9.04 = 16.55 s for 640
-tokens = 38.7 tok/s. Measured: **31.98 tok/s** (20.0 s). The gap is real work the isolated tests do
-not do — `tg128` decodes from an empty KV cache, whereas the `pg` case decodes at depth 512–640, so
-attention reads a growing KV cache and each token costs more. Any TTFT/throughput model built by
-composing separate pp/tg numbers will be optimistic; measure at depth (`-d`/`n-depth`) for realistic
-figures. This case also carries the run's single worst outlier (rep 2 at 23.87 vs ~34 for the rest).
+4. **Vulkan runs correctly but loses on every workload**, catastrophically so on decode (9.4×).
+   The device capability readout explains it:
+   `int dot: 0` (no `VK_KHR_shader_integer_dot_product`, so Q4_0 matmul gets no integer-dot path),
+   `matrix cores: none`, and **16 KB** shared memory (vs 32–64 KB typical), which caps `mul_mm`
+   tile sizes. `uma: 1` is the one favourable property. See
+   [vulkan-build-notes.md](vulkan-build-notes.md).
 
-**6. Boost-clock decay is visible *within* a single 5-rep case, and no memory pressure was observed.**
-The very first case of the run (t=2 pp512, cold device) decays monotonically 75.05 → 59.43 tok/s
-across its five reps — a 21 % fall in ~50 s while the battery moved only 33.3 → 34.0 °C. That is DVFS
-boost budget expiring, not thermal throttling. It explains the outsized ±6.77 stddev on an otherwise
-well-behaved configuration, and argues that the first case in any suite should be treated as warm-up.
-Separately, the Phase 0 memory-thrashing gotcha did **not** recur: `MemAvailable` stayed between 1.39
-and 2.07 GB across all 18 snapshots and no case showed anomalously low tok/s from swapping.
-`llama-bench` at this commit derives context from prompt+gen (max 640 tokens here), so the KV cache
-stays negligible and the 128K default never comes into play — confirming that gotcha is specific to
-`llama-completion`'s explicit `-c`.
+5. **Vulkan is remarkably *stable* even though it is slow** — ±0.03 on pp512 and ±0.00 on tg128,
+   an order of magnitude tighter than any CPU case. The GPU runs at a flat, low clock and is
+   unaffected by the scheduler noise and DVFS ramps that move the CPU numbers. Predictability is
+   not the problem; throughput is.
+
+6. **pg is well below naive pp/tg composition.** Composing t=6 pp (70.72) and tg (14.16) for a
+   512+128 workload predicts ≈ 42 tok/s; measured is 34.67, i.e. **17 % below** — KV-depth cost is
+   real and must be measured, not extrapolated. (Identical 17 % gap to the Windows run, so this is
+   a property of the workload, not the toolchain.)
+
+7. **Cold-start DVFS ramp biases whichever case runs first.** `cpu-t2-pp512` ran first on a 34.7 °C
+   device and its five reps ramped 29.3 → 44.1 → 51.2 → 54.5 → 55.2 (±10.73, 23 % rel.). A warm
+   re-run of the same case gave **46.15 ± 3.48** — the same mean, one third the spread. So the
+   *value* is sound but the *variance* is an artifact of case ordering.
+   **Methodology fix for future suites:** run a throwaway warmup case first, or discard rep 1.
+
+8. **Memory headroom is tighter than the 5.6 GB figure suggests** — `MemAvailable` sat at
+   1.9–2.2 GB during the run with a 730 MiB model resident. The `-c 512` discipline (HANDOFF §7.2)
+   remains load-bearing.
 
 ---
 
-## Pending
+## Overturned finding: t=8 does *not* collapse
 
-- **Vulkan comparison is pending.** The three `vulkan-*` cases in `phase1-baseline.json`
-  (`vulkan-pp512`, `vulkan-tg128`, `vulkan-pg512-128`) were skipped for this run via the new
-  `--only-backend cpu` flag, because no `llama-bench-vulkan` binary exists on the device yet — the
-  Vulkan build is currently blocked on the host. Status and details: `docs/vulkan-build-notes.md`.
-  Re-run the full suite (drop `--only-backend`) once that binary is built and pushed; the CPU numbers
-  above are the reference line.
-- **Core-affinity sweep** (`cpuMask` / `-C`) — A78-only vs A55-only vs all-core at matched thread
-  counts. Phase 2, workstream C. See observation 2.
-- **Depth sweep** (`-d`) to characterise decode cost as the KV cache grows. See observation 5.
+The Windows-built run reported t=8 as unstable and slow — pp512 **58.62 ± 26.74** (46 % rel. stddev)
+with reps of 74.8 / 78.9 / 78.1 / **19.6** / 41.7, and tg128 **9.48 ± 2.31**. That drove a HANDOFF
+finding that "t=8 collapses unpredictably".
 
-## Reproduce
+Linux-built binaries show **no such collapse**:
 
-```bash
-adb shell svc power stayon usb
-python tools/run_suite.py benchmarks/suites/phase1-baseline.json \
-  --serial 8DYTMRKF755TOBZD --only-backend cpu --ndk-version 28.2.13676358
-python tools/summarize_results.py benchmarks/results/raw/<timestamp>-phase1-baseline \
-  -o docs/baseline-results.md
-```
+| | Windows-built | Linux-built |
+|---|---:|---:|
+| t8 pp512 | 58.62 ± 26.74 (46 % rel.) | **80.04 ± 1.34 (1.7 % rel.)** |
+| t8 tg128 | 9.48 ± 2.31 (24 % rel.) | **13.87 ± 0.90 (6.5 % rel.)** |
+
+t=8 is now the *best* prefill configuration and is stable. The collapse was an artifact of the
+Windows-built binary (or of that run's environment), not a property of the device. This vindicates
+HANDOFF's warning to re-baseline before treating any Windows number as an A/B reference, and it
+removes "t=8 is unusable" from the Gate G1 evidence set.
+
+**Consequence for Gate G1:** the case for workstream C now rests specifically on the **decode**
+anomaly (t=4 < t=2, and t=8 ≤ t=6), not on a general instability at high thread counts.
+
+---
+
+## Impact on Gate G1
+
+PLAN.md's decision table maps "Vulkan ≪ CPU or unstable" → **workstream A (adaptive backend
+routing)**. That row assumed a backend worth routing *to*. Here the GPU is slower on prefill
+(2.0×), decode (9.4×) *and* combined (5.4×), so a router would never select it — workstream A
+would ship a switch that is always off.
+
+The live evidence instead points at **workstream C (big.LITTLE-aware threading)**: prefill wants
+8 threads, decode wants 6, and decode actively regresses at t=4 due to A55 stragglers. A
+phase-aware thread/affinity policy has a measurable target on this device.
+
+> **⚠️ Superseded by Phase 2 (23 Jul).** Workstream C is **refuted for throughput**. Explicit
+> affinity experiments show the decode ceiling (≈14.5 tok/s) is *already reached by the stock
+> default*, because decode is DRAM-bound at ~65–75 % of LPDDR4X peak. Pinning buys variance
+> (±1.20 → ±0.03) and energy headroom, not speed. The evidence now favours **workstream D**
+> (speculative decoding — the only option that reduces bytes-per-token), though PLAN.md's 3B+1B
+> sizing does **not** fit the measured 1.84 GB `MemAvailable` and would need a draft-model-free
+> variant. Full reasoning and the G1 table: [bottleneck-note.md](bottleneck-note.md).
+
+**Not yet decided** — Gate G1 is 31 Jul.
+
+---
+
+## Superseded: preliminary Windows-built run (22 Jul 2026)
+
+Kept for comparison only. **Do not use as an A/B baseline** — different toolchain.
+Raw: `benchmarks/results/raw/20260722-210643-phase1-baseline/` (9 CPU cases; Vulkan was blocked
+on Windows). Repo commit `0fcd0ea`, 25 min 29 s wall, 9/9 clean.
+
+| threads | pp512 tok/s | tg128 tok/s |
+|---:|---:|---:|
+| 2 | 66.11 ± 6.77 | 12.80 ± 0.16 |
+| 4 | 63.41 ± 2.65 | 11.19 ± 0.53 |
+| 6 | 68.20 ± 0.77 | 14.16 ± 0.20 |
+| 8 | 58.62 ± 26.74 | 9.48 ± 2.31 |
+
+pg512+128 @ t=6: 31.98 ± 4.58. Thermal never left NONE; skin 36.5 → 42.2 °C.
+
+**What reproduced:** t=6 decode optimum (14.16 both runs, to 3 s.f.); the t=4 < t=2 decode
+anomaly; the ~17 % pg shortfall vs naive composition; thermal status never leaving NONE.
+**What did not:** the t=8 collapse (see above); t=2 prefill (66.11 Windows vs 46.5 Linux —
+the Linux figure is confirmed by a warm re-run).

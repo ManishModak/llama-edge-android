@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "suite": "phase3-mtp",
+  "description": "Phase 3 feasibility and same-target end-to-end A/B: Gemma 4 E2B QAT UD-Q2_K_XL with native MTP disabled versus its Q4_0 MTP head enabled.",
+  "defaults": {
+    "binDir": "/data/local/tmp/llama-edge",
+    "modelsDir": "/data/local/tmp/llama-edge/models",
+    "binary": "llama-server",
+    "llamaCppBaseCommit": "178a6c44937154dc4c4eff0d166f4a044c4fceba",
+    "candidatePatch": "patches/llama.cpp/0001-fix-speculative-draft-model-path.patch",
+    "speculativeMode": "mtp",
+    "artifactFile": "mtp-ab.json",
+    "targetModel": "gemma-4-e2b-it-qat-ud-q2_k_xl",
+    "draftModel": "gemma-4-e2b-it-qat-mtp-q4_0",
+    "contextSize": 512,
+    "threads": 6,
+    "threadsBatch": 8,
+    "draftThreads": 6,
+    "draftThreadsBatch": 8,
+    "nGpuLayers": 0,
+    "draftGpuLayers": 0,
+    "repetitions": 5,
+    "generatedTokens": 128,
+    "draftTokens": 4,
+    "seed": 42,
+    "remotePort": 8093,
+    "startupTimeoutSeconds": 300,
+    "requestTimeoutSeconds": 300,
+    "telemetryIntervalSeconds": 2,
+    "cooldownSeconds": 0,
+    "modeCooldownSeconds": 120,
+    "modeOrder": ["baseline", "mtp"],
+    "minimumSpeedup": 1.03,
+    "maxZramGrowthBytes": 0,
+    "maxSwapFreeDropKb": 0,
+    "extraServerArgs": [],
+    "extraRequestFields": {}
+  },
+  "prompts": [
+    {
+      "id": "repetitive-sequence",
+      "category": "repetitive",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Continue this exact comma-separated pattern for as many terms as possible, with no explanation: red-1, blue-2, green-3, red-4, blue-5, green-6,"
+        }
+      ]
+    },
+    {
+      "id": "code-continuation",
+      "category": "code",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Complete this Python function. Return only code.\n\ndef moving_average(values, window):\n    if window <= 0:\n        raise ValueError(\"window must be positive\")\n"
+        }
+      ]
+    },
+    {
+      "id": "ordinary-chat",
+      "category": "chat",
+      "messages": [
+        {
+          "role": "user",
+          "content": "In two concise paragraphs, explain why the sky can look red near sunset but blue at noon."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,320 @@
+3092 (llama-bench) 6 1 1
+---
+3092 (llama-bench) 6 9 4
+---
+3092 (llama-bench) 6 17 5
+---
+3092 (llama-bench) 6 25 8
+---
+3092 (llama-bench) 6 36 9
+---
+3092 (llama-bench) 6 46 9
+---
+3092 (llama-bench) 7 57 10
+---
+3092 (llama-bench) 7 60 14
+---
+3092 (llama-bench) 7 60 22
+---
+3092 (llama-bench) 6 60 26
+---
+3092 (llama-bench) 7 60 34
+---
+3092 (llama-bench) 7 60 39
+---
+3092 (llama-bench) 6 61 47
+---
+3092 (llama-bench) 2 61 56
+---
+3092 (llama-bench) 6 61 63
+---
+3092 (llama-bench) 7 61 71
+---
+3092 (llama-bench) 6 64 77
+---
+3092 (llama-bench) 6 73 79
+---
+3092 (llama-bench) 6 81 83
+---
+3092 (llama-bench) 6 90 87
+---
+3092 (llama-bench) 7 93 101
+---
+3092 (llama-bench) 3 97 110
+---
+3092 (llama-bench) 5 101 117
+---
+3092 (llama-bench) 7 105 124
+---
+3092 (llama-bench) 4 110 129
+---
+3092 (llama-bench) 4 115 135
+---
+3092 (llama-bench) 7 118 144
+---
+3092 (llama-bench) 5 123 152
+---
+3092 (llama-bench) 4 129 163
+---
+3092 (llama-bench) 1 134 168
+3432 (llama-bench) 1 8 0
+---
+3092 (llama-bench) 7 140 173
+3432 (llama-bench) 6 19 0
+---
+3092 (llama-bench) 4 147 176
+3432 (llama-bench) 7 30 0
+---
+3092 (llama-bench) 7 150 182
+3432 (llama-bench) 1 42 0
+---
+3092 (llama-bench) 7 164 182
+3432 (llama-bench) 6 55 0
+---
+3092 (llama-bench) 7 178 182
+3432 (llama-bench) 6 69 0
+---
+3092 (llama-bench) 7 191 182
+3432 (llama-bench) 6 82 0
+---
+3092 (llama-bench) 4 204 182
+3432 (llama-bench) 7 95 0
+---
+3092 (llama-bench) 6 217 182
+3432 (llama-bench) 2 108 0
+---
+3092 (llama-bench) 6 230 182
+3432 (llama-bench) 4 121 0
+---
+3092 (llama-bench) 6 241 182
+3432 (llama-bench) 4 134 0
+---
+3092 (llama-bench) 2 252 182
+3432 (llama-bench) 7 145 0
+---
+3092 (llama-bench) 6 266 182
+3432 (llama-bench) 5 158 0
+---
+3092 (llama-bench) 2 273 186
+3432 (llama-bench) 7 169 0
+---
+3092 (llama-bench) 6 284 186
+3432 (llama-bench) 1 180 0
+---
+3092 (llama-bench) 1 295 186
+3432 (llama-bench) 6 192 0
+---
+3092 (llama-bench) 6 306 186
+3432 (llama-bench) 5 203 0
+---
+3092 (llama-bench) 2 317 187
+3432 (llama-bench) 1 215 0
+---
+3092 (llama-bench) 5 318 193
+3432 (llama-bench) 7 225 0
+---
+3092 (llama-bench) 6 328 193
+3432 (llama-bench) 7 237 0
+---
+3092 (llama-bench) 3 341 193
+3432 (llama-bench) 6 250 0
+---
+3092 (llama-bench) 5 354 193
+3432 (llama-bench) 3 263 0
+---
+3092 (llama-bench) 6 367 193
+3432 (llama-bench) 1 275 0
+---
+3092 (llama-bench) 7 380 193
+3432 (llama-bench) 3 289 0
+---
+3092 (llama-bench) 6 393 193
+3432 (llama-bench) 5 301 0
+---
+3092 (llama-bench) 6 406 193
+3432 (llama-bench) 4 314 0
+---
+3092 (llama-bench) 1 419 193
+3432 (llama-bench) 6 328 0
+---
+3092 (llama-bench) 5 432 193
+3432 (llama-bench) 7 341 0
+---
+3092 (llama-bench) 6 444 193
+3432 (llama-bench) 7 354 0
+---
+3092 (llama-bench) 4 457 193
+3432 (llama-bench) 7 367 0
+---
+3092 (llama-bench) 6 470 193
+3432 (llama-bench) 7 380 0
+---
+3092 (llama-bench) 6 480 194
+3432 (llama-bench) 2 390 0
+---
+3092 (llama-bench) 6 493 194
+3432 (llama-bench) 3 403 0
+---
+3092 (llama-bench) 2 505 194
+3432 (llama-bench) 6 416 0
+---
+3092 (llama-bench) 6 519 194
+3432 (llama-bench) 0 429 0
+---
+3092 (llama-bench) 6 527 196
+3432 (llama-bench) 7 441 0
+---
+3092 (llama-bench) 7 542 196
+3432 (llama-bench) 2 456 0
+---
+3092 (llama-bench) 4 555 196
+3432 (llama-bench) 6 469 0
+---
+3092 (llama-bench) 4 568 196
+3432 (llama-bench) 7 482 0
+---
+3092 (llama-bench) 6 581 196
+3432 (llama-bench) 7 495 0
+---
+3092 (llama-bench) 3 594 196
+3432 (llama-bench) 7 508 0
+---
+3092 (llama-bench) 5 606 196
+3432 (llama-bench) 6 520 0
+---
+3092 (llama-bench) 7 618 196
+3432 (llama-bench) 5 532 0
+---
+3092 (llama-bench) 6 631 196
+3432 (llama-bench) 2 545 0
+---
+3092 (llama-bench) 1 644 196
+3432 (llama-bench) 6 558 0
+---
+3092 (llama-bench) 5 657 196
+3432 (llama-bench) 1 572 0
+---
+3092 (llama-bench) 2 670 196
+3432 (llama-bench) 7 585 0
+---
+3092 (llama-bench) 1 683 196
+3432 (llama-bench) 6 598 0
+---
+3092 (llama-bench) 7 696 196
+3432 (llama-bench) 6 611 0
+---
+3092 (llama-bench) 4 709 196
+3432 (llama-bench) 6 623 0
+---
+3092 (llama-bench) 7 721 196
+3432 (llama-bench) 3 635 0
+---
+3092 (llama-bench) 6 734 196
+3432 (llama-bench) 4 648 0
+---
+3092 (llama-bench) 3 747 196
+3432 (llama-bench) 7 661 0
+---
+3092 (llama-bench) 6 760 196
+3432 (llama-bench) 4 674 0
+---
+3092 (llama-bench) 6 773 196
+3432 (llama-bench) 7 687 0
+---
+3092 (llama-bench) 6 787 196
+3432 (llama-bench) 7 701 0
+---
+3092 (llama-bench) 3 799 196
+3432 (llama-bench) 7 714 0
+---
+3092 (llama-bench) 2 811 196
+3432 (llama-bench) 7 726 0
+---
+3092 (llama-bench) 6 824 196
+3432 (llama-bench) 3 739 0
+---
+3092 (llama-bench) 5 837 196
+3432 (llama-bench) 7 752 0
+---
+3092 (llama-bench) 2 850 196
+3432 (llama-bench) 6 765 0
+---
+3092 (llama-bench) 2 862 196
+3432 (llama-bench) 6 777 0
+---
+3092 (llama-bench) 7 876 196
+3432 (llama-bench) 4 790 0
+---
+3092 (llama-bench) 1 889 196
+3432 (llama-bench) 4 804 0
+---
+3092 (llama-bench) 6 902 196
+3432 (llama-bench) 4 817 0
+---
+3092 (llama-bench) 4 914 196
+3432 (llama-bench) 6 829 0
+---
+3092 (llama-bench) 6 928 196
+3432 (llama-bench) 1 842 1
+---
+3092 (llama-bench) 6 940 196
+3432 (llama-bench) 5 854 1
+---
+3092 (llama-bench) 5 953 196
+3432 (llama-bench) 7 867 1
+---
+3092 (llama-bench) 7 966 196
+3432 (llama-bench) 6 880 1
+---
+3092 (llama-bench) 2 980 196
+3432 (llama-bench) 6 894 1
+---
+3092 (llama-bench) 7 993 196
+3432 (llama-bench) 6 907 1
+---
+3092 (llama-bench) 7 1006 196
+3432 (llama-bench) 3 919 1
+---
+3092 (llama-bench) 6 1017 196
+3432 (llama-bench) 4 930 1
+---
+3092 (llama-bench) 3 1028 196
+3432 (llama-bench) 6 941 1
+---
+3092 (llama-bench) 6 1039 196
+3432 (llama-bench) 4 952 1
+---
+3092 (llama-bench) 1 1050 196
+3432 (llama-bench) 3 964 1
+---
+3092 (llama-bench) 1 1061 196
+3432 (llama-bench) 6 975 1
+---
+3092 (llama-bench) 7 1075 196
+3432 (llama-bench) 1 988 1
+---
+3092 (llama-bench) 7 1087 196
+3432 (llama-bench) 1 1001 1
+---
+3092 (llama-bench) 1 1100 196
+3432 (llama-bench) 6 1013 1
+---
+3092 (llama-bench) 7 1113 196
+3432 (llama-bench) 1 1026 1
+---
+3092 (llama-bench) 7 1127 196
+3432 (llama-bench) 6 1040 1
+---
+3092 (llama-bench) 5 1140 196
+3432 (llama-bench) 6 1052 1
+---
+3092 (llama-bench) 1 1153 196
+3432 (llama-bench) 7 1065 1
+---
+3092 (llama-bench) 4 1165 196
+3432 (llama-bench) 7 1077 1
+---
+3092 (llama-bench) 6 1171 202
+---
+3092 (llama-bench) 6 1176 208
+---

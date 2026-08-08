@@ -1,0 +1,6605 @@
+{
+  "schemaVersion": 1,
+  "tool": "autotune",
+  "suite": "autotune",
+  "timestampUtc": "2026-08-07T16:53:22.898154+00:00",
+  "dryRun": false,
+  "provenance": {
+    "runnerFile": "tools/autotune.py",
+    "runnerFileSha256": "da65d9600c2c453d35c5c26c8558e8e94002628d7c239e15f5bacf9676888ab1",
+    "suiteFile": "/home/manishm/Projects/llama-edge-android/benchmarks/suites/autotune.json",
+    "suiteFileSha256": "3ed8a5bd0aa0fef3df332d8103ae8060ce697c30f42432f4033c1136238fc780",
+    "manifestFile": "models/manifest.json",
+    "manifestFileSha256": "653e9d07d5e4493fd8d046723250436bc0d68ee584992f12c81a55fe1c487768",
+    "knownProfilesFile": "/home/manishm/Projects/llama-edge-android/benchmarks/profiles/known-profiles.json",
+    "knownProfilesFileSha256": "4803834e7bbc7594baacf5d8974a9674cabe552dfef3e752e2cf6a7d34a099ce",
+    "appCommit": "54aabbde5b9c31340f685ba6075a00222b8908f8",
+    "scoringRule": "score(metric) = mean - k*stddev, pooled over all rounds; expressed as a ratio to the stock-default row; combined = tgWeight*tgRatio + (1-tgWeight)*ppRatio. Any row whose relative stddev exceeds maxRelStddev on a measured metric is disqualified from winning. The winner must beat stock by at least minImprovement."
+  },
+  "device": {
+    "model": "24094RAD4I",
+    "android": "16",
+    "soc": "MT6855",
+    "vulkanDevice": null,
+    "vulkanDriver": null,
+    "serial": "8DYTMRKF755TOBZD",
+    "fingerprint": "21af563364372fb1a807f56aa981a621f76791a43e9e148249a90ea546c08b38"
+  },
+  "topology": {
+    "coreCount": 8,
+    "clusters": [
+      {
+        "maxFreqKhz": 2500000,
+        "cpuIds": [
+          6,
+          7
+        ],
+        "midrPart": "0xd41",
+        "midrImplementer": "0x41",
+        "label": "Cortex-A78",
+        "tier": "big",
+        "size": 2,
+        "cpuMask": "c0"
+      },
+      {
+        "maxFreqKhz": 2000000,
+        "cpuIds": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "midrPart": "0xd05",
+        "midrImplementer": "0x41",
+        "label": "Cortex-A55",
+        "tier": "little",
+        "size": 6,
+        "cpuMask": "3f"
+      }
+    ],
+    "bigCpuIds": [
+      6,
+      7
+    ],
+    "bigCoreCount": 2,
+    "littleCoreCount": 6,
+    "midrSignature": "2x0xd41+6x0xd05",
+    "clusterSignature": "2x0xd41@2500000+6x0xd05@2000000",
+    "memory": {
+      "memTotalKb": 5609316,
+      "memAvailableKb": 1552048,
+      "swapFreeKb": 3741088
+    },
+    "freqSignal": true,
+    "midrSignal": true,
+    "confidence": "high",
+    "source": "device",
+    "notes": []
+  },
+  "model": {
+    "id": "llama-3.2-1b-instruct-q4_0",
+    "file": "Llama-3.2-1B-Instruct-Q4_0.gguf",
+    "sha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
+    "quantization": "Q4_0"
+  },
+  "cacheKey": "21af563364372fb1:fa0390e7c043f89a:fabc6b3dd1fb6f2e",
+  "profileIdentity": {
+    "schemaVersion": 1,
+    "binarySha256": "459de42359a7abc37ac1e8b0df0ef20b54175d6e09b1d65dbeedd873846fc68b",
+    "llamaCppSourceCommit": "178a6c44937154dc4c4eff0d166f4a044c4fceba",
+    "modelSha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
+    "contextSize": 512,
+    "benchmarkShape": {
+      "promptTokens": 64,
+      "genTokens": 32,
+      "repetitions": 2,
+      "rounds": 3
+    },
+    "workloadClass": "interactive-chat-decode-weighted",
+    "scoring": {
+      "stabilityK": 1.0,
+      "tgWeight": 0.7,
+      "maxRelStddev": 0.1,
+      "minImprovement": 0.03,
+      "maxOrderDrift": 0.1
+    },
+    "sha256": "fabc6b3dd1fb6f2eea7c0fe48fd5ce0b0a45ae2fa244d8fa16622ddb1557f0e6"
+  },
+  "benchmarkBinary": {
+    "path": "/data/local/tmp/llama-edge/llama-bench",
+    "sha256": "459de42359a7abc37ac1e8b0df0ef20b54175d6e09b1d65dbeedd873846fc68b",
+    "llamaCppSourceCommit": "178a6c44937154dc4c4eff0d166f4a044c4fceba"
+  },
+  "source": "sweep",
+  "sweep": {
+    "rounds": 3,
+    "repetitionsPerRound": 2,
+    "promptTokens": 64,
+    "genTokens": 32,
+    "cooldownSeconds": 120,
+    "thermalGateCeilingC": 37.5,
+    "thermalMaxWaitSeconds": 300,
+    "orderPolicy": "counterbalanced: forward on even rounds, reversed on odd",
+    "startThermal": {
+      "batteryLevel": 91,
+      "batteryTempC": 36.5,
+      "thermalStatus": "2 (MODERATE)",
+      "memAvailableKb": 1577792,
+      "capturedAt": "2026-08-07T16:53:23.090520+00:00"
+    }
+  },
+  "candidates": [
+    {
+      "id": "stock-default",
+      "threads": null,
+      "cpuMask": null,
+      "family": "stock",
+      "rationale": "llama.cpp's own default thread count with no affinity mask. Every ratio in this report is measured against it, because the claim under test is 'autotuned beats stock defaults'.",
+      "threadsBatch": null
+    },
+    {
+      "id": "pin-big-t2",
+      "threads": 2,
+      "cpuMask": "c0",
+      "family": "pinned",
+      "rationale": "pin to the big cluster(s) (Cortex-A78); no slower core can join the barrier",
+      "threadsBatch": 2
+    },
+    {
+      "id": "pin-little-t6",
+      "threads": 6,
+      "cpuMask": "3f",
+      "family": "pinned",
+      "rationale": "pin to the Cortex-A55 cluster alone; on a DRAM-bound decode the little cores can saturate bandwidth without the big cores",
+      "threadsBatch": 6
+    },
+    {
+      "id": "t2",
+      "threads": 2,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "2/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 2
+    },
+    {
+      "id": "t4",
+      "threads": 4,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "4/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 4
+    },
+    {
+      "id": "t6",
+      "threads": 6,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "6/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 6
+    },
+    {
+      "id": "t8",
+      "threads": 8,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "8/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 8
+    },
+    {
+      "id": "pp8-tg2",
+      "threads": 2,
+      "cpuMask": null,
+      "family": "phase-pair",
+      "rationale": "use all 8 discovered cores for compute-heavy prefill and 2 topology-derived threads for decode",
+      "threadsBatch": 8
+    },
+    {
+      "id": "pp8-tg4",
+      "threads": 4,
+      "cpuMask": null,
+      "family": "phase-pair",
+      "rationale": "use all 8 discovered cores for compute-heavy prefill and 4 topology-derived threads for decode",
+      "threadsBatch": 8
+    },
+    {
+      "id": "pp8-tg6",
+      "threads": 6,
+      "cpuMask": null,
+      "family": "phase-pair",
+      "rationale": "use all 8 discovered cores for compute-heavy prefill and 6 topology-derived threads for decode",
+      "threadsBatch": 8
+    }
+  ],
+  "warmup": {
+    "candidateId": "stock-default",
+    "round": 0,
+    "position": 0,
+    "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -ngl 0 -c 512 -r 1 -p 64 -n 32 -o json",
+    "startedAt": "2026-08-07T16:53:23.315755+00:00",
+    "thermalStart": {
+      "batteryLevel": 91,
+      "batteryTempC": 36.5,
+      "thermalStatus": "2 (MODERATE)",
+      "memAvailableKb": 1568916,
+      "capturedAt": "2026-08-07T16:53:23.315755+00:00"
+    },
+    "thermalEnd": {
+      "batteryLevel": 91,
+      "batteryTempC": 36.5,
+      "thermalStatus": "2 (MODERATE)",
+      "memAvailableKb": 1871912,
+      "capturedAt": "2026-08-07T16:53:32.736196+00:00"
+    },
+    "metrics": {
+      "ppTokensPerSec": {
+        "mean": 65.818749,
+        "std": 0.0,
+        "samples": [
+          65.8187
+        ]
+      },
+      "tgTokensPerSec": {
+        "mean": 12.497043,
+        "std": 0.0,
+        "samples": [
+          12.497
+        ]
+      }
+    },
+    "resolvedThreads": 8,
+    "resolvedThreadsBatch": 8,
+    "resolvedContextSize": 512,
+    "llamaCppCommit": "178a6c4",
+    "ok": true,
+    "rawBench": [
+      {
+        "build_commit": "178a6c4",
+        "build_number": 1,
+        "cpu_info": "CPU",
+        "gpu_info": "",
+        "backends": "CPU",
+        "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+        "model_type": "llama 1B Q4_0",
+        "model_size": 765194368,
+        "model_n_params": 1235814432,
+        "n_ctx": 512,
+        "n_batch": 2048,
+        "n_ubatch": 512,
+        "n_threads": 8,
+        "n_threads_batch": 8,
+        "cpu_mask": "0x0",
+        "cpu_strict": false,
+        "poll": 50,
+        "type_k": "f16",
+        "type_v": "f16",
+        "n_gpu_layers": 0,
+        "n_cpu_moe": 0,
+        "split_mode": "layer",
+        "main_gpu": 0,
+        "no_kv_offload": false,
+        "flash_attn": -1,
+        "devices": "auto",
+        "tensor_split": "0.00",
+        "tensor_buft_overrides": "none",
+        "use_mmap": true,
+        "use_direct_io": false,
+        "embeddings": false,
+        "no_op_offload": 0,
+        "no_host": false,
+        "fit_target": 0,
+        "fit_min_ctx": 0,
+        "n_prompt": 64,
+        "n_gen": 0,
+        "n_depth": 0,
+        "test_time": "2026-08-07T16:53:26Z",
+        "avg_ns": 972367308,
+        "stddev_ns": 0,
+        "avg_ts": 65.818749,
+        "stddev_ts": 0.0,
+        "samples_ns": [
+          972367308
+        ],
+        "samples_ts": [
+          65.8187
+        ]
+      },
+      {
+        "build_commit": "178a6c4",
+        "build_number": 1,
+        "cpu_info": "CPU",
+        "gpu_info": "",
+        "backends": "CPU",
+        "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+        "model_type": "llama 1B Q4_0",
+        "model_size": 765194368,
+        "model_n_params": 1235814432,
+        "n_ctx": 512,
+        "n_batch": 2048,
+        "n_ubatch": 512,
+        "n_threads": 8,
+        "n_threads_batch": 8,
+        "cpu_mask": "0x0",
+        "cpu_strict": false,
+        "poll": 50,
+        "type_k": "f16",
+        "type_v": "f16",
+        "n_gpu_layers": 0,
+        "n_cpu_moe": 0,
+        "split_mode": "layer",
+        "main_gpu": 0,
+        "no_kv_offload": false,
+        "flash_attn": -1,
+        "devices": "auto",
+        "tensor_split": "0.00",
+        "tensor_buft_overrides": "none",
+        "use_mmap": true,
+        "use_direct_io": false,
+        "embeddings": false,
+        "no_op_offload": 0,
+        "no_host": false,
+        "fit_target": 0,
+        "fit_min_ctx": 0,
+        "n_prompt": 0,
+        "n_gen": 32,
+        "n_depth": 0,
+        "test_time": "2026-08-07T16:53:29Z",
+        "avg_ns": 2560605770,
+        "stddev_ns": 0,
+        "avg_ts": 12.497043,
+        "stddev_ts": 0.0,
+        "samples_ns": [
+          2560605770
+        ],
+        "samples_ts": [
+          12.497
+        ]
+      }
+    ],
+    "scored": false,
+    "purpose": "warmup (discarded; primes the page cache)"
+  },
+  "records": [
+    {
+      "candidateId": "stock-default",
+      "round": 1,
+      "position": 0,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T16:53:32.957274+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1880204,
+        "capturedAt": "2026-08-07T16:53:32.957274+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1903180,
+        "capturedAt": "2026-08-07T16:53:43.437820+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 75.738404,
+          "std": 8.09415,
+          "samples": [
+            81.4618,
+            70.015
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.828738,
+          "std": 1.349365,
+          "samples": [
+            13.7829,
+            11.8746
+          ]
+        }
+      },
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T16:53:35Z",
+          "avg_ns": 849867077,
+          "stddev_ns": 90825146,
+          "avg_ts": 75.738404,
+          "stddev_ts": 8.09415,
+          "samples_ns": [
+            785644000,
+            914090154
+          ],
+          "samples_ts": [
+            81.4618,
+            70.015
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T16:53:38Z",
+          "avg_ns": 2508274731,
+          "stddev_ns": 263827795,
+          "avg_ts": 12.828738,
+          "stddev_ts": 1.349365,
+          "samples_ns": [
+            2321720308,
+            2694829154
+          ],
+          "samples_ts": [
+            13.7829,
+            11.8746
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pin-big-t2",
+      "round": 1,
+      "position": 1,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -ngl 0 -c 512 -r 2 -p 64 -n 32 -C c0 -o json",
+      "startedAt": "2026-08-07T16:55:43.835382+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.7,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1742436,
+        "capturedAt": "2026-08-07T16:55:43.835382+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.7,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2026884,
+        "capturedAt": "2026-08-07T16:55:55.643061+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 55.832996,
+          "std": 0.314092,
+          "samples": [
+            56.0551,
+            55.6109
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.630302,
+          "std": 0.010613,
+          "samples": [
+            12.6228,
+            12.6378
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "c0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T16:55:46Z",
+          "avg_ns": 1146293730,
+          "stddev_ns": 6448719,
+          "avg_ts": 55.832996,
+          "stddev_ts": 0.314092,
+          "samples_ns": [
+            1141733923,
+            1150853538
+          ],
+          "samples_ts": [
+            56.0551,
+            55.6109
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "c0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T16:55:50Z",
+          "avg_ns": 2533590346,
+          "stddev_ns": 2128989,
+          "avg_ts": 12.630302,
+          "stddev_ts": 0.010613,
+          "samples_ns": [
+            2535095769,
+            2532084923
+          ],
+          "samples_ts": [
+            12.6228,
+            12.6378
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pin-little-t6",
+      "round": 1,
+      "position": 2,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -ngl 0 -c 512 -r 2 -p 64 -n 32 -C 3f -o json",
+      "startedAt": "2026-08-07T16:57:56.064032+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1882868,
+        "capturedAt": "2026-08-07T16:57:56.064032+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2000656,
+        "capturedAt": "2026-08-07T16:58:06.019886+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 67.620246,
+          "std": 1.430355,
+          "samples": [
+            66.6088,
+            68.6317
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 14.465584,
+          "std": 0.188964,
+          "samples": [
+            14.5992,
+            14.332
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "3f",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T16:57:58Z",
+          "avg_ns": 946673884,
+          "stddev_ns": 20024821,
+          "avg_ts": 67.620246,
+          "stddev_ts": 1.430355,
+          "samples_ns": [
+            960833538,
+            932514231
+          ],
+          "samples_ts": [
+            66.6088,
+            68.6317
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "3f",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T16:58:01Z",
+          "avg_ns": 2212335885,
+          "stddev_ns": 28899725,
+          "avg_ts": 14.465584,
+          "stddev_ts": 0.188964,
+          "samples_ns": [
+            2191900693,
+            2232771077
+          ],
+          "samples_ts": [
+            14.5992,
+            14.332
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t2",
+      "round": 1,
+      "position": 3,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:00:06.451730+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1900912,
+        "capturedAt": "2026-08-07T17:00:06.451730+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2013508,
+        "capturedAt": "2026-08-07T17:00:17.523448+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 57.154958,
+          "std": 0.007005,
+          "samples": [
+            57.15,
+            57.1599
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.872083,
+          "std": 0.013363,
+          "samples": [
+            12.8815,
+            12.8626
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:00:08Z",
+          "avg_ns": 1119762885,
+          "stddev_ns": 137232,
+          "avg_ts": 57.154958,
+          "stddev_ts": 0.007005,
+          "samples_ns": [
+            1119859923,
+            1119665847
+          ],
+          "samples_ts": [
+            57.15,
+            57.1599
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:00:12Z",
+          "avg_ns": 2486001538,
+          "stddev_ns": 2581794,
+          "avg_ts": 12.872083,
+          "stddev_ts": 0.013363,
+          "samples_ns": [
+            2484176615,
+            2487826462
+          ],
+          "samples_ts": [
+            12.8815,
+            12.8626
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t4",
+      "round": 1,
+      "position": 4,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 4 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:02:17.964333+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1860076,
+        "capturedAt": "2026-08-07T17:02:17.964333+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1928172,
+        "capturedAt": "2026-08-07T17:02:29.349322+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 58.604635,
+          "std": 2.331813,
+          "samples": [
+            60.2535,
+            56.9558
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.446631,
+          "std": 0.117911,
+          "samples": [
+            11.3633,
+            11.53
+          ]
+        }
+      },
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 4,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 4,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:02:20Z",
+          "avg_ns": 1092928923,
+          "stddev_ns": 43486413,
+          "avg_ts": 58.604635,
+          "stddev_ts": 2.331813,
+          "samples_ns": [
+            1062179385,
+            1123678461
+          ],
+          "samples_ts": [
+            60.2535,
+            56.9558
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 4,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:02:23Z",
+          "avg_ns": 2795730731,
+          "stddev_ns": 28798555,
+          "avg_ts": 11.446631,
+          "stddev_ts": 0.117911,
+          "samples_ns": [
+            2816094385,
+            2775367077
+          ],
+          "samples_ts": [
+            11.3633,
+            11.53
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t6",
+      "round": 1,
+      "position": 5,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:04:29.813281+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1767888,
+        "capturedAt": "2026-08-07T17:04:29.813281+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1890812,
+        "capturedAt": "2026-08-07T17:04:39.795861+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 69.40782,
+          "std": 1.898957,
+          "samples": [
+            68.0651,
+            70.7506
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 14.498226,
+          "std": 0.408317,
+          "samples": [
+            14.7869,
+            14.2095
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:04:32Z",
+          "avg_ns": 922431538,
+          "stddev_ns": 25237185,
+          "avg_ts": 69.40782,
+          "stddev_ts": 1.898957,
+          "samples_ns": [
+            940276923,
+            904586153
+          ],
+          "samples_ts": [
+            68.0651,
+            70.7506
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:04:35Z",
+          "avg_ns": 2208042308,
+          "stddev_ns": 62185689,
+          "avg_ts": 14.498226,
+          "stddev_ts": 0.408317,
+          "samples_ns": [
+            2164070385,
+            2252014231
+          ],
+          "samples_ts": [
+            14.7869,
+            14.2095
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t8",
+      "round": 1,
+      "position": 6,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:06:40.168785+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1895920,
+        "capturedAt": "2026-08-07T17:06:40.168785+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1931520,
+        "capturedAt": "2026-08-07T17:06:50.865401+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 70.863599,
+          "std": 7.040042,
+          "samples": [
+            65.8855,
+            75.8417
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.157493,
+          "std": 0.654595,
+          "samples": [
+            13.6204,
+            12.6946
+          ]
+        }
+      },
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:06:42Z",
+          "avg_ns": 907622500,
+          "stddev_ns": 90169005,
+          "avg_ts": 70.863599,
+          "stddev_ts": 7.040042,
+          "samples_ns": [
+            971381615,
+            843863385
+          ],
+          "samples_ts": [
+            65.8855,
+            75.8417
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:06:45Z",
+          "avg_ns": 2435087846,
+          "stddev_ns": 121147408,
+          "avg_ts": 13.157493,
+          "stddev_ts": 0.654595,
+          "samples_ns": [
+            2349423692,
+            2520752000
+          ],
+          "samples_ts": [
+            13.6204,
+            12.6946
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg2",
+      "round": 1,
+      "position": 7,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:08:51.315587+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1837036,
+        "capturedAt": "2026-08-07T17:08:51.315587+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1972228,
+        "capturedAt": "2026-08-07T17:09:01.499717+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 76.412716,
+          "std": 7.198661,
+          "samples": [
+            71.3225,
+            81.5029
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.941881,
+          "std": 0.002965,
+          "samples": [
+            12.944,
+            12.9398
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:08:53Z",
+          "avg_ns": 841290192,
+          "stddev_ns": 79255954,
+          "avg_ts": 76.412716,
+          "stddev_ts": 7.198661,
+          "samples_ns": [
+            897332615,
+            785247769
+          ],
+          "samples_ts": [
+            71.3225,
+            81.5029
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:08:56Z",
+          "avg_ns": 2472592808,
+          "stddev_ns": 566392,
+          "avg_ts": 12.941881,
+          "stddev_ts": 0.002965,
+          "samples_ns": [
+            2472192308,
+            2472993308
+          ],
+          "samples_ts": [
+            12.944,
+            12.9398
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg4",
+      "round": 1,
+      "position": 8,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 4 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:11:01.943924+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1556084,
+        "capturedAt": "2026-08-07T17:11:01.943924+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1809128,
+        "capturedAt": "2026-08-07T17:11:16.850267+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 75.223056,
+          "std": 5.790777,
+          "samples": [
+            71.1284,
+            79.3178
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 8.890889,
+          "std": 3.308689,
+          "samples": [
+            11.2305,
+            6.55129
+          ]
+        }
+      },
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:11:05Z",
+          "avg_ns": 853331461,
+          "stddev_ns": 65690655,
+          "avg_ts": 75.223056,
+          "stddev_ts": 5.790777,
+          "samples_ns": [
+            899781769,
+            806881153
+          ],
+          "samples_ts": [
+            71.1284,
+            79.3178
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:11:08Z",
+          "avg_ns": 3866959769,
+          "stddev_ns": 1439064996,
+          "avg_ts": 8.890889,
+          "stddev_ts": 3.308689,
+          "samples_ns": [
+            2849387154,
+            4884532385
+          ],
+          "samples_ts": [
+            11.2305,
+            6.55129
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg6",
+      "round": 1,
+      "position": 9,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:13:17.293846+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1483636,
+        "capturedAt": "2026-08-07T17:13:17.293846+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1885164,
+        "capturedAt": "2026-08-07T17:13:34.192403+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 53.90453,
+          "std": 13.825923,
+          "samples": [
+            44.1281,
+            63.6809
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 9.384042,
+          "std": 1.370719,
+          "samples": [
+            10.3533,
+            8.4148
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:13:21Z",
+          "avg_ns": 1227666269,
+          "stddev_ns": 314882975,
+          "avg_ts": 53.90453,
+          "stddev_ts": 13.825923,
+          "samples_ns": [
+            1450322154,
+            1005010385
+          ],
+          "samples_ts": [
+            44.1281,
+            63.6809
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:13:26Z",
+          "avg_ns": 3446815385,
+          "stddev_ns": 503473415,
+          "avg_ts": 9.384042,
+          "stddev_ts": 1.370719,
+          "samples_ns": [
+            3090805924,
+            3802824847
+          ],
+          "samples_ts": [
+            10.3533,
+            8.4148
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg6",
+      "round": 2,
+      "position": 0,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:15:34.657599+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1754988,
+        "capturedAt": "2026-08-07T17:15:34.657599+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1906932,
+        "capturedAt": "2026-08-07T17:15:52.259442+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 26.94137,
+          "std": 14.268867,
+          "samples": [
+            37.031,
+            16.8518
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 9.86188,
+          "std": 0.971161,
+          "samples": [
+            9.17517,
+            10.5486
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:15:37Z",
+          "avg_ns": 2763053077,
+          "stddev_ns": 1463386530,
+          "avg_ts": 26.94137,
+          "stddev_ts": 14.268867,
+          "samples_ns": [
+            1728282538,
+            3797823616
+          ],
+          "samples_ts": [
+            37.031,
+            16.8518
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:15:44Z",
+          "avg_ns": 3260627423,
+          "stddev_ns": 321094425,
+          "avg_ts": 9.86188,
+          "stddev_ts": 0.971161,
+          "samples_ns": [
+            3487675462,
+            3033579385
+          ],
+          "samples_ts": [
+            9.17517,
+            10.5486
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg4",
+      "round": 2,
+      "position": 1,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 4 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:17:52.730756+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.2,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1841544,
+        "capturedAt": "2026-08-07T17:17:52.730756+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.2,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2072276,
+        "capturedAt": "2026-08-07T17:18:05.174073+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 84.999068,
+          "std": 3.72902,
+          "samples": [
+            82.3623,
+            87.6359
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.242323,
+          "std": 0.140343,
+          "samples": [
+            11.1431,
+            11.3416
+          ]
+        }
+      },
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:17:55Z",
+          "avg_ns": 753674731,
+          "stddev_ns": 33064693,
+          "avg_ts": 84.999068,
+          "stddev_ts": 3.72902,
+          "samples_ns": [
+            777055000,
+            730294462
+          ],
+          "samples_ts": [
+            82.3623,
+            87.6359
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:17:59Z",
+          "avg_ns": 2846608538,
+          "stddev_ns": 35535568,
+          "avg_ts": 11.242323,
+          "stddev_ts": 0.140343,
+          "samples_ns": [
+            2871735923,
+            2821481154
+          ],
+          "samples_ts": [
+            11.1431,
+            11.3416
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg2",
+      "round": 2,
+      "position": 2,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:20:05.614008+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.1,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1793080,
+        "capturedAt": "2026-08-07T17:20:05.614008+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.1,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1992576,
+        "capturedAt": "2026-08-07T17:20:17.329473+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 78.993488,
+          "std": 2.528817,
+          "samples": [
+            80.7816,
+            77.2053
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.123021,
+          "std": 0.340321,
+          "samples": [
+            12.8824,
+            13.3637
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:20:08Z",
+          "avg_ns": 810608731,
+          "stddev_ns": 25950002,
+          "avg_ts": 78.993488,
+          "stddev_ts": 2.528817,
+          "samples_ns": [
+            792259308,
+            828958154
+          ],
+          "samples_ts": [
+            80.7816,
+            77.2053
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:20:12Z",
+          "avg_ns": 2439283231,
+          "stddev_ns": 63258317,
+          "avg_ts": 13.123021,
+          "stddev_ts": 0.340321,
+          "samples_ns": [
+            2484013616,
+            2394552846
+          ],
+          "samples_ts": [
+            12.8824,
+            13.3637
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t8",
+      "round": 2,
+      "position": 3,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:22:17.787435+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.0,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1908832,
+        "capturedAt": "2026-08-07T17:22:17.787435+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2151960,
+        "capturedAt": "2026-08-07T17:22:30.529758+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 82.468832,
+          "std": 2.822363,
+          "samples": [
+            84.4645,
+            80.4731
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 8.577774,
+          "std": 2.722061,
+          "samples": [
+            6.65299,
+            10.5026
+          ]
+        }
+      },
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:22:20Z",
+          "avg_ns": 776505500,
+          "stddev_ns": 26574679,
+          "avg_ts": 82.468832,
+          "stddev_ts": 2.822363,
+          "samples_ns": [
+            757714385,
+            795296616
+          ],
+          "samples_ts": [
+            84.4645,
+            80.4731
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:22:22Z",
+          "avg_ns": 3928372884,
+          "stddev_ns": 1246625396,
+          "avg_ts": 8.577774,
+          "stddev_ts": 2.722061,
+          "samples_ns": [
+            4809870154,
+            3046875615
+          ],
+          "samples_ts": [
+            6.65299,
+            10.5026
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t6",
+      "round": 2,
+      "position": 4,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:24:31.002551+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1766080,
+        "capturedAt": "2026-08-07T17:24:31.002551+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2248820,
+        "capturedAt": "2026-08-07T17:24:43.671311+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 73.118038,
+          "std": 1.90627,
+          "samples": [
+            74.466,
+            71.7701
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 10.459058,
+          "std": 0.201509,
+          "samples": [
+            10.6015,
+            10.3166
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:24:34Z",
+          "avg_ns": 875594577,
+          "stddev_ns": 22827746,
+          "avg_ts": 73.118038,
+          "stddev_ts": 1.90627,
+          "samples_ns": [
+            859452923,
+            891736231
+          ],
+          "samples_ts": [
+            74.466,
+            71.7701
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:24:37Z",
+          "avg_ns": 3060116769,
+          "stddev_ns": 58957744,
+          "avg_ts": 10.459058,
+          "stddev_ts": 0.201509,
+          "samples_ns": [
+            3018427385,
+            3101806154
+          ],
+          "samples_ts": [
+            10.6015,
+            10.3166
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t4",
+      "round": 2,
+      "position": 5,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 4 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:26:44.117138+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.8,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2004152,
+        "capturedAt": "2026-08-07T17:26:44.117138+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.8,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2129664,
+        "capturedAt": "2026-08-07T17:26:55.959873+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 65.764551,
+          "std": 2.23305,
+          "samples": [
+            64.1855,
+            67.3436
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 10.965256,
+          "std": 0.403519,
+          "samples": [
+            10.6799,
+            11.2506
+          ]
+        }
+      },
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 4,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 4,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:26:46Z",
+          "avg_ns": 973729999,
+          "stddev_ns": 33063254,
+          "avg_ts": 65.764551,
+          "stddev_ts": 2.23305,
+          "samples_ns": [
+            997109230,
+            950350769
+          ],
+          "samples_ts": [
+            64.1855,
+            67.3436
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 4,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:26:49Z",
+          "avg_ns": 2920285885,
+          "stddev_ns": 107465925,
+          "avg_ts": 10.965256,
+          "stddev_ts": 0.403519,
+          "samples_ns": [
+            2996275770,
+            2844296000
+          ],
+          "samples_ts": [
+            10.6799,
+            11.2506
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t2",
+      "round": 2,
+      "position": 6,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:28:56.381352+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2116576,
+        "capturedAt": "2026-08-07T17:28:56.381352+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2149816,
+        "capturedAt": "2026-08-07T17:29:06.754968+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 61.71094,
+          "std": 0.64617,
+          "samples": [
+            61.254,
+            62.1679
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.313166,
+          "std": 0.015618,
+          "samples": [
+            13.3242,
+            13.3021
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:28:58Z",
+          "avg_ns": 1037150115,
+          "stddev_ns": 10860004,
+          "avg_ts": 61.71094,
+          "stddev_ts": 0.64617,
+          "samples_ns": [
+            1044829231,
+            1029471000
+          ],
+          "samples_ts": [
+            61.254,
+            62.1679
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:29:01Z",
+          "avg_ns": 2403637192,
+          "stddev_ns": 2819779,
+          "avg_ts": 13.313166,
+          "stddev_ts": 0.015618,
+          "samples_ns": [
+            2401643307,
+            2405631077
+          ],
+          "samples_ts": [
+            13.3242,
+            13.3021
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pin-little-t6",
+      "round": 2,
+      "position": 7,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -ngl 0 -c 512 -r 2 -p 64 -n 32 -C 3f -o json",
+      "startedAt": "2026-08-07T17:31:07.250639+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1936008,
+        "capturedAt": "2026-08-07T17:31:07.250639+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 37.2,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1983848,
+        "capturedAt": "2026-08-07T17:32:35.559101+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 73.471596,
+          "std": 2.257575,
+          "samples": [
+            71.8752,
+            75.0679
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 5.806351,
+          "std": 7.646363,
+          "samples": [
+            11.2131,
+            0.399556
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "3f",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:31:09Z",
+          "avg_ns": 871496346,
+          "stddev_ns": 26778623,
+          "avg_ts": 73.471596,
+          "stddev_ts": 2.257575,
+          "samples_ns": [
+            890431692,
+            852561000
+          ],
+          "samples_ts": [
+            71.8752,
+            75.0679
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "3f",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:31:12Z",
+          "avg_ns": 41471355694,
+          "stddev_ns": 3564611278,
+          "avg_ts": 5.806351,
+          "stddev_ts": 7.646363,
+          "samples_ns": [
+            2853793308,
+            80088918081
+          ],
+          "samples_ts": [
+            11.2131,
+            0.399556
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pin-big-t2",
+      "round": 2,
+      "position": 8,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -ngl 0 -c 512 -r 2 -p 64 -n 32 -C c0 -o json",
+      "startedAt": "2026-08-07T17:34:36.000454+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1763756,
+        "capturedAt": "2026-08-07T17:34:36.000454+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2132660,
+        "capturedAt": "2026-08-07T17:34:48.476393+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 55.220764,
+          "std": 2.533958,
+          "samples": [
+            53.429,
+            57.0125
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.552327,
+          "std": 0.626035,
+          "samples": [
+            12.1097,
+            12.995
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "c0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:34:39Z",
+          "avg_ns": 1160205846,
+          "stddev_ns": 53239288,
+          "avg_ts": 55.220764,
+          "stddev_ts": 2.533958,
+          "samples_ns": [
+            1197851693,
+            1122560000
+          ],
+          "samples_ts": [
+            53.429,
+            57.0125
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "c0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:34:43Z",
+          "avg_ns": 2552502731,
+          "stddev_ns": 127303642,
+          "avg_ts": 12.552327,
+          "stddev_ts": 0.626035,
+          "samples_ns": [
+            2642520000,
+            2462485462
+          ],
+          "samples_ts": [
+            12.1097,
+            12.995
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "stock-default",
+      "round": 2,
+      "position": 9,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:36:48.911265+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2122264,
+        "capturedAt": "2026-08-07T17:36:48.911265+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 36.4,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2152548,
+        "capturedAt": "2026-08-07T17:36:59.797100+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 83.453441,
+          "std": 0.79567,
+          "samples": [
+            84.0161,
+            82.8908
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 10.627374,
+          "std": 0.105797,
+          "samples": [
+            10.7022,
+            10.5526
+          ]
+        }
+      },
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:36:51Z",
+          "avg_ns": 766929538,
+          "stddev_ns": 7312241,
+          "avg_ts": 83.453441,
+          "stddev_ts": 0.79567,
+          "samples_ns": [
+            761759077,
+            772100000
+          ],
+          "samples_ts": [
+            84.0161,
+            82.8908
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:36:53Z",
+          "avg_ns": 3011241077,
+          "stddev_ns": 29977193,
+          "avg_ts": 10.627374,
+          "stddev_ts": 0.105797,
+          "samples_ns": [
+            2990044000,
+            3032438154
+          ],
+          "samples_ts": [
+            10.7022,
+            10.5526
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "stock-default",
+      "round": 3,
+      "position": 0,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:39:00.291324+00:00",
+      "thermalStart": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2002604,
+        "capturedAt": "2026-08-07T17:39:00.291324+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 91,
+        "batteryTempC": 35.9,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2105896,
+        "capturedAt": "2026-08-07T17:39:10.986634+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 85.179306,
+          "std": 1.019969,
+          "samples": [
+            85.9005,
+            84.4581
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 10.665581,
+          "std": 0.330082,
+          "samples": [
+            10.899,
+            10.4322
+          ]
+        }
+      },
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:39:02Z",
+          "avg_ns": 751410077,
+          "stddev_ns": 8997662,
+          "avg_ts": 85.179306,
+          "stddev_ts": 1.019969,
+          "samples_ns": [
+            745047769,
+            757772385
+          ],
+          "samples_ts": [
+            85.9005,
+            84.4581
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:39:04Z",
+          "avg_ns": 3001743000,
+          "stddev_ns": 92898817,
+          "avg_ts": 10.665581,
+          "stddev_ts": 0.330082,
+          "samples_ns": [
+            2936053616,
+            3067432384
+          ],
+          "samples_ts": [
+            10.899,
+            10.4322
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pin-big-t2",
+      "round": 3,
+      "position": 1,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -ngl 0 -c 512 -r 2 -p 64 -n 32 -C c0 -o json",
+      "startedAt": "2026-08-07T17:41:11.391330+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1833524,
+        "capturedAt": "2026-08-07T17:41:11.391330+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2114740,
+        "capturedAt": "2026-08-07T17:41:21.903303+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 63.720049,
+          "std": 0.354525,
+          "samples": [
+            63.4694,
+            63.9707
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.050968,
+          "std": 0.386679,
+          "samples": [
+            12.7775,
+            13.3244
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "c0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:41:13Z",
+          "avg_ns": 1004409000,
+          "stddev_ns": 5588499,
+          "avg_ts": 63.720049,
+          "stddev_ts": 0.354525,
+          "samples_ns": [
+            1008360539,
+            1000457462
+          ],
+          "samples_ts": [
+            63.4694,
+            63.9707
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "c0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:41:16Z",
+          "avg_ns": 2453002153,
+          "stddev_ns": 72678535,
+          "avg_ts": 13.050968,
+          "stddev_ts": 0.386679,
+          "samples_ns": [
+            2504393615,
+            2401610692
+          ],
+          "samples_ts": [
+            12.7775,
+            13.3244
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pin-little-t6",
+      "round": 3,
+      "position": 2,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -ngl 0 -c 512 -r 2 -p 64 -n 32 -C 3f -o json",
+      "startedAt": "2026-08-07T17:43:22.329781+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1704824,
+        "capturedAt": "2026-08-07T17:43:22.329781+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2064432,
+        "capturedAt": "2026-08-07T17:43:37.984332+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 51.921737,
+          "std": 2.317886,
+          "samples": [
+            53.5607,
+            50.2827
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 9.61333,
+          "std": 0.780192,
+          "samples": [
+            9.06165,
+            10.165
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "3f",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:43:26Z",
+          "avg_ns": 1233853884,
+          "stddev_ns": 55081628,
+          "avg_ts": 51.921737,
+          "stddev_ts": 2.317886,
+          "samples_ns": [
+            1194905307,
+            1272802462
+          ],
+          "samples_ts": [
+            53.5607,
+            50.2827
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "3f",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:43:30Z",
+          "avg_ns": 3339709731,
+          "stddev_ns": 271041807,
+          "avg_ts": 9.61333,
+          "stddev_ts": 0.780192,
+          "samples_ns": [
+            3531365231,
+            3148054231
+          ],
+          "samples_ts": [
+            9.06165,
+            10.165
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t2",
+      "round": 3,
+      "position": 3,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:45:38.440251+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1963416,
+        "capturedAt": "2026-08-07T17:45:38.440251+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2161948,
+        "capturedAt": "2026-08-07T17:45:51.479332+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 49.880369,
+          "std": 4.661424,
+          "samples": [
+            46.5842,
+            53.1765
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.024045,
+          "std": 2.364149,
+          "samples": [
+            9.35234,
+            12.6958
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:45:41Z",
+          "avg_ns": 1288697192,
+          "stddev_ns": 120431445,
+          "avg_ts": 49.880369,
+          "stddev_ts": 4.661424,
+          "samples_ns": [
+            1373855077,
+            1203539308
+          ],
+          "samples_ts": [
+            46.5842,
+            53.1765
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 2,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:45:45Z",
+          "avg_ns": 2971066039,
+          "stddev_ns": 637156569,
+          "avg_ts": 11.024045,
+          "stddev_ts": 2.364149,
+          "samples_ns": [
+            3421603770,
+            2520528308
+          ],
+          "samples_ts": [
+            9.35234,
+            12.6958
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t4",
+      "round": 3,
+      "position": 4,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 4 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:47:51.925251+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1956520,
+        "capturedAt": "2026-08-07T17:47:51.925251+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1929324,
+        "capturedAt": "2026-08-07T17:48:08.220328+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 65.905633,
+          "std": 0.016139,
+          "samples": [
+            65.8942,
+            65.917
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 7.514104,
+          "std": 4.64754,
+          "samples": [
+            10.8004,
+            4.2278
+          ]
+        }
+      },
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 4,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 4,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:47:54Z",
+          "avg_ns": 971085461,
+          "stddev_ns": 241854,
+          "avg_ts": 65.905633,
+          "stddev_ts": 0.016139,
+          "samples_ns": [
+            971253615,
+            970917308
+          ],
+          "samples_ts": [
+            65.8942,
+            65.917
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 4,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:47:57Z",
+          "avg_ns": 5265901539,
+          "stddev_ns": 3257006503,
+          "avg_ts": 7.514104,
+          "stddev_ts": 4.64754,
+          "samples_ns": [
+            2962850154,
+            7568952924
+          ],
+          "samples_ts": [
+            10.8004,
+            4.2278
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t6",
+      "round": 3,
+      "position": 5,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:50:08.697103+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1796640,
+        "capturedAt": "2026-08-07T17:50:08.697103+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.6,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2160248,
+        "capturedAt": "2026-08-07T17:50:21.564434+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 70.101357,
+          "std": 0.942488,
+          "samples": [
+            69.4349,
+            70.7678
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.277816,
+          "std": 0.101957,
+          "samples": [
+            11.3499,
+            11.2057
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:50:12Z",
+          "avg_ns": 913046308,
+          "stddev_ns": 12275591,
+          "avg_ts": 70.101357,
+          "stddev_ts": 0.942488,
+          "samples_ns": [
+            921726462,
+            904366154
+          ],
+          "samples_ts": [
+            69.4349,
+            70.7678
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 6,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:50:15Z",
+          "avg_ns": 2837544730,
+          "stddev_ns": 25652802,
+          "avg_ts": 11.277816,
+          "stddev_ts": 0.101957,
+          "samples_ns": [
+            2819405538,
+            2855683923
+          ],
+          "samples_ts": [
+            11.3499,
+            11.2057
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "t8",
+      "round": 3,
+      "position": 6,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:52:22.027287+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2145976,
+        "capturedAt": "2026-08-07T17:52:22.027287+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2154052,
+        "capturedAt": "2026-08-07T17:52:31.657216+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 81.357684,
+          "std": 2.857825,
+          "samples": [
+            83.3785,
+            79.3369
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.094244,
+          "std": 0.183056,
+          "samples": [
+            12.9648,
+            13.2237
+          ]
+        }
+      },
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:52:24Z",
+          "avg_ns": 787135346,
+          "stddev_ns": 27649481,
+          "avg_ts": 81.357684,
+          "stddev_ts": 2.857825,
+          "samples_ns": [
+            767584231,
+            806686462
+          ],
+          "samples_ts": [
+            83.3785,
+            79.3369
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 8,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:52:26Z",
+          "avg_ns": 2444060769,
+          "stddev_ns": 34167617,
+          "avg_ts": 13.094244,
+          "stddev_ts": 0.183056,
+          "samples_ns": [
+            2468220923,
+            2419900615
+          ],
+          "samples_ts": [
+            12.9648,
+            13.2237
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg2",
+      "round": 3,
+      "position": 7,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 2 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:54:32.131309+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2047820,
+        "capturedAt": "2026-08-07T17:54:32.131309+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2179524,
+        "capturedAt": "2026-08-07T17:54:41.983201+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 83.576918,
+          "std": 2.964149,
+          "samples": [
+            81.4809,
+            85.6729
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.186939,
+          "std": 0.047215,
+          "samples": [
+            13.1536,
+            13.2203
+          ]
+        }
+      },
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:54:34Z",
+          "avg_ns": 766243577,
+          "stddev_ns": 27175719,
+          "avg_ts": 83.576918,
+          "stddev_ts": 2.964149,
+          "samples_ns": [
+            785459693,
+            747027462
+          ],
+          "samples_ts": [
+            81.4809,
+            85.6729
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 2,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:54:36Z",
+          "avg_ns": 2426659077,
+          "stddev_ns": 8688492,
+          "avg_ts": 13.186939,
+          "stddev_ts": 0.047215,
+          "samples_ns": [
+            2432802769,
+            2420515385
+          ],
+          "samples_ts": [
+            13.1536,
+            13.2203
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg4",
+      "round": 3,
+      "position": 8,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 4 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:56:42.439857+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2012760,
+        "capturedAt": "2026-08-07T17:56:42.439857+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.3,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2098252,
+        "capturedAt": "2026-08-07T17:56:52.847034+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 82.120593,
+          "std": 0.787846,
+          "samples": [
+            82.6777,
+            81.5635
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.407916,
+          "std": 0.195153,
+          "samples": [
+            11.2699,
+            11.5459
+          ]
+        }
+      },
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:56:44Z",
+          "avg_ns": 779377538,
+          "stddev_ns": 7477269,
+          "avg_ts": 82.120593,
+          "stddev_ts": 0.787846,
+          "samples_ns": [
+            774090384,
+            784664693
+          ],
+          "samples_ts": [
+            82.6777,
+            81.5635
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 4,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:56:47Z",
+          "avg_ns": 2805480231,
+          "stddev_ns": 47992751,
+          "avg_ts": 11.407916,
+          "stddev_ts": 0.195153,
+          "samples_ns": [
+            2839416231,
+            2771544231
+          ],
+          "samples_ts": [
+            11.2699,
+            11.5459
+          ]
+        }
+      ]
+    },
+    {
+      "candidateId": "pp8-tg6",
+      "round": 3,
+      "position": 9,
+      "command": "cd /data/local/tmp/llama-edge && LD_LIBRARY_PATH=/data/local/tmp/llama-edge ./llama-bench -m /data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf -t 6 -tb 8 -ngl 0 -c 512 -r 2 -p 64 -n 32 -o json",
+      "startedAt": "2026-08-07T17:58:53.358053+00:00",
+      "thermalStart": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 1881556,
+        "capturedAt": "2026-08-07T17:58:53.358053+00:00"
+      },
+      "thermalEnd": {
+        "batteryLevel": 92,
+        "batteryTempC": 35.5,
+        "thermalStatus": "2 (MODERATE)",
+        "memAvailableKb": 2161400,
+        "capturedAt": "2026-08-07T17:59:05.821145+00:00"
+      },
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 77.011251,
+          "std": 1.350025,
+          "samples": [
+            76.0566,
+            77.9659
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.317555,
+          "std": 0.01218,
+          "samples": [
+            11.3089,
+            11.3262
+          ]
+        }
+      },
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 8,
+      "resolvedContextSize": 512,
+      "llamaCppCommit": "178a6c4",
+      "ok": true,
+      "rawBench": [
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 64,
+          "n_gen": 0,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:58:55Z",
+          "avg_ns": 831175115,
+          "stddev_ns": 14570753,
+          "avg_ts": 77.011251,
+          "stddev_ts": 1.350025,
+          "samples_ns": [
+            841478154,
+            820872077
+          ],
+          "samples_ts": [
+            76.0566,
+            77.9659
+          ]
+        },
+        {
+          "build_commit": "178a6c4",
+          "build_number": 1,
+          "cpu_info": "CPU",
+          "gpu_info": "",
+          "backends": "CPU",
+          "model_filename": "/data/local/tmp/llama-edge/models/Llama-3.2-1B-Instruct-Q4_0.gguf",
+          "model_type": "llama 1B Q4_0",
+          "model_size": 765194368,
+          "model_n_params": 1235814432,
+          "n_ctx": 512,
+          "n_batch": 2048,
+          "n_ubatch": 512,
+          "n_threads": 6,
+          "n_threads_batch": 8,
+          "cpu_mask": "0x0",
+          "cpu_strict": false,
+          "poll": 50,
+          "type_k": "f16",
+          "type_v": "f16",
+          "n_gpu_layers": 0,
+          "n_cpu_moe": 0,
+          "split_mode": "layer",
+          "main_gpu": 0,
+          "no_kv_offload": false,
+          "flash_attn": -1,
+          "devices": "auto",
+          "tensor_split": "0.00",
+          "tensor_buft_overrides": "none",
+          "use_mmap": true,
+          "use_direct_io": false,
+          "embeddings": false,
+          "no_op_offload": 0,
+          "no_host": false,
+          "fit_target": 0,
+          "fit_min_ctx": 0,
+          "n_prompt": 0,
+          "n_gen": 32,
+          "n_depth": 0,
+          "test_time": "2026-08-07T17:58:59Z",
+          "avg_ns": 2827467346,
+          "stddev_ns": 3043826,
+          "avg_ts": 11.317555,
+          "stddev_ts": 0.01218,
+          "samples_ns": [
+            2829619000,
+            2825315693
+          ],
+          "samples_ts": [
+            11.3089,
+            11.3262
+          ]
+        }
+      ]
+    }
+  ],
+  "cooldowns": [
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.7,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T16:55:43.659772+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pin-big-t2",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.6,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T16:57:55.859485+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pin-little-t6",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.5,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:00:06.235548+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t2",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:02:17.752918+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t4",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:04:29.599009+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t6",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:06:39.982349+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t8",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.4,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:08:51.116025+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg2",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.5,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:11:01.727523+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg4",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.6,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:13:17.101271+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg6",
+      "beforeRound": 1
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.4,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:15:34.436972+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg6",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.2,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:17:52.495070+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg4",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.1,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:20:05.388820+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg2",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.0,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:22:17.562369+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t8",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.9,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:24:30.764388+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t6",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.8,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:26:43.896640+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t4",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.5,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:28:56.165609+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t2",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:31:07.001295+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pin-little-t6",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.9,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:34:35.817376+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pin-big-t2",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 36.4,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:36:48.697398+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "stock-default",
+      "beforeRound": 2
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.9,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:39:00.058915+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "stock-default",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.5,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:41:11.197615+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pin-big-t2",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.6,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:43:22.149059+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pin-little-t6",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.5,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:45:38.212239+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t2",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:47:51.710544+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t4",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.6,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:50:08.444102+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t6",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:52:21.794970+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "t8",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:54:31.893591+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg2",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.3,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:56:42.214443+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg4",
+      "beforeRound": 3
+    },
+    {
+      "cooldownSeconds": 120,
+      "ceilingC": 37.5,
+      "maxThermalStatus": null,
+      "maxWaitSeconds": 300,
+      "waitedSeconds": 120,
+      "polls": [
+        {
+          "batteryTempC": 35.5,
+          "thermalStatus": "2 (MODERATE)",
+          "ok": true,
+          "reasons": [],
+          "at": "2026-08-07T17:58:53.108995+00:00"
+        }
+      ],
+      "gateSatisfied": true,
+      "timedOut": false,
+      "beforeCandidateId": "pp8-tg6",
+      "beforeRound": 3
+    }
+  ],
+  "rows": [
+    {
+      "id": "stock-default",
+      "threads": null,
+      "cpuMask": null,
+      "family": "stock",
+      "rationale": "llama.cpp's own default thread count with no affinity mask. Every ratio in this report is measured against it, because the claim under test is 'autotuned beats stock defaults'.",
+      "threadsBatch": null,
+      "flags": "(stock defaults)",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 81.45705,
+          "stddev": 5.801300815075872,
+          "relStddev": 0.07121913714130174,
+          "samples": [
+            81.4618,
+            70.015,
+            84.0161,
+            82.8908,
+            85.9005,
+            84.4581
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.373916666666666,
+          "stddev": 1.2877907414120768,
+          "relStddev": 0.11322315602910843,
+          "samples": [
+            13.7829,
+            11.8746,
+            10.7022,
+            10.5526,
+            10.899,
+            10.4322
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 0,
+          "pp": 75.738404,
+          "tg": 12.828738,
+          "thermalStartC": 36.5,
+          "thermalEndC": 36.5,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 9,
+          "pp": 83.453441,
+          "tg": 10.627374,
+          "thermalStartC": 36.4,
+          "thermalEndC": 36.4,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 0,
+          "pp": 85.179306,
+          "tg": 10.665581,
+          "thermalStartC": 35.9,
+          "thermalEndC": 35.9,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 75.65574918492412,
+          "tgTokensPerSec": 10.086125925254589
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 1.0,
+          "tgTokensPerSec": 1.0
+        },
+        "combined": 1.0,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "tgTokensPerSec relative stddev 11.3% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "pin-big-t2",
+      "threads": 2,
+      "cpuMask": "c0",
+      "family": "pinned",
+      "rationale": "pin to the big cluster(s) (Cortex-A78); no slower core can join the barrier",
+      "threadsBatch": 2,
+      "flags": "-t 2 -C c0",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 58.257933333333334,
+          "stddev": 4.393723916982798,
+          "relStddev": 0.0754184651872786,
+          "samples": [
+            56.0551,
+            55.6109,
+            53.429,
+            57.0125,
+            63.4694,
+            63.9707
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.744533333333335,
+          "stddev": 0.40725669382671503,
+          "relStddev": 0.03195540261655049,
+          "samples": [
+            12.6228,
+            12.6378,
+            12.1097,
+            12.995,
+            12.7775,
+            13.3244
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 1,
+          "pp": 55.832996,
+          "tg": 12.630302,
+          "thermalStartC": 36.7,
+          "thermalEndC": 36.7,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 8,
+          "pp": 55.220764,
+          "tg": 12.552327,
+          "thermalStartC": 36.9,
+          "thermalEndC": 36.9,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 1,
+          "pp": 63.720049,
+          "tg": 13.050968,
+          "thermalStartC": 35.5,
+          "thermalEndC": 35.5,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 53.86420941635053,
+          "tgTokensPerSec": 12.33727663950662
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.711964523471853,
+          "tgTokensPerSec": 1.2231928027604126
+        },
+        "combined": 1.0698243189738448,
+        "partialMetrics": false,
+        "disqualified": false,
+        "disqualificationReasons": []
+      }
+    },
+    {
+      "id": "pin-little-t6",
+      "threads": 6,
+      "cpuMask": "3f",
+      "family": "pinned",
+      "rationale": "pin to the Cortex-A55 cluster alone; on a DRAM-bound decode the little cores can saturate bandwidth without the big cores",
+      "threadsBatch": 6,
+      "flags": "-t 6 -C 3f",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 64.33783333333334,
+          "stddev": 10.091919375355051,
+          "relStddev": 0.15685824113891075,
+          "samples": [
+            66.6088,
+            68.6317,
+            71.8752,
+            75.0679,
+            53.5607,
+            50.2827
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 9.961751,
+          "stddev": 5.185710154908969,
+          "relStddev": 0.5205621135188953,
+          "samples": [
+            14.5992,
+            14.332,
+            11.2131,
+            0.399556,
+            9.06165,
+            10.165
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 2,
+          "pp": 67.620246,
+          "tg": 14.465584,
+          "thermalStartC": 36.6,
+          "thermalEndC": 36.6,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 7,
+          "pp": 73.471596,
+          "tg": 5.806351,
+          "thermalStartC": 35.3,
+          "thermalEndC": 37.2,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 2,
+          "pp": 51.921737,
+          "tg": 9.61333,
+          "thermalStartC": 35.6,
+          "thermalEndC": 35.6,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 54.24591395797829,
+          "tgTokensPerSec": 4.776040845091031
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.7170098048383062,
+          "tgTokensPerSec": 0.4735257997456022
+        },
+        "combined": 0.5465710012734134,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "ppTokensPerSec relative stddev 15.7% > 10.0%",
+          "tgTokensPerSec relative stddev 52.1% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "t2",
+      "threads": 2,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "2/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 2,
+      "flags": "-t 2",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 2,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 56.24875,
+          "stddev": 5.737134422950189,
+          "relStddev": 0.10199576742505724,
+          "samples": [
+            57.15,
+            57.1599,
+            61.254,
+            62.1679,
+            46.5842,
+            53.1765
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.40309,
+          "stddev": 1.515878813559976,
+          "relStddev": 0.12221783552001766,
+          "samples": [
+            12.8815,
+            12.8626,
+            13.3242,
+            13.3021,
+            9.35234,
+            12.6958
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 3,
+          "pp": 57.154958,
+          "tg": 12.872083,
+          "thermalStartC": 36.5,
+          "thermalEndC": 36.4,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 6,
+          "pp": 61.71094,
+          "tg": 13.313166,
+          "thermalStartC": 35.5,
+          "thermalEndC": 35.5,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 3,
+          "pp": 49.880369,
+          "tg": 11.024045,
+          "thermalStartC": 35.5,
+          "thermalEndC": 35.5,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 50.51161557704981,
+          "tgTokensPerSec": 10.887211186440025
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.6676507221359356,
+          "tgTokensPerSec": 1.0794244754747315
+        },
+        "combined": 0.9558923494730927,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "ppTokensPerSec relative stddev 10.2% > 10.0%",
+          "tgTokensPerSec relative stddev 12.2% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "t4",
+      "threads": 4,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "4/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 4,
+      "flags": "-t 4",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 4,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 63.424933333333335,
+          "stddev": 4.003742242286165,
+          "relStddev": 0.06312568310074952,
+          "samples": [
+            60.2535,
+            56.9558,
+            64.1855,
+            67.3436,
+            65.8942,
+            65.917
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 9.975333333333333,
+          "stddev": 2.8348204032472086,
+          "relStddev": 0.2841830251200169,
+          "samples": [
+            11.3633,
+            11.53,
+            10.6799,
+            11.2506,
+            10.8004,
+            4.2278
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 4,
+          "pp": 58.604635,
+          "tg": 11.446631,
+          "thermalStartC": 36.3,
+          "thermalEndC": 36.4,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 5,
+          "pp": 65.764551,
+          "tg": 10.965256,
+          "thermalStartC": 35.8,
+          "thermalEndC": 35.8,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 4,
+          "pp": 65.905633,
+          "tg": 7.514104,
+          "thermalStartC": 35.3,
+          "thermalEndC": 35.3,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 59.42119109104717,
+          "tgTokensPerSec": 7.140512930086125
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.7854154077016,
+          "tgTokensPerSec": 0.7079539739045929
+        },
+        "combined": 0.731192404043695,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "tgTokensPerSec relative stddev 28.4% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "t6",
+      "threads": 6,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "6/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 6,
+      "flags": "-t 6",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 6,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 70.87575,
+          "stddev": 2.176826812357839,
+          "relStddev": 0.030713280809837484,
+          "samples": [
+            68.0651,
+            70.7506,
+            74.466,
+            71.7701,
+            69.4349,
+            70.7678
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 12.07835,
+          "stddev": 1.9212001371538572,
+          "relStddev": 0.15906147256486666,
+          "samples": [
+            14.7869,
+            14.2095,
+            10.6015,
+            10.3166,
+            11.3499,
+            11.2057
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 5,
+          "pp": 69.40782,
+          "tg": 14.498226,
+          "thermalStartC": 36.3,
+          "thermalEndC": 36.4,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 4,
+          "pp": 73.118038,
+          "tg": 10.459058,
+          "thermalStartC": 35.9,
+          "thermalEndC": 35.9,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 5,
+          "pp": 70.101357,
+          "tg": 11.277816,
+          "thermalStartC": 35.6,
+          "thermalEndC": 35.6,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 68.69892318764215,
+          "tgTokensPerSec": 10.157149862846143
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.9080463008795603,
+          "tgTokensPerSec": 1.0070417460695904
+        },
+        "combined": 0.9773431125125813,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "tgTokensPerSec relative stddev 15.9% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "t8",
+      "threads": 8,
+      "cpuMask": null,
+      "family": "unpinned",
+      "rationale": "8/8 threads, scheduler-placed; derived from a cluster boundary or the midpoint between two boundaries",
+      "threadsBatch": 8,
+      "flags": "-t 8",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 8,
+      "resolvedThreadsBatch": 8,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 78.23003333333334,
+          "stddev": 6.778250878410057,
+          "relStddev": 0.08664512322944244,
+          "samples": [
+            65.8855,
+            75.8417,
+            84.4645,
+            80.4731,
+            83.3785,
+            79.3369
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 11.609848333333332,
+          "stddev": 2.6629254143547967,
+          "relStddev": 0.22936780377304358,
+          "samples": [
+            13.6204,
+            12.6946,
+            6.65299,
+            10.5026,
+            12.9648,
+            13.2237
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 6,
+          "pp": 70.863599,
+          "tg": 13.157493,
+          "thermalStartC": 36.3,
+          "thermalEndC": 36.3,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 3,
+          "pp": 82.468832,
+          "tg": 8.577774,
+          "thermalStartC": 36.0,
+          "thermalEndC": 35.9,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 6,
+          "pp": 81.357684,
+          "tg": 13.094244,
+          "thermalStartC": 35.3,
+          "thermalEndC": 35.3,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 71.45178245492328,
+          "tgTokensPerSec": 8.946922918978535
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.9444329508954414,
+          "tgTokensPerSec": 0.8870524704214122
+        },
+        "combined": 0.904266614563621,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "tgTokensPerSec relative stddev 22.9% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "pp8-tg2",
+      "threads": 2,
+      "cpuMask": null,
+      "family": "phase-pair",
+      "rationale": "use all 8 discovered cores for compute-heavy prefill and 2 topology-derived threads for decode",
+      "threadsBatch": 8,
+      "flags": "-t 2 -tb 8",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 2,
+      "resolvedThreadsBatch": 8,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 79.66101666666667,
+          "stddev": 4.892123512920198,
+          "relStddev": 0.061411763465068304,
+          "samples": [
+            71.3225,
+            81.5029,
+            80.7816,
+            77.2053,
+            81.4809,
+            85.6729
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 13.083966666666667,
+          "stddev": 0.19114922617333968,
+          "relStddev": 0.014609424728994496,
+          "samples": [
+            12.944,
+            12.9398,
+            12.8824,
+            13.3637,
+            13.1536,
+            13.2203
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 7,
+          "pp": 76.412716,
+          "tg": 12.941881,
+          "thermalStartC": 36.4,
+          "thermalEndC": 36.4,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 2,
+          "pp": 78.993488,
+          "tg": 13.123021,
+          "thermalStartC": 36.1,
+          "thermalEndC": 36.1,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 7,
+          "pp": 83.576918,
+          "tg": 13.186939,
+          "thermalStartC": 35.3,
+          "thermalEndC": 35.3,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 74.76889315374648,
+          "tgTokensPerSec": 12.892817440493328
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.9882777443785545,
+          "tgTokensPerSec": 1.2782725038372842
+        },
+        "combined": 1.1912740759996652,
+        "partialMetrics": false,
+        "disqualified": false,
+        "disqualificationReasons": []
+      }
+    },
+    {
+      "id": "pp8-tg4",
+      "threads": 4,
+      "cpuMask": null,
+      "family": "phase-pair",
+      "rationale": "use all 8 discovered cores for compute-heavy prefill and 4 topology-derived threads for decode",
+      "threadsBatch": 8,
+      "flags": "-t 4 -tb 8",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 4,
+      "resolvedThreadsBatch": 8,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 80.78093333333334,
+          "stddev": 5.459186419482915,
+          "relStddev": 0.06758013548761814,
+          "samples": [
+            71.1284,
+            79.3178,
+            82.3623,
+            87.6359,
+            82.6777,
+            81.5635
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 10.513715,
+          "stddev": 1.9459359340302034,
+          "relStddev": 0.1850854749277685,
+          "samples": [
+            11.2305,
+            6.55129,
+            11.1431,
+            11.3416,
+            11.2699,
+            11.5459
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 8,
+          "pp": 75.223056,
+          "tg": 8.890889,
+          "thermalStartC": 36.5,
+          "thermalEndC": 36.5,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 1,
+          "pp": 84.999068,
+          "tg": 11.242323,
+          "thermalStartC": 36.2,
+          "thermalEndC": 36.2,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 8,
+          "pp": 82.120593,
+          "tg": 11.407916,
+          "thermalStartC": 35.3,
+          "thermalEndC": 35.3,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 75.32174691385042,
+          "tgTokensPerSec": 8.567779065969797
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.9955852360901575,
+          "tgTokensPerSec": 0.8494618379210384
+        },
+        "combined": 0.8932988573717742,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "tgTokensPerSec relative stddev 18.5% > 10.0%"
+        ]
+      }
+    },
+    {
+      "id": "pp8-tg6",
+      "threads": 6,
+      "cpuMask": null,
+      "family": "phase-pair",
+      "rationale": "use all 8 discovered cores for compute-heavy prefill and 6 topology-derived threads for decode",
+      "threadsBatch": 8,
+      "flags": "-t 6 -tb 8",
+      "rounds": 3,
+      "ok": true,
+      "resolvedThreads": 6,
+      "resolvedThreadsBatch": 8,
+      "metrics": {
+        "ppTokensPerSec": {
+          "mean": 52.61905000000001,
+          "stddev": 24.118564582557564,
+          "relStddev": 0.45836184010463055,
+          "samples": [
+            44.1281,
+            63.6809,
+            37.031,
+            16.8518,
+            76.0566,
+            77.9659
+          ]
+        },
+        "tgTokensPerSec": {
+          "mean": 10.187828333333334,
+          "stddev": 1.1729735864104813,
+          "relStddev": 0.11513480086552445,
+          "samples": [
+            10.3533,
+            8.4148,
+            9.17517,
+            10.5486,
+            11.3089,
+            11.3262
+          ]
+        }
+      },
+      "perRound": [
+        {
+          "round": 1,
+          "position": 9,
+          "pp": 53.90453,
+          "tg": 9.384042,
+          "thermalStartC": 36.6,
+          "thermalEndC": 36.6,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 2,
+          "position": 0,
+          "pp": 26.94137,
+          "tg": 9.86188,
+          "thermalStartC": 36.4,
+          "thermalEndC": 36.4,
+          "thermalStatusEnd": "2 (MODERATE)"
+        },
+        {
+          "round": 3,
+          "position": 9,
+          "pp": 77.011251,
+          "tg": 11.317555,
+          "thermalStartC": 35.5,
+          "thermalEndC": 35.5,
+          "thermalStatusEnd": "2 (MODERATE)"
+        }
+      ],
+      "score": {
+        "robust": {
+          "ppTokensPerSec": 28.500485417442444,
+          "tgTokensPerSec": 9.014854746922852
+        },
+        "ratioVsBaseline": {
+          "ppTokensPerSec": 0.37671275117214387,
+          "tgTokensPerSec": 0.8937876458939118
+        },
+        "combined": 0.7386651774773814,
+        "partialMetrics": false,
+        "disqualified": true,
+        "disqualificationReasons": [
+          "ppTokensPerSec relative stddev 45.8% > 10.0%",
+          "tgTokensPerSec relative stddev 11.5% > 10.0%"
+        ]
+      }
+    }
+  ],
+  "stockBaseline": {
+    "candidateId": "stock-default",
+    "resolvedThreads": 8,
+    "resolvedThreadsBatch": 8,
+    "metrics": {
+      "ppTokensPerSec": {
+        "mean": 81.45705,
+        "stddev": 5.801300815075872,
+        "relStddev": 0.07121913714130174,
+        "samples": [
+          81.4618,
+          70.015,
+          84.0161,
+          82.8908,
+          85.9005,
+          84.4581
+        ]
+      },
+      "tgTokensPerSec": {
+        "mean": 11.373916666666666,
+        "stddev": 1.2877907414120768,
+        "relStddev": 0.11322315602910843,
+        "samples": [
+          13.7829,
+          11.8746,
+          10.7022,
+          10.5526,
+          10.899,
+          10.4322
+        ]
+      }
+    }
+  },
+  "scoring": {
+    "rule": "score(metric) = mean - k*stddev, pooled over all rounds; expressed as a ratio to the stock-default row; combined = tgWeight*tgRatio + (1-tgWeight)*ppRatio. Any row whose relative stddev exceeds maxRelStddev on a measured metric is disqualified from winning. The winner must beat stock by at least minImprovement.",
+    "stabilityK": 1.0,
+    "tgWeight": 0.7,
+    "maxRelStddev": 0.1,
+    "baselineId": "stock-default",
+    "normaliser": "stock-default",
+    "ranking": [
+      "pp8-tg2",
+      "pin-big-t2"
+    ],
+    "bestId": "pp8-tg2",
+    "disqualified": [
+      {
+        "id": "stock-default",
+        "reasons": [
+          "tgTokensPerSec relative stddev 11.3% > 10.0%"
+        ]
+      },
+      {
+        "id": "pin-little-t6",
+        "reasons": [
+          "ppTokensPerSec relative stddev 15.7% > 10.0%",
+          "tgTokensPerSec relative stddev 52.1% > 10.0%"
+        ]
+      },
+      {
+        "id": "t2",
+        "reasons": [
+          "ppTokensPerSec relative stddev 10.2% > 10.0%",
+          "tgTokensPerSec relative stddev 12.2% > 10.0%"
+        ]
+      },
+      {
+        "id": "t4",
+        "reasons": [
+          "tgTokensPerSec relative stddev 28.4% > 10.0%"
+        ]
+      },
+      {
+        "id": "t6",
+        "reasons": [
+          "tgTokensPerSec relative stddev 15.9% > 10.0%"
+        ]
+      },
+      {
+        "id": "t8",
+        "reasons": [
+          "tgTokensPerSec relative stddev 22.9% > 10.0%"
+        ]
+      },
+      {
+        "id": "pp8-tg4",
+        "reasons": [
+          "tgTokensPerSec relative stddev 18.5% > 10.0%"
+        ]
+      },
+      {
+        "id": "pp8-tg6",
+        "reasons": [
+          "ppTokensPerSec relative stddev 45.8% > 10.0%",
+          "tgTokensPerSec relative stddev 11.5% > 10.0%"
+        ]
+      }
+    ]
+  },
+  "thermal": {
+    "startBatteryTempC": 36.5,
+    "peakBatteryTempC": 37.2,
+    "endBatteryTempC": 35.5,
+    "batteryTempRiseC": 0.7000000000000028,
+    "maxTempRiseLimitC": 3.0,
+    "thermalStatuses": [
+      "2 (MODERATE)"
+    ],
+    "maxThermalStatus": 2,
+    "maxThermalStatusLimit": null,
+    "thermalStatusGated": false,
+    "statusExceeded": null,
+    "statusAdvisory": "android.os.PowerManager thermal status is recorded but does NOT gate the sweep by default. On the test device (Redmi Note 14 5G / MT6855) status 2 (MODERATE) is the *steady state*, not a throttling signal: it is reported at every telemetry point of runs that were thermally quiet by temperature (the 27 Jul ngram A/B sat at status 2 throughout with a 0.2 C battery temperature rise), partly because the device is USB-charging during every benchmark to hold stay_on_while_plugged_in. Gating on status would return 'inconclusive' on every sweep forever. Temperature, measured relative to the sweep's own starting point, is the discriminating signal. Opt into a strict status gate with --max-thermal-status N on devices where the status is meaningful.",
+    "gateTimeouts": [],
+    "stable": true,
+    "warnings": [
+      "peak thermal status was 2; recorded, not gated (pass --max-thermal-status to make it a gate)"
+    ],
+    "reasons": []
+  },
+  "orderDrift": {
+    "roundsCompared": 3,
+    "lastOverFirstRatios": [
+      0.7314859809281319,
+      1.0776215082722564,
+      1.0611287842640735
+    ],
+    "meanLastOverFirst": 0.956745424488154
+  },
+  "gates": {
+    "allCandidatesMeasured": true,
+    "baselineMeasured": true,
+    "thermallyStable": true,
+    "runOrderNeutral": true,
+    "winnerIsStable": true,
+    "beatsStockDefault": true
+  },
+  "winner": {
+    "id": "pp8-tg2",
+    "threads": 2,
+    "cpuMask": null,
+    "family": "phase-pair",
+    "rationale": "use all 8 discovered cores for compute-heavy prefill and 2 topology-derived threads for decode",
+    "threadsBatch": 8,
+    "flags": "-t 2 -tb 8",
+    "rounds": 3,
+    "ok": true,
+    "resolvedThreads": 2,
+    "resolvedThreadsBatch": 8,
+    "metrics": {
+      "ppTokensPerSec": {
+        "mean": 79.66101666666667,
+        "stddev": 4.892123512920198,
+        "relStddev": 0.061411763465068304,
+        "samples": [
+          71.3225,
+          81.5029,
+          80.7816,
+          77.2053,
+          81.4809,
+          85.6729
+        ]
+      },
+      "tgTokensPerSec": {
+        "mean": 13.083966666666667,
+        "stddev": 0.19114922617333968,
+        "relStddev": 0.014609424728994496,
+        "samples": [
+          12.944,
+          12.9398,
+          12.8824,
+          13.3637,
+          13.1536,
+          13.2203
+        ]
+      }
+    },
+    "perRound": [
+      {
+        "round": 1,
+        "position": 7,
+        "pp": 76.412716,
+        "tg": 12.941881,
+        "thermalStartC": 36.4,
+        "thermalEndC": 36.4,
+        "thermalStatusEnd": "2 (MODERATE)"
+      },
+      {
+        "round": 2,
+        "position": 2,
+        "pp": 78.993488,
+        "tg": 13.123021,
+        "thermalStartC": 36.1,
+        "thermalEndC": 36.1,
+        "thermalStatusEnd": "2 (MODERATE)"
+      },
+      {
+        "round": 3,
+        "position": 7,
+        "pp": 83.576918,
+        "tg": 13.186939,
+        "thermalStartC": 35.3,
+        "thermalEndC": 35.3,
+        "thermalStatusEnd": "2 (MODERATE)"
+      }
+    ],
+    "score": {
+      "robust": {
+        "ppTokensPerSec": 74.76889315374648,
+        "tgTokensPerSec": 12.892817440493328
+      },
+      "ratioVsBaseline": {
+        "ppTokensPerSec": 0.9882777443785545,
+        "tgTokensPerSec": 1.2782725038372842
+      },
+      "combined": 1.1912740759996652,
+      "partialMetrics": false,
+      "disqualified": false,
+      "disqualificationReasons": []
+    }
+  },
+  "recommendation": {
+    "source": "sweep",
+    "candidateId": "pp8-tg2",
+    "threads": 2,
+    "threadsBatch": 8,
+    "baselineThreads": 8,
+    "baselineThreadsBatch": 8,
+    "cpuMask": null,
+    "benchFlags": "-t 2 -tb 8",
+    "improvementVsStock": 0.19127407599966517
+  },
+  "verdict": "autotuned",
+  "verdictReason": "pp8-tg2 beats stock defaults by 19.1%",
+  "notes": [
+    "known profile 'mt6855-dimensity-7025-llama-3.2-1b-q4_0' matched but is confidence=low and full profile identity is not bound; sweeping anyway (pass --trust-known-profiles to accept it)"
+  ]
+}

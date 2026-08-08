@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "note": "Bundled core-policy profiles are consulted before a sweep. Automatic reuse requires both confidence=high and an exact profileIdentitySha256 match covering binary, llama.cpp commit, model, context/shape, workload, and scoring. Generic or lower-confidence entries are hints only and trigger measurement unless --trust-known-profiles is explicitly passed.",
+  "howToContribute": "Run `python tools/autotune.py` on your device, take the `recommendation` block out of the emitted benchmarks/results/raw/<stamp>-autotune/autotune.json, and add an entry here with the match fields from its `topology`/`device` blocks. Keep confidence at \"low\" until the same profile has been reproduced on more than one unit.",
+  "profiles": [
+    {
+      "id": "mt6855-dimensity-7025-llama-3.2-1b-q4_0",
+      "confidence": "low",
+      "match": {
+        "socModel": "MT6855",
+        "coreCount": 8,
+        "midrSignature": "2x0xd41+6x0xd05",
+        "modelSha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8"
+      },
+      "device": {
+        "description": "Redmi Note 14 5G, MediaTek Dimensity 7025 (MT6855), 2x Cortex-A78 (0xd41) + 6x Cortex-A55 (0xd05), Android 16, 5.6 GB usable RAM",
+        "unitsMeasured": 1
+      },
+      "recommendation": {
+        "source": "known-profile",
+        "candidateId": "t6",
+        "threads": 6,
+        "cpuMask": null,
+        "benchFlags": "-t 6",
+        "improvementVsStock": null
+      },
+      "evidence": {
+        "measuredOn": "2026-07-2x, Phase 1 baseline suite (benchmarks/suites/phase1-baseline.json), Llama 3.2 1B Q4_0, pp512/tg128, 5 reps, 120 s cooldowns",
+        "phase1": {
+          "t2": { "pp512": 66.11, "pp512Stddev": 6.77, "tg128": 12.80, "tg128Stddev": 0.16 },
+          "t4": { "pp512": 63.41, "pp512Stddev": 2.65, "tg128": 11.19, "tg128Stddev": 0.53 },
+          "t6": { "pp512": 68.20, "pp512Stddev": 0.77, "tg128": 14.16, "tg128Stddev": 0.20 },
+          "t8": { "pp512": 58.62, "pp512Stddev": 26.74, "tg128": 9.48, "tg128Stddev": 2.31 }
+        },
+        "mechanism": "The Windows-built Phase 1 binary showed non-monotonic scaling: t=4 measured worse than t=2 and t=8 collapsed (reps 74.8, 78.9, 78.1, 19.6, 41.7 -> 46 % relative stddev). Later Linux and affinity evidence did not reproduce that stability pattern and supports DRAM saturation plus synchronization/spin-wait overhead, not a universal A55-versus-A78 rule. The reusable conclusion is to measure each device/model/build/workload rather than copy a constant."
+      },
+      "caveats": [
+        "MEASURED ON EXACTLY ONE DEVICE. Treat as a hint, not a fact. This is why the entry is confidence \"low\" and the autotuner still sweeps unless --trust-known-profiles is given.",
+        "THE PHASE 1 NUMBERS DID NOT REPRODUCE. Phase 1 (Windows-built binaries) recorded t=8 as wildly unstable at 46 % relative stddev and t=6 as the clear optimum. Re-measuring the same device with Linux-built binaries, the stock default (which resolves to t=8 here) came out stable and fast: pp512 76.30 +- 3.52, tg128 10.52 +- 0.06. So `t=6` is NOT a constant of the hardware -- it depended on the build, and may also depend on model weights and context size.",
+        "That discrepancy is the whole argument for this tool measuring per (device, model, build) instead of shipping a remembered winner. Do not copy `-t 6` into anything as 'the answer for Dimensity 7025'.",
+        "Improvement over stock defaults was never measured under the counterbalanced, thermally gated protocol this tool now uses, which is why improvementVsStock is null rather than a number.",
+        "THERMAL STATUS 2 IS THIS DEVICE'S RESTING STATE, NOT A THROTTLING SIGNAL. `dumpsys thermalservice` reports `Thermal Status: 2` (MODERATE) at every telemetry point of every run on this handset -- see benchmarks/results/phase3-feasibility/20260726-210042-phase3-mtp/mtp-ab.json, and the 27 Jul ngram A/B which sat at status 2 throughout while battery temperature rose only 0.2 C and passed its own thermal gates. The device is USB-charging during every benchmark (required to keep stay_on_while_plugged_in active), which holds battery temperature up independently of load. Anything that treats status > 1 as proof of throttling will mark every run on this device inconclusive forever. tools/autotune.py therefore records status but gates on TEMPERATURE, measured relative to each sweep's own starting point; --max-thermal-status opts back into a strict status gate for devices where the status is meaningful."
+      ]
+    }
+  ]
+}
