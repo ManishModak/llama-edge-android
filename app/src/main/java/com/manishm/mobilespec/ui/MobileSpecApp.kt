@@ -43,6 +43,7 @@ fun MobileSpecApp(
     val chat by viewModel.chat.collectAsStateWithLifecycle()
     val models by viewModel.models.collectAsStateWithLifecycle()
     val capabilities by viewModel.capabilities.collectAsStateWithLifecycle()
+    val qualification by viewModel.qualification.collectAsStateWithLifecycle()
     val telemetry by viewModel.telemetryMonitor.snapshots.collectAsStateWithLifecycle()
     val modelLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) viewModel.importModel(uri)
@@ -109,8 +110,17 @@ fun MobileSpecApp(
             )
             AppTab.MODELS -> ModelsScreen(
                 state = models,
+                capabilities = capabilities,
+                qualification = qualification,
                 onImport = { modelLauncher.launch(arrayOf("application/octet-stream", "*/*")) },
                 onSelect = viewModel::selectModel,
+                onBackendChange = viewModel::setBackend,
+                onGpuLayersChange = viewModel::setGpuLayers,
+                onRunQualification = viewModel::runBackendQualification,
+                onCancelQualification = viewModel::cancel,
+                onExportQualification = {
+                    viewModel.qualificationJson()?.let(onShareBenchmark)
+                },
                 modifier = modifier,
             )
         }

@@ -4,6 +4,7 @@ import com.manishm.mobilespec.engine.BenchmarkConfig
 import com.manishm.mobilespec.engine.BenchmarkEvent
 import com.manishm.mobilespec.engine.BenchmarkResult
 import com.manishm.mobilespec.engine.BenchmarkRun
+import com.manishm.mobilespec.engine.Backend
 import com.manishm.mobilespec.engine.EngineCapabilities
 import com.manishm.mobilespec.engine.EngineState
 import com.manishm.mobilespec.engine.GenerationConfig
@@ -16,6 +17,7 @@ import com.manishm.mobilespec.engine.TelemetryProvider
 import com.manishm.mobilespec.engine.TelemetrySnapshot
 import com.manishm.mobilespec.engine.TokenEvent
 import com.manishm.mobilespec.engine.Traceability
+import com.manishm.mobilespec.engine.vulkanDeviceIdentitySha256
 import java.util.UUID
 import java.security.MessageDigest
 import java.util.concurrent.atomic.AtomicLong
@@ -39,6 +41,7 @@ class LlamaInferenceEngine(
     private val llamaCommit: String = "178a6c4",
     private val llamaSourceDiffSha256: String? = null,
     private val nativeLibrarySha256: String? = null,
+    private val runtimeDeviceFingerprintSha256: String? = null,
     private val runtimeDeviceModel: String? = null,
     private val runtimeSocModel: String? = null,
 ) : InferenceEngine {
@@ -47,19 +50,21 @@ class LlamaInferenceEngine(
     private val mutableState = MutableStateFlow<EngineState>(EngineState.Unloaded)
     private var loadedModel: ModelConfig? = null
     private var phasePolicyRejection: String? = null
+    private var backendPolicyRejection: String? = null
+    private var activeVulkanDeviceIdentitySha256: String? = null
 
     override val state: StateFlow<EngineState> = mutableState.asStateFlow()
 
     override fun capabilities(): EngineCapabilities {
         val native = bindings.capabilities()
         val policyReady = loadedModel?.phasePolicy != null
-        val rejection = phasePolicyRejection
         return native.copy(
             supportsPhaseAwareThreadPolicy =
                 native.supportsPhaseAwareThreadPolicy && policyReady,
             detail = listOfNotNull(
                 native.detail,
-                rejection?.let { "phase policy disabled: $it" },
+                phasePolicyRejection?.let { "phase policy disabled: $it" },
+                backendPolicyRejection?.let { "backend policy fallback: $it" },
             ).joinToString("; ").ifBlank { null },
         )
     }
@@ -84,10 +89,106 @@ class LlamaInferenceEngine(
                     model.phasePolicy != null &&
                     !nativeCapabilities.supportsPhaseAwareThreadPolicy
                 ) "native build does not support phase-aware threads" else null
-            val effectiveModel = if (policyError == null) model else model.copy(phasePolicy = null)
+            val phaseSafeModel = if (policyError == null) model else model.copy(phasePolicy = null)
             phasePolicyRejection = policyError
-            val handle = withContext(Dispatchers.IO) { bindings.createSession(effectiveModel) }
+            val vulkanIdentity = vulkanDeviceIdentitySha256(nativeCapabilities.vulkanDevices)
+            val backendPolicy = model.backendPolicy
+            val compatibilityError = backendPolicy?.compatibilityError(
+                model = model,
+                runtimeLlamaCommit = llamaCommit,
+                runtimeNativeLibrarySha256 = nativeLibrarySha256,
+                runtimeDeviceFingerprintSha256 = runtimeDeviceFingerprintSha256,
+                runtimeDeviceModel = runtimeDeviceModel,
+                runtimeSocModel = runtimeSocModel,
+                runtimeVulkanDeviceIdentitySha256 = vulkanIdentity,
+            )
+            val backendPolicyError = compatibilityError ?: if (
+                backendPolicy != null && policyError != null
+            ) {
+                "backend-policy CPU phase policy is invalid: $policyError"
+            } else if (
+                model.backend != Backend.AUTO &&
+                backendPolicy != null &&
+                backendPolicy.backend != model.backend
+            ) {
+                "backend policy does not match the requested backend"
+            } else null
+            val requestedBackend = when (model.backend) {
+                Backend.AUTO -> if (backendPolicyError == null) {
+                    backendPolicy?.backend ?: Backend.CPU
+                } else {
+                    Backend.CPU
+                }
+                else -> model.backend
+            }
+            val capabilityError = when (requestedBackend) {
+                Backend.CPU -> null
+                Backend.VULKAN -> when {
+                    !nativeCapabilities.supportsGpuOffload -> "Vulkan offload is unavailable"
+                    model.backend == Backend.AUTO && backendPolicy?.gpuLayers != -1 ->
+                        "qualified Vulkan policy does not request full offload"
+                    else -> null
+                }
+                Backend.HYBRID -> when {
+                    !nativeCapabilities.supportsHybridOffload -> "hybrid offload is unavailable"
+                    (backendPolicy?.gpuLayers ?: model.gpuLayers) <= 0 ->
+                        "hybrid offload requires a positive layer count"
+                    else -> null
+                }
+                Backend.AUTO -> "Auto backend was not resolved"
+            }
+            val autoFallback = if (model.backend == Backend.AUTO && backendPolicy == null) {
+                "no qualified GPU policy; using CPU"
+            } else null
+            val fallbackReason = backendPolicyError ?: capabilityError ?: autoFallback
+            val selectionError = backendPolicyError ?: capabilityError
+            val effectiveBackend = if (selectionError == null) requestedBackend else Backend.CPU
+            val effectiveGpuLayers = when (effectiveBackend) {
+                Backend.VULKAN -> -1
+                Backend.HYBRID -> backendPolicy?.gpuLayers ?: model.gpuLayers
+                else -> 0
+            }
+            var effectiveModel = phaseSafeModel.copy(
+                backend = effectiveBackend,
+                gpuLayers = effectiveGpuLayers,
+                backendPolicy = if (fallbackReason == null) backendPolicy else null,
+            )
+            backendPolicyRejection = fallbackReason
+            activeVulkanDeviceIdentitySha256 = vulkanIdentity
+            val handle = withContext(Dispatchers.IO) {
+                try {
+                    bindings.createSession(effectiveModel)
+                } catch (gpuError: Exception) {
+                    if (effectiveModel.backend == Backend.CPU) throw gpuError
+                    val failedBackend = effectiveModel.backend
+                    effectiveModel = effectiveModel.copy(
+                        backend = Backend.CPU,
+                        gpuLayers = 0,
+                        backendPolicy = null,
+                    )
+                    backendPolicyRejection =
+                        "$failedBackend session failed (${gpuError.safeMessage()}); using CPU"
+                    bindings.createSession(effectiveModel)
+                }
+            }
             check(handle != 0L) { "Native engine returned a null session" }
+            val modelLayerCount = try {
+                withContext(Dispatchers.IO) {
+                    bindings.modelLayerCount(handle)
+                }
+            } catch (error: Exception) {
+                withContext(Dispatchers.IO) {
+                    bindings.destroySession(handle)
+                }
+                throw error
+            }
+            if (modelLayerCount <= 0) {
+                withContext(Dispatchers.IO) {
+                    bindings.destroySession(handle)
+                }
+                error("Native engine returned an invalid model layer count")
+            }
+            effectiveModel = effectiveModel.copy(modelLayerCount = modelLayerCount)
             activeHandle.set(handle)
             loadedModel = effectiveModel
             mutableState.value = EngineState.Ready(effectiveModel)
@@ -239,14 +340,22 @@ class LlamaInferenceEngine(
                         phasePolicyIdentitySha256 =
                             model.phasePolicy?.profileIdentitySha256,
                         deviceFingerprintSha256 =
-                            model.phasePolicy?.deviceFingerprintSha256,
+                            model.backendPolicy?.deviceFingerprintSha256
+                                ?: model.phasePolicy?.deviceFingerprintSha256
+                                ?: runtimeDeviceFingerprintSha256,
                         benchmarkBinarySha256 =
                             model.phasePolicy?.benchmarkBinarySha256,
-                        sourceReportSha256 = model.phasePolicy?.sourceReportSha256,
+                        sourceReportSha256 = model.backendPolicy?.sourceReportSha256
+                            ?: model.phasePolicy?.sourceReportSha256,
                         baselineDecodeThreads = model.phasePolicy?.baselineDecodeThreads,
                         baselinePrefillThreads = model.phasePolicy?.baselinePrefillThreads,
                         decodeThreads = model.phasePolicy?.decodeThreads,
                         prefillThreads = model.phasePolicy?.prefillThreads,
+                        executionBackend = model.backend,
+                        gpuLayers = model.gpuLayers,
+                        backendPolicyIdentitySha256 =
+                            model.backendPolicy?.profileIdentitySha256,
+                        vulkanDeviceIdentitySha256 = activeVulkanDeviceIdentitySha256,
                     ),
                     warmup = warmup,
                     runs = runs,
@@ -274,6 +383,8 @@ class LlamaInferenceEngine(
         destroyActiveSession()
         loadedModel = null
         phasePolicyRejection = null
+        backendPolicyRejection = null
+        activeVulkanDeviceIdentitySha256 = null
         mutableState.value = EngineState.Unloaded
     }
 

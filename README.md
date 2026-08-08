@@ -1,10 +1,10 @@
 # MobileSpec: evidence-led LLM inference on Android
 
-MobileSpec is an evidence-led llama.cpp optimizer for Arm Android. Its active goal is a phase-aware
-CPU policy autotuner: discover heterogeneous CPU topology, measure stock defaults, and select
-separate prefill and decode thread policies without promoting noisy or thermally contaminated
-results. It is being built for the Mobile AI track of the Arm Create: AI Optimization Challenge
-2026.
+MobileSpec is an evidence-led llama.cpp execution-policy optimizer for Arm Android. It discovers
+heterogeneous CPU topology, measures separate prefill/decode policies, enumerates available Vulkan
+devices, and fails closed to CPU unless a device/build/model-specific GPU or hybrid policy has
+passed correctness, resource, thermal, stability, and performance gates. It is being built for the
+Mobile AI track of the Arm Create: AI Optimization Challenge 2026.
 
 > **Evidence status (8 August 2026):** Phases 0–2 are measured. Native MTP was slower and used
 > swap; the zero-weight n-gram result was rejected because its apparent 2.97x gain came from a
@@ -15,12 +15,20 @@ results. It is being built for the Mobile AI track of the Arm Create: AI Optimiz
 > VmHWM, and SwapFree across the scored A/B.
 > The result below is a device/model/build/context/workload-specific measurement, not a universal
 > Android speedup claim. The demo video and external submission steps remain pending.
+> The experimental KleidiAI + Android Vulkan build compiles locally and contains both kernel sets,
+> but has not yet been qualified on the phone. Because that native binary changed, its bundled
+> `pp8-tg2` policy is intentionally disabled until the final approved device re-sweep. `AUTO`
+> therefore selects CPU on an unknown or stale profile.
 > The baseline evidence ends at
 > project commit
 > `54aabbde5b9c31340f685ba6075a00222b8908f8`; the official Phase 1 bundle was captured at
 > `4462c70587f9cdd6d00b67b5964cac060014c7a3`.
 
 ## The result so far
+
+**Measured headline: 2.0739× sustained decode throughput on the target Redmi** (`11.178` versus
+`5.390 tok/s`, 15 runs per mode), with exact paired output hashes. This is frozen-binary evidence,
+not a cross-device or current experimental-backend claim.
 
 The target is a Redmi Note 14 5G with a MediaTek Dimensity 7025: two Cortex-A78 cores, six
 Cortex-A55 cores, a PowerVR BXM-8-256 GPU, and 5.6 GB of usable RAM. The benchmark model is
@@ -90,6 +98,11 @@ demo. Remaining submission actions are tracked in [the Phase 5 checklist](docs/p
    import/copy/hash, native load, baseline/optimized generation, five-run counterbalanced A/B,
    exact-output correctness, JSON sharing, cancellation, and post-cancel session reuse all passed.
    Unsupported or stale policies disable optimized mode and retain measured stock defaults.
+8. **Fail-closed backend expansion.** The app and JNI contracts now expose CPU, full Vulkan
+   offload, bounded partial-layer hybrid offload, and Auto. Native capability data includes the
+   Vulkan device/driver/API, UMA class, FP16, integer-dot and cooperative-matrix flags, backend
+   memory/capabilities, and KleidiAI presence. Auto never treats capability as proof: a missing or
+   stale qualified profile resolves to CPU.
 
 See [CHANGES_FOR_CHALLENGE.md](CHANGES_FOR_CHALLENGE.md) for the commit-by-commit challenge-window
 work.
@@ -102,7 +115,7 @@ The repository must be public before submission. Until then, cloning requires re
 
 ```bash
 git clone --depth 1 --shallow-submodules \
-  --branch agent/phase-aware-autotuner --recurse-submodules \
+  --branch main --recurse-submodules \
   https://github.com/ManishModak/llama-edge-android.git
 cd llama-edge-android
 git submodule update --init --recursive
@@ -144,6 +157,43 @@ the Llama 3.2 Community License before use.
 The recorded Linux build used NDK `28.2.13676358`, CMake `4.3.4`, Ninja `1.13.1`, and
 `-march=armv8.2-a+dotprod+fp16`. Exact CPU and Vulkan commands, binary deployment, device
 preparation, and result verification are in [docs/reproducibility.md](docs/reproducibility.md).
+
+Build the Android app with the pinned Arm CPU ISA, KleidiAI kernels, and Vulkan backend, then print
+the source/toolchain/APK/native identities plus symbol evidence:
+
+```bash
+ANDROID_HOME=/absolute/path/to/Android/Sdk ./gradlew --no-daemon test :app:assembleDebug
+ANDROID_NDK_HOME=/absolute/path/to/Android/Sdk/ndk/28.2.13676358 \
+  python tools/inspect_android_build.py
+```
+
+The Models screen exposes four execution choices:
+
+- `CPU`: `n_gpu_layers=0`, always the safe release path.
+- `VULKAN`: requests full model offload (`n_gpu_layers=-1`) only when the packaged native backend
+  and a Vulkan device are present.
+- `HYBRID`: requests a positive bounded layer count; qualification candidates are derived at about
+  25%, 50%, and 75% of model layers before full offload.
+- `AUTO`: uses a GPU/hybrid policy only when device, Vulkan driver/capabilities, llama.cpp/JNI
+  binary, model, context, CPU phase policy, workload, and scoring identities all match. Otherwise
+  it reports the rejection and uses CPU.
+
+Explicit Vulkan/hybrid modes are candidate-generation controls, not performance claims. A driver
+advertising Vulkan or FP16 does not make it eligible for Auto without the measured qualification
+gates.
+
+The Models screen can run the bounded qualification workflow and export its raw JSON. It fails
+before timing on missing/failed required operation evidence, then requires exact CPU/GPU output,
+safe cancellation and reuse, stable native timing, acceptable load/TTFT, memory/SwapFree and
+thermal behavior, plus a counterbalanced end-to-end improvement. Validate a captured report with:
+
+```bash
+python tools/export_android_backend_policy.py /absolute/path/to/qualification.json --check
+```
+
+The exporter refuses inconclusive or stale evidence. A generated Auto policy is also bound to the
+approved CPU phase-policy identity, so the current experimental binary continues to use CPU in
+Auto until both final policies are measured and promoted together.
 
 Once both binaries and the model are under `/data/local/tmp/llama-edge/` on the phone:
 
@@ -295,6 +345,9 @@ The full protocol is in
 - The PowerVR Vulkan path produced coherent output for the tested Llama model and prompt, but the
   partial operator sweep found unsupported bf16 pipeline creation and Q4_0 failures at other
   shapes. It is not claimed safe for arbitrary models.
+- The new Android Vulkan/hybrid path is locally build-verified only. No current Adreno, Mali, or
+  PowerVR Android speedup claim is made, and the old CPU phase policy is not reused across the new
+  native-library identity.
 - The native-MTP run is only one repetition per prompt, started at thermal status 2, and crossed
   the no-swap threshold. It supports rejecting that candidate, not a repeatable speed estimate.
 - The n-gram run completed but is rejection evidence only: its 2.97x number was a persistent-cache

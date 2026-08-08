@@ -539,6 +539,65 @@ Both APKs contain `lib/arm64-v8a/libmobilespec_llama.so` and
 `lib/arm64-v8a/libc++_shared.so`, and both verify with APK Signature Scheme v2. They do not carry
 v1, v3, v3.1, or v4 signatures.
 
+### Experimental KleidiAI + Vulkan/hybrid Android build
+
+The bounded Phase 5 backend branch keeps the pinned
+`-march=armv8.2-a+dotprod+fp16` CPU target and adds two independently switchable Gradle/CMake
+properties. Both default on:
+
+```bash
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
+  ./gradlew --no-daemon test :app:assembleDebug
+```
+
+The proven CPU-only release path remains buildable without either experiment:
+
+```bash
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
+  ./gradlew --no-daemon \
+    -Pmobilespec.enableKleidiAI=false \
+    -Pmobilespec.enableVulkan=false \
+    :app:assembleDebug
+```
+
+The Vulkan build uses the pinned `third_party/Vulkan-Headers`, the committed SPIR-V CMake shim,
+and the NDK host `glslc`; it does not require a separately installed LunarG SDK. After building,
+emit machine-readable source/toolchain/artifact identities and verify that both `kai_*` and
+`ggml_backend_vk_*` symbols are present and that the JNI library links `libvulkan.so`:
+
+```bash
+ANDROID_NDK_HOME=/absolute/path/to/Android/Sdk/ndk/28.2.13676358 \
+  python tools/inspect_android_build.py
+```
+
+The report also reads the KleidiAI pin from the checked-out llama.cpp CMake source, verifies the
+downloaded archive against that source's MD5, records its SHA-256, and lists the license files in
+the archive. For the current pin these are KleidiAI `v1.24.0`, archive SHA-256
+`9348b969e042d8890a54b01a463dbe71f5a4c074b5329e9c26a85ef3b68aa19b`, and the bundled
+Apache-2.0 and BSD-3-Clause texts. The downloaded archive and extracted source remain under the
+ignored `.cxx/` build tree.
+
+On 8 August 2026 this local build passed in 3m41s. This proves packaging and symbol presence only;
+it is not device correctness, stability, or speed evidence. Since the native binary changed, the
+previously measured Android phase policy is disabled on this branch until the final binary is
+frozen and an explicitly approved re-sweep refreshes the policy and hashes.
+
+The Models screen also contains a bounded backend-qualification action. It runs CPU and available
+partial/full GPU candidates through fail-fast correctness, cancellation/reuse, device-loss,
+memory/SwapFree, thermal, native-timing, stability, and counterbalanced performance gates. Timing
+is skipped when required operation-shape evidence is absent or has already failed. Export the raw
+qualification JSON from the screen, then validate it without changing source:
+
+```bash
+python tools/export_android_backend_policy.py /absolute/path/to/qualification.json --check
+```
+
+Only a report with one fully qualified candidate and exact profile identity can generate a bundled
+Auto policy. Unknown GPUs therefore remain on CPU until device evidence is supplied. The retained
+PowerVR BXM operation failures reject that known family before timing. Because the current CPU
+phase policy is deliberately disabled after the native binary change, a final GPU policy also
+cannot be promoted until the approved final CPU re-sweep supplies the matching policy identity.
+
 The final builds embed provenance that distinguishes the committed parent from the dirty worktree:
 
 ```text

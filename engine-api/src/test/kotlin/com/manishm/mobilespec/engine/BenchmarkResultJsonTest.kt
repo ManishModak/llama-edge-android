@@ -27,6 +27,10 @@ class BenchmarkResultJsonTest {
                 baselinePrefillThreads = 8,
                 decodeThreads = 6,
                 prefillThreads = 8,
+                executionBackend = Backend.HYBRID,
+                gpuLayers = 12,
+                backendPolicyIdentitySha256 = "backend-policy-sha",
+                vulkanDeviceIdentitySha256 = "vulkan-device-sha",
             ),
             runs = emptyList(),
         )
@@ -47,6 +51,10 @@ class BenchmarkResultJsonTest {
         assertTrue(json.contains("\"baselinePrefillThreads\":8"))
         assertTrue(json.contains("\"decodeThreads\":6"))
         assertTrue(json.contains("\"prefillThreads\":8"))
+        assertTrue(json.contains("\"executionBackend\":\"HYBRID\""))
+        assertTrue(json.contains("\"gpuLayers\":12"))
+        assertTrue(json.contains("\"backendPolicyIdentitySha256\":\"backend-policy-sha\""))
+        assertTrue(json.contains("\"vulkanDeviceIdentitySha256\":\"vulkan-device-sha\""))
         assertFalse(json.contains("NaN"))
     }
 
@@ -117,5 +125,12 @@ class BenchmarkResultJsonTest {
         assertTrue(json.contains("\"processPeakRssBytes\":40"))
         assertTrue(json.contains("\"swapTotalBytes\":50"))
         assertTrue(json.contains("\"swapFreeBytes\":60"))
+    }
+
+    @Test
+    fun `GPU layer candidates are bounded and deduplicated`() {
+        assertTrue(gpuLayerCandidates(1) == listOf(0, -1))
+        assertTrue(gpuLayerCandidates(4) == listOf(0, 1, 2, 3, -1))
+        assertTrue(gpuLayerCandidates(32) == listOf(0, 8, 16, 24, -1))
     }
 }

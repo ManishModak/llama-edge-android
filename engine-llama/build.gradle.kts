@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+val enableKleidiAI = providers.gradleProperty("mobilespec.enableKleidiAI").orElse("true")
+val enableVulkan = providers.gradleProperty("mobilespec.enableVulkan").orElse("true")
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -21,6 +24,8 @@ android {
                 arguments += listOf(
                     "-DANDROID_STL=c++_shared",
                     "-DCMAKE_BUILD_TYPE=Release",
+                    "-DMOBILESPEC_ENABLE_KLEIDIAI=${enableKleidiAI.get()}",
+                    "-DMOBILESPEC_ENABLE_VULKAN=${enableVulkan.get()}",
                 )
             }
         }

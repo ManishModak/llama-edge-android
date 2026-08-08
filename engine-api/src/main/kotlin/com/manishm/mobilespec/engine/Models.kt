@@ -1,10 +1,13 @@
 package com.manishm.mobilespec.engine
 
-enum class Backend { CPU, VULKAN }
+import java.security.MessageDigest
+
+enum class Backend { CPU, VULKAN, HYBRID, AUTO }
 
 enum class InferenceMode { BASELINE, OPTIMIZED }
 
 const val INTERACTIVE_PHASE_POLICY_WORKLOAD = "interactive-chat-decode-weighted"
+const val EXECUTION_POLICY_SCORING = "e2e-3pct-correctness-memory-thermal-stability"
 
 data class ModelConfig(
     val path: String,
@@ -14,9 +17,126 @@ data class ModelConfig(
     /** 0 keeps the llama API default; a verified policy overrides it with measured stock widths. */
     val threads: Int = 0,
     val backend: Backend = Backend.CPU,
+    /** CPU=0, Vulkan=-1 (all), Hybrid=positive bounded layer count. */
+    val gpuLayers: Int = 0,
     val useMmap: Boolean = true,
     val phasePolicy: PhasePolicy? = null,
+    val backendPolicy: BackendPolicy? = null,
+    /** Populated by the native engine after model load; ignored as an input hint. */
+    val modelLayerCount: Int? = null,
 )
+
+data class BackendPolicy(
+    val backend: Backend,
+    val gpuLayers: Int,
+    val profileIdentitySha256: String,
+    val deviceFingerprintSha256: String,
+    val vulkanDeviceIdentitySha256: String,
+    val nativeLibrarySha256: String,
+    val sourceReportSha256: String,
+    val cpuPhasePolicyIdentitySha256: String,
+    val deviceModel: String,
+    val socModel: String,
+    val modelSha256: String,
+    val llamaCommit: String,
+    val contextSize: Int,
+    val qualificationPromptSha256: String,
+    val qualificationMaxTokens: Int,
+    val qualificationTemperature: Float,
+    val qualificationSeed: Long,
+    val workloadClass: String,
+    val scoringPolicy: String,
+) {
+    fun compatibilityError(
+        model: ModelConfig,
+        runtimeLlamaCommit: String,
+        runtimeNativeLibrarySha256: String?,
+        runtimeDeviceFingerprintSha256: String?,
+        runtimeDeviceModel: String?,
+        runtimeSocModel: String?,
+        runtimeVulkanDeviceIdentitySha256: String?,
+    ): String? = when {
+        backend != Backend.VULKAN && backend != Backend.HYBRID ->
+            "backend policy must select Vulkan or Hybrid"
+        backend == Backend.VULKAN && gpuLayers != -1 ->
+            "Vulkan backend policy must request full offload"
+        backend == Backend.HYBRID && gpuLayers <= 0 ->
+            "Hybrid backend policy must request a positive layer count"
+        profileIdentitySha256.length != 64 -> "backend-policy identity is missing or malformed"
+        deviceFingerprintSha256.length != 64 -> "backend-policy device identity is malformed"
+        vulkanDeviceIdentitySha256.length != 64 -> "Vulkan device identity is malformed"
+        nativeLibrarySha256.length != 64 -> "backend-policy native-library identity is malformed"
+        sourceReportSha256.length != 64 -> "backend-policy source report identity is malformed"
+        cpuPhasePolicyIdentitySha256.length != 64 ->
+            "backend-policy CPU phase identity is malformed"
+        qualificationPromptSha256.length != 64 ->
+            "backend-policy qualification prompt identity is malformed"
+        qualificationMaxTokens <= 0 || !qualificationTemperature.isFinite() ->
+            "backend-policy qualification generation shape is malformed"
+        runtimeDeviceModel.isNullOrBlank() || runtimeSocModel.isNullOrBlank() ->
+            "runtime device identity is unavailable"
+        runtimeNativeLibrarySha256.isNullOrBlank() ->
+            "runtime native-library identity is unavailable"
+        runtimeDeviceFingerprintSha256.isNullOrBlank() ->
+            "runtime device fingerprint is unavailable"
+        runtimeVulkanDeviceIdentitySha256.isNullOrBlank() ->
+            "runtime Vulkan device identity is unavailable"
+        !deviceModel.equals(runtimeDeviceModel, ignoreCase = true) ->
+            "backend-policy device model is stale"
+        !socModel.equals(runtimeSocModel, ignoreCase = true) -> "backend-policy SoC is stale"
+        !deviceFingerprintSha256.equals(runtimeDeviceFingerprintSha256, ignoreCase = true) ->
+            "backend-policy device fingerprint is stale"
+        !modelSha256.equals(model.sha256, ignoreCase = true) -> "backend-policy model hash is stale"
+        llamaCommit != runtimeLlamaCommit -> "backend-policy llama.cpp build is stale"
+        !nativeLibrarySha256.equals(runtimeNativeLibrarySha256, ignoreCase = true) ->
+            "backend-policy native library is stale"
+        !vulkanDeviceIdentitySha256.equals(runtimeVulkanDeviceIdentitySha256, ignoreCase = true) ->
+            "backend-policy Vulkan driver/device is stale"
+        model.phasePolicy == null -> "backend-policy CPU phase policy is unavailable"
+        !cpuPhasePolicyIdentitySha256.equals(
+            model.phasePolicy.profileIdentitySha256,
+            ignoreCase = true,
+        ) -> "backend-policy CPU phase policy is stale"
+        contextSize != model.contextSize -> "backend-policy context is stale"
+        workloadClass != INTERACTIVE_PHASE_POLICY_WORKLOAD ->
+            "backend-policy workload class is stale or unsupported"
+        scoringPolicy != EXECUTION_POLICY_SCORING ->
+            "backend-policy scoring policy is stale or unsupported"
+        else -> null
+    }
+}
+
+fun runtimeDeviceFingerprintSha256(deviceModel: String, socModel: String, cpuCoreCount: Int): String {
+    require(deviceModel.isNotBlank() && socModel.isNotBlank() && cpuCoreCount > 0) {
+        "device model, SoC, and CPU core count are required"
+    }
+    val material = listOf(
+        deviceModel.trim().lowercase(),
+        socModel.trim().lowercase(),
+        cpuCoreCount,
+    ).joinToString("|")
+    return MessageDigest.getInstance("SHA-256")
+        .digest(material.toByteArray(Charsets.UTF_8))
+        .joinToString("") { "%02x".format(it) }
+}
+
+fun vulkanDeviceIdentitySha256(devices: List<VulkanDeviceInfo>): String? {
+    val material = devices.sortedBy(VulkanDeviceInfo::identityMaterial)
+        .joinToString("\n", transform = VulkanDeviceInfo::identityMaterial)
+        .takeIf(String::isNotBlank)
+        ?: return null
+    return MessageDigest.getInstance("SHA-256")
+        .digest(material.toByteArray(Charsets.UTF_8))
+        .joinToString("") { "%02x".format(it) }
+}
+
+/** CPU, roughly 25/50/75 percent partial offload, and full Vulkan offload (-1). */
+fun gpuLayerCandidates(modelLayerCount: Int): List<Int> {
+    require(modelLayerCount > 0) { "model layer count must be positive" }
+    val partial = if (modelLayerCount == 1) emptyList() else listOf(0.25, 0.50, 0.75)
+        .map { fraction -> (modelLayerCount * fraction).toInt().coerceIn(1, modelLayerCount - 1) }
+    return (listOf(0) + partial + listOf(-1)).distinct()
+}
 
 data class PhasePolicy(
     val baselineDecodeThreads: Int,
@@ -76,8 +196,55 @@ data class EngineCapabilities(
     val supportsCancellation: Boolean,
     val timingSource: String,
     val supportsPhaseAwareThreadPolicy: Boolean = false,
+    val supportsGpuOffload: Boolean = false,
+    val supportsHybridOffload: Boolean = false,
+    val supportsKleidiAI: Boolean = false,
+    val backendDevices: List<BackendDeviceInfo> = emptyList(),
+    val vulkanDevices: List<VulkanDeviceInfo> = emptyList(),
     val detail: String? = null,
 )
+
+data class BackendDeviceInfo(
+    val name: String,
+    val description: String,
+    val type: String,
+    val memoryFreeBytes: Long,
+    val memoryTotalBytes: Long,
+    val asynchronous: Boolean = false,
+    val hostBuffer: Boolean = false,
+    val bufferFromHostPointer: Boolean = false,
+    val events: Boolean = false,
+)
+
+data class VulkanDeviceInfo(
+    val name: String,
+    val vendorId: Long,
+    val deviceId: Long,
+    val apiVersion: String,
+    val driverVersionRaw: Long,
+    val driverVersion: String,
+    val deviceType: String,
+    val fp16: Boolean,
+    val integerDotProduct: Boolean,
+    val cooperativeMatrix: Boolean,
+    val cooperativeMatrix2: Boolean,
+) {
+    val unifiedMemory: Boolean
+        get() = deviceType == "INTEGRATED_GPU"
+
+    fun identityMaterial(): String = listOf(
+        name,
+        vendorId,
+        deviceId,
+        apiVersion,
+        driverVersionRaw,
+        deviceType,
+        fp16,
+        integerDotProduct,
+        cooperativeMatrix,
+        cooperativeMatrix2,
+    ).joinToString("|")
+}
 
 data class GenerationMetrics(
     val promptTokens: Int,
@@ -154,6 +321,10 @@ data class Traceability(
     val baselinePrefillThreads: Int? = null,
     val decodeThreads: Int? = null,
     val prefillThreads: Int? = null,
+    val executionBackend: Backend = Backend.CPU,
+    val gpuLayers: Int = 0,
+    val backendPolicyIdentitySha256: String? = null,
+    val vulkanDeviceIdentitySha256: String? = null,
 )
 
 data class BenchmarkResult(

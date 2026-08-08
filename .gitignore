@@ -19,6 +19,7 @@ __pycache__/
 
 # Local agent orchestration and generated strategy audit
 .agents/
+.claude/
 ARM_AI_CHALLENGE_AUDIT_AND_WINNING_STRATEGY.md
 
 # Native build output

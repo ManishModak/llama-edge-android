@@ -59,6 +59,18 @@ fun DeviceScreen(
                 "Backends",
                 capabilities.backends.joinToString().ifBlank { "none" },
             )
+            InfoRow("KleidiAI", if (capabilities.supportsKleidiAI) "enabled" else "disabled")
+            InfoRow("GPU offload", if (capabilities.supportsGpuOffload) "candidate" else "unavailable")
+            capabilities.vulkanDevices.forEachIndexed { index, device ->
+                InfoRow("Vulkan device ${index + 1}", device.name)
+                InfoRow("Vulkan driver", "${device.driverVersion} (raw ${device.driverVersionRaw})")
+                InfoRow("Unified memory", device.unifiedMemory.toString())
+                InfoRow(
+                    "GPU features",
+                    "FP16=${device.fp16}, int-dot=${device.integerDotProduct}, " +
+                        "coop-matrix=${device.cooperativeMatrix || device.cooperativeMatrix2}",
+                )
+            }
             InfoRow(
                 "Speculation",
                 if (capabilities.supportsSpeculativeDecoding) "supported" else "unavailable",
