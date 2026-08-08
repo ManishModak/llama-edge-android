@@ -697,7 +697,7 @@ class SweepHygieneTests(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 class CacheAndProfileTests(unittest.TestCase):
-    DEVICE = {"model": "24094RAD4I", "soc": "MT6855", "serial": "8DYTMRKF755TOBZD"}
+    DEVICE = {"model": "24094RAD4I", "soc": "MT6855", "serial": "TEST-PHONE-SERIAL"}
     MODEL_SHA = "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8"
 
     def test_fingerprint_is_stable_and_ignores_serial(self):
@@ -706,6 +706,15 @@ class CacheAndProfileTests(unittest.TestCase):
         second = at.device_fingerprint({**self.DEVICE, "serial": "OTHER"}, t)
         self.assertEqual(first, second)
         self.assertEqual(len(first), 64)
+
+    def test_shareable_device_block_redacts_adb_serial(self):
+        block = at.run_suite.device_block(
+            "PRIVATE-SERIAL",
+            {"model": "phone", "soc": "soc", "serial": "PRIVATE-SERIAL"},
+            False,
+        )
+
+        self.assertEqual("<redacted>", block["serial"])
 
     def test_fingerprint_changes_with_soc_or_topology(self):
         t = topo(TOPO_2_6)

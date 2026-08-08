@@ -17,6 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_APK = ROOT / "app/build/outputs/apk/debug/app-debug.apk"
 
 
+def display_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return path.name
+
+
 def sha256(path: Path) -> str:
     return file_digest(path, "sha256")
 
@@ -73,7 +80,7 @@ def kleidiai_provenance(has_symbols: bool) -> dict[str, object]:
                 if "/LICENSES/" in member.name and member.isfile()
             )
         archive_report = {
-            "path": str(archive),
+            "path": display_path(archive),
             "md5": actual_md5,
             "md5MatchesPinnedSource": actual_md5 == expected_md5,
             "sha256": sha256(archive),
@@ -127,9 +134,9 @@ def main() -> int:
     project_diff = output("git", "-C", str(ROOT), "diff", "--binary", "HEAD", "--")
     report = {
         "schemaVersion": 1,
-        "apk": {"path": str(args.apk), "sha256": sha256(args.apk)},
+        "apk": {"path": display_path(args.apk), "sha256": sha256(args.apk)},
         "nativeLibrary": {
-            "path": str(args.library),
+            "path": display_path(args.library),
             "sha256": sha256(args.library),
             "hasKleidiAISymbols": has_kleidiai_symbols,
             "hasVulkanBackendSymbols": "ggml_backend_vk_" in symbols,

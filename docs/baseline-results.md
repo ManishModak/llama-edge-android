@@ -6,7 +6,7 @@
 > [§ Overturned finding](#overturned-finding-t8-does-not-collapse).
 
 **Date:** 2026-07-23 · **Suite:** `benchmarks/suites/phase1-baseline.json` (all 12 cases)
-**Device:** Redmi Note 14 5G (`24094RAD4I`, serial `8DYTMRKF755TOBZD`) — MediaTek Dimensity 7025 (MT6855),
+**Device:** Redmi Note 14 5G (`24094RAD4I`; ADB serial omitted) — MediaTek Dimensity 7025 (MT6855),
 2× Cortex-A78 (cpu6/7) + 6× Cortex-A55 (cpu0–5), arm64-v8a, Android 16, 5.6 GB RAM.
 GPU: PowerVR B-Series BXM-8-256, Vulkan 1.3.
 **Binaries:** `llama-bench` (CPU) and `llama-bench-vulkan` (Vulkan), static, pinned llama.cpp `178a6c4`,

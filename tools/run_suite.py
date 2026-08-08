@@ -126,13 +126,13 @@ def device_block(serial: str | None, snapshot: dict | None, dry_run: bool) -> di
             "soc": snapshot.get("soc"),
             "vulkanDevice": snapshot.get("vulkanDevice"),
             "vulkanDriver": snapshot.get("vulkanDriver"),
-            "serial": snapshot.get("serial") or serial,
+            "serial": "<redacted>",
         }
     if dry_run:
         for prop in ("ro.product.model", "ro.build.version.release", "ro.soc.model"):
             run_adb(serial, ["shell", "getprop", prop], dry_run=True)
         return {"model": None, "android": None, "soc": None,
-                "vulkanDevice": None, "vulkanDriver": None, "serial": serial}
+                "vulkanDevice": None, "vulkanDriver": None, "serial": "<redacted>"}
     gp = lambda p: run_adb(serial, ["shell", "getprop", p], dry_run=False).strip() or None
     return {
         "model": gp("ro.product.model"),
@@ -140,7 +140,7 @@ def device_block(serial: str | None, snapshot: dict | None, dry_run: bool) -> di
         "soc": gp("ro.soc.model"),
         "vulkanDevice": None,   # not queryable via a fast adb call; fill via --device-snapshot
         "vulkanDriver": None,
-        "serial": serial,
+        "serial": "<redacted>",
     }
 
 

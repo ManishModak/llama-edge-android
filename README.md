@@ -403,6 +403,14 @@ The full protocol is in
 
 Repository code and documentation are licensed under
 [Apache License 2.0](LICENSE). Model weights and submodules retain their own licenses.
+Runtime dependency attribution and release-bundle notice requirements are recorded in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); the public-tree review is in
+[docs/repository-audit.md](docs/repository-audit.md).
+
+After the final device gates pass, `tools/prepare_release_bundle.py` assembles the APK, exact build
+inspection, signature evidence, SHA-256 manifest, root license, dependency notices, and matching
+NDK LLVM notice without overwriting an existing destination. The full command and its fail-closed
+conditions are in [docs/reproducibility.md](docs/reproducibility.md#15-prepare-but-do-not-publish-the-release-bundle).
 
 The independent prefill/decode `llama-bench` patch passed the final device gates and is isolated
 under `patches/llama.cpp/`. An upstream issue/PR is still a human-owned publication step; until that

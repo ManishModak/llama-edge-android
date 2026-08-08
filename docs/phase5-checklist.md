@@ -294,14 +294,14 @@ b2f447f615d51fa4c87084c17b83de78a271685d3ab21f7fe009d40f379c269f
 Verified release command:
 
 ```bash
-ANDROID_HOME=/home/manishm/Android/Sdk \
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
   ./gradlew --no-daemon test assembleDebug assembleRelease
 ```
 
 Verified debug command:
 
 ```bash
-ANDROID_HOME=/home/manishm/Android/Sdk \
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
   ./gradlew test assembleDebug --stacktrace
 ```
 

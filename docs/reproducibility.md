@@ -509,7 +509,7 @@ Final Android pins:
 The final central validation command was:
 
 ```bash
-ANDROID_HOME=/home/manishm/Android/Sdk \
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
   ./gradlew --no-daemon test assembleDebug assembleRelease
 ```
 
@@ -682,7 +682,33 @@ native-timing runs/mode, exact output hashes, complete worktree/JNI provenance, 
 VmHWM, and SwapFree at every boundary. The existing sustained run predates those fields and is not
 misrepresented as peak-RSS/swap evidence.
 
-## 15. Fresh-clone acceptance test
+## 15. Prepare (but do not publish) the release bundle
+
+After all device gates pass and the final source is committed, build the release APK and create a
+non-overwriting bundle containing its provenance, signature verification, checksums, project and
+third-party notices, and the matching NDK LLVM notice:
+
+```bash
+TASK_SDK=/absolute/path/to/Android/Sdk
+ANDROID_HOME="$TASK_SDK" ./gradlew --no-daemon test :app:assembleRelease
+python tools/prepare_release_bundle.py \
+  --apk app/build/outputs/apk/release/app-release.apk \
+  --ndk "$TASK_SDK/ndk/28.2.13676358" \
+  --apksigner "$TASK_SDK/build-tools/36.0.0/apksigner" \
+  --version v1.0.0-arm-challenge \
+  --output dist/v1.0.0-arm-challenge
+```
+
+The command refuses an existing destination, an uncommitted project tree, a missing/mismatched
+APK inspection hash, an invalid APK signature, a missing patch-series check, or an ambiguous LLVM
+notice. The expected repository-managed llama.cpp patch worktree is allowed and is recorded by
+commit plus source-diff hash. `packagingEligible` covers package/source hygiene only—it does not
+mean physical qualification or Devpost submission gates passed. `--allow-dirty` exists solely for
+development previews and marks that field false.
+
+Do not publish this experimental branch's bundle until P1/P2 and the final clean-device gates pass.
+
+## 16. Fresh-clone acceptance test
 
 A final fresh clone passes only when all of the following are evidenced:
 

@@ -11,7 +11,7 @@ Canonical copy of this plan: `docs/PLAN.md` in the repo. P0 lands the completed
 
 ## 0. Verified facts (measured 20 Jul 2026 — do not re-derive)
 
-### Device (Redmi Note 14 5G, `24094RAD4I`, ADB serial `8DYTMRKF755TOBZD`)
+### Device (Redmi Note 14 5G, `24094RAD4I`; ADB serial omitted from public docs)
 | Item | Verified value |
 |---|---|
 | SoC | **MediaTek Dimensity 7025 (MT6855)** |
@@ -325,7 +325,7 @@ portable claim is that phase optima can differ and must be measured rather than 
       The promoted phone profile is `pp8-tg2`; wrong device/model/build/context identities disable it.
 - [x] Verify model import, generation, cancellation/reuse, benchmark UI, and JSON export on the phone.
       SAF copy/hash/load, baseline and optimized generation, A/B, export, cancellation, and a
-      successful 128-token post-cancel reuse run were exercised on serial `8DYTMRKF755TOBZD`.
+      successful 128-token post-cancel reuse run were exercised on the target phone.
 
 **What generalizes and what does not:**
 
@@ -471,9 +471,11 @@ worth more than an unproven late optimization.
 - [x] `CHANGES_FOR_CHALLENGE.md` — exact work done during the submission window
 - [x] `docs/reproducibility.md` complete: JDK/NDK/CMake/AGP versions, build commands, ADB steps
 - [x] Authenticated shallow recursive clone + Android release build passed on commit `02c369b`.
-- [ ] Because the repo is already public, immediately audit tracked files and Git history for
+- [x] Because the repo is already public, immediately audit tracked files and Git history for
       secrets, personal paths, device serial exposure, model redistribution, third-party notices,
-      and submodule reproducibility.
+      and submodule reproducibility. Completed 8 Aug; findings and retained immutable-evidence
+      exceptions are in `docs/repository-audit.md`, and dependency attribution is in
+      `THIRD_PARTY_NOTICES.md`.
 - [ ] Publish a GitHub Release with the testable release APK, source/commit identity, checksums,
       model acquisition instructions (do not redistribute restricted weights), and final evidence.
 - [x] Public visibility and GitHub Apache-2.0 detection verified 8 Aug.
@@ -564,7 +566,9 @@ worth more than an unproven late optimization.
       as a general result
 - [x] Correctness checks pass; unsupported-device fallback works
 - [x] App demos chat + A/B benchmark without log-diving
-- [ ] Proven CPU mode remains independently releasable regardless of KleidiAI/GPU experiment status
+- [x] Proven CPU mode remains independently releasable regardless of KleidiAI/GPU experiment status:
+      default `main` contains the frozen verified CPU app, and the experimental branch retains a
+      build-verified `mobilespec.enableKleidiAI=false`/`mobilespec.enableVulkan=false` path.
 - [ ] If P2 is merged: CPU/Vulkan/Hybrid/Auto are explicit; unknown/stale/failed GPU policies fall
       back to CPU; PowerVR rejection is device-verified; no untested-GPU speed claim appears
 - [ ] Public repo and test build are accessible, Apache-2.0 is detected, README is judge-ordered,
