@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,6 +79,23 @@ def inspect_build(apk: Path, ndk: Path) -> dict[str, object]:
     return report
 
 
+def verify_embedded_commit(apk: Path, commit: str) -> str:
+    short_commit = commit[:12]
+    needle = short_commit.encode("ascii")
+    with zipfile.ZipFile(apk) as bundle:
+        dex_entries = sorted(
+            name for name in bundle.namelist()
+            if name.startswith("classes") and name.endswith(".dex")
+        )
+        if not dex_entries:
+            raise ReleaseBundleError("APK contains no classes dex")
+        if not any(needle in bundle.read(name) for name in dex_entries):
+            raise ReleaseBundleError(
+                f"APK does not embed current project commit {short_commit}; rebuild it"
+            )
+    return short_commit
+
+
 def llvm_notice(ndk: Path) -> Path:
     candidates = sorted((ndk / "toolchains/llvm/prebuilt").glob("*/NOTICE"))
     if len(candidates) != 1:
@@ -115,10 +133,11 @@ def build_bundle(
     if not version or any(char.isspace() for char in version):
         raise ReleaseBundleError("release version must be non-empty and contain no whitespace")
 
+    commit = output("git", "rev-parse", "HEAD")
+    embedded_commit = verify_embedded_commit(apk, commit)
     status, packaging_eligible = validate_release_tree(allow_dirty)
     inspection = inspect_build(apk, ndk)
     signature = output(str(apksigner), "verify", "--verbose", str(apk))
-    commit = output("git", "rev-parse", "HEAD")
     branch = output("git", "branch", "--show-current") or "detached"
     parent = destination.parent
     parent.mkdir(parents=True, exist_ok=True)
@@ -144,6 +163,7 @@ def build_bundle(
             "allowDirtyOverride": allow_dirty,
             "workingTreeStatus": status,
             "apk": {"file": apk_name, "sha256": sha256(staging / apk_name)},
+            "apkEmbeddedCommit": embedded_commit,
             "buildInspection": "build-inspection.json",
             "signatureEvidence": "apk-signature.txt",
             "license": "LICENSE",

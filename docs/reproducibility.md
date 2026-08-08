@@ -699,12 +699,13 @@ python tools/prepare_release_bundle.py \
   --output dist/v1.0.0-arm-challenge
 ```
 
-The command refuses an existing destination, an uncommitted project tree, a missing/mismatched
-APK inspection hash, an invalid APK signature, a missing patch-series check, or an ambiguous LLVM
-notice. The expected repository-managed llama.cpp patch worktree is allowed and is recorded by
-commit plus source-diff hash. `packagingEligible` covers package/source hygiene only—it does not
-mean physical qualification or Devpost submission gates passed. `--allow-dirty` exists solely for
-development previews and marks that field false.
+The command refuses an existing destination, an uncommitted project tree, an APK that does not
+embed the current Git commit, a missing/mismatched APK inspection hash, an invalid APK signature,
+a missing patch-series check, or an ambiguous LLVM notice. The expected repository-managed
+llama.cpp patch worktree is allowed and is recorded by commit plus source-diff hash.
+`packagingEligible` covers package/source hygiene only—it does not mean physical qualification or
+Devpost submission gates passed. `--allow-dirty` exists solely for development previews and marks
+that field false.
 
 Do not publish this experimental branch's bundle until P1/P2 and the final clean-device gates pass.
 

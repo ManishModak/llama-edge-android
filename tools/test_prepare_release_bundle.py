@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+import zipfile
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -46,6 +47,17 @@ class PrepareReleaseBundleTest(unittest.TestCase):
             notice.write_text("notice", encoding="utf-8")
 
             self.assertEqual(notice, release.llvm_notice(ndk))
+
+    def test_apk_must_embed_current_commit(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            apk = Path(temporary) / "app.apk"
+            commit = "a" * 40
+            with zipfile.ZipFile(apk, "w") as bundle:
+                bundle.writestr("classes.dex", b"prefix" + commit[:12].encode() + b"suffix")
+
+            self.assertEqual(commit[:12], release.verify_embedded_commit(apk, commit))
+            with self.assertRaisesRegex(release.ReleaseBundleError, "does not embed"):
+                release.verify_embedded_commit(apk, "b" * 40)
 
 
 if __name__ == "__main__":
