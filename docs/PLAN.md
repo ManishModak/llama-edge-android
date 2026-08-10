@@ -451,31 +451,39 @@ worth more than an unproven late optimization.
       whether the shipped binary changed. Do not start a full GPU matrix, CPU re-sweep, sustained
       session, or final evidence rerun until the user explicitly approves it. No GPU candidate
       survived; no long GPU matrix or CPU re-sweep was started.
-- [ ] If GPU support is unfinished or unsafe by **11 Aug evening**, do not merge it. Keep the proven
+- [x] If GPU support is unfinished or unsafe by **11 Aug evening**, do not merge it. Keep the proven
       CPU app on `main`, document the measured PowerVR rejection, and retain GPU Auto routing as
-      post-submission work.
+      post-submission work. The fail-closed generic modes were complete and merged in PR #2 on
+      10 Aug; PowerVR selects CPU and carries no GPU speed claim.
 
 **Final evidence bundle**
 - [x] Complete the three-round topology-derived sweep, including measured stock defaults.
-- [ ] Clean-device final benchmark session: stock-default vs phase-aware CPU policy and any accepted
+- [x] Clean-device final benchmark session: stock-default vs phase-aware CPU policy and any accepted
       GPU/hybrid policy, full matrix, raw
       JSON committed/attached to a GitHub Release. Existing 15-per-mode evidence satisfies the
       sustained requirement for the current binary; rerun only if P1/P2 changes the shipped binary.
+      A 10 Aug final sweep retained all 30 samples but was inconclusive because run order correlated
+      with speed; a controlled retry was stopped after its thermal gate timed out. Neither failed
+      gate was relaxed. The rebuilt stripped benchmark remained byte-identical (`459de4...68b`) to
+      the accepted six-gate report, so that report re-enabled `pp8-tg2`. The final GPU-capable app
+      A/B then completed five runs/mode with exact output hashes and Auto resolved to CPU. Its hot
+      `MODERATE` telemetry is retained under `benchmarks/results/20260810-final-release/` as
+      integration confirmation, not as a replacement headline run.
 - [x] Headline chart (stock-default vs autotuned decode tok/s + TTFT + **variance/p99**) as PNG for README
 - [x] Two claims, scoped differently and both stated:
   - *General:* "MobileSpec derives and measures phase-specific llama.cpp CPU policies from Arm Android topology, and keeps stock defaults unless a candidate passes performance, variance, and thermal gates."
   - *Device-specific:* "On Redmi Note 14 5G (Dimensity 7025), with the frozen Llama 3.2 1B Q4_0 build and workload, the selected prefill/decode pair changed X from A to B across N samples, correctness preserved."
 - [x] State the single-device limitation plainly, and invite others to run the harness and add a row
-- [ ] If P2 ships, add a third scoped claim: "MobileSpec qualifies CPU, Vulkan, and partial-layer
+- [x] If P2 ships, add a third scoped claim: "MobileSpec qualifies CPU, Vulkan, and partial-layer
       policies and fails closed to CPU; on the tested PowerVR device, GPU candidates were rejected."
       Do not imply a measured win on untested GPUs.
 
 **Repository/docs**
 - [x] README in judge order: 1-sentence pitch → headline chart → demo link → what changed & why → reproduction steps (exact commits, model sha256, commands) → methodology → limitations/fallbacks → upstream plan
-- [ ] After the binary freezes, update README with the execution-policy story: proven phase-aware
+- [x] After the binary freezes, update README with the execution-policy story: proven phase-aware
       CPU result; explicit CPU/Vulkan/Hybrid/Auto modes if P2 ships; driver-bound qualification;
       PowerVR rejection; and CPU fallback. Do not present Vulkan as universally faster.
-- [ ] Document the one-command CPU build/ADB benchmark and, if P2 ships, the reproducible Vulkan
+- [x] Document the one-command CPU build/ADB benchmark and, if P2 ships, the reproducible Vulkan
       toolchain/shader build plus a command that prints the selected or rejected backend policy.
 - [x] `CHANGES_FOR_CHALLENGE.md` — exact work done during the submission window
 - [x] `docs/reproducibility.md` complete: JDK/NDK/CMake/AGP versions, build commands, ADB steps
@@ -488,8 +496,9 @@ worth more than an unproven late optimization.
 - [ ] Publish a GitHub Release with the testable release APK, source/commit identity, checksums,
       model acquisition instructions (do not redistribute restricted weights), and final evidence.
 - [x] Public visibility and GitHub Apache-2.0 detection verified 8 Aug.
-- [ ] After the final branch lands on `main`, perform an unauthenticated shallow recursive clone and
-      release build from the default branch.
+- [x] After the final branch lands on `main`, perform an unauthenticated shallow recursive clone and
+      release build from the default branch. Verified 10 Aug at merge commit `358d458`: exact
+      submodule pins, tests, debug APK, and release APK all built successfully.
 - [ ] From that public clone, perform the documented model acquisition/import and one standard
       device run. This is the remaining end-to-end reproducibility gate.
 - [x] Root Apache-2.0 file is present and detected; per-file headers are not a challenge requirement.
@@ -578,7 +587,7 @@ worth more than an unproven late optimization.
 - [x] Proven CPU mode remains independently releasable regardless of KleidiAI/GPU experiment status:
       default `main` contains the frozen verified CPU app, and the experimental branch retains a
       build-verified `mobilespec.enableKleidiAI=false`/`mobilespec.enableVulkan=false` path.
-- [ ] If P2 is merged: CPU/Vulkan/Hybrid/Auto are explicit; unknown/stale/failed GPU policies fall
+- [x] If P2 is merged: CPU/Vulkan/Hybrid/Auto are explicit; unknown/stale/failed GPU policies fall
       back to CPU; PowerVR rejection is device-verified; no untested-GPU speed claim appears
 - [ ] Public repo and test build are accessible, Apache-2.0 is detected, README is judge-ordered,
       required Devpost fields are complete, and all logged-out links work

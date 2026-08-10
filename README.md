@@ -6,7 +6,7 @@ devices, and fails closed to CPU unless a device/build/model-specific GPU or hyb
 passed correctness, resource, thermal, stability, and performance gates. It is being built for the
 Mobile AI track of the Arm Create: AI Optimization Challenge 2026.
 
-> **Evidence status (8 August 2026):** Phases 0–2 are measured. Native MTP was slower and used
+> **Evidence status (10 August 2026):** Phases 0–2 are measured. Native MTP was slower and used
 > swap; the zero-weight n-gram result was rejected because its apparent 2.97x gain came from a
 > persistent-cache artifact and its resource gates failed. The topology-derived three-round sweep
 > selected `pp8-tg2` over measured stock `pp8-tg8`; all six promotion gates passed. A frozen app
@@ -15,10 +15,15 @@ Mobile AI track of the Arm Create: AI Optimization Challenge 2026.
 > VmHWM, and SwapFree across the scored A/B.
 > The result below is a device/model/build/context/workload-specific measurement, not a universal
 > Android speedup claim. The demo video and external submission steps remain pending.
-> The experimental KleidiAI + Android Vulkan build compiles locally and contains both kernel sets,
-> but has not yet been qualified on the phone. Because that native binary changed, its bundled
-> `pp8-tg2` policy is intentionally disabled until the final approved device re-sweep. `AUTO`
-> therefore selects CPU on an unknown or stale profile.
+> KleidiAI was activated and measured on the phone but rejected after regressions of 5.90% in
+> prefill and 1.11% in decode, so it is off in the release build. CPU, Vulkan, Hybrid, and Auto are
+> explicit modes. On the tested PowerVR BXM device, retained operation failures rejected every GPU
+> candidate before timing and Auto retained CPU. The release policy enables the proven `pp8-tg2`
+> CPU phase pair only for its exact device/model/llama.cpp/context identity; missing, stale, or failed
+> CPU/GPU evidence fails closed to measured stock CPU behavior.
+> A final five-run-per-mode app A/B on the GPU-capable native library preserved exact output hashes,
+> resolved Auto to CPU, and confirmed the phase pair remained beneficial. It ran hot at Android
+> thermal status `MODERATE`, so it is integration evidence rather than the headline speed source.
 > The baseline evidence ends at
 > project commit
 > `54aabbde5b9c31340f685ba6075a00222b8908f8`; the official Phase 1 bundle was captured at
@@ -45,6 +50,7 @@ Llama 3.2 1B Instruct Q4_0.
 | Final synthetic phase pair | **`pp8-tg2`** versus measured stock **`pp8-tg8`**; robust combined score **1.191×**, all six promotion gates passed |
 | Frozen real-generation confirmation | **11.52 tok/s optimized vs 6.19 stock**, 5 runs/mode, exact paired output hashes |
 | Sustained real generation | **11.18 ± 0.19 tok/s optimized vs 5.39 ± 0.87 stock**, 15 runs/mode over 14.37 min; exact hashes matched |
+| Final GPU-capable app confirmation | **5.50 tok/s optimized vs 1.34 stock**, 5 runs/mode; exact hashes matched; hot `MODERATE` session, so not used for the headline claim |
 
 The central finding is that prefill is compute-heavy while decode is DRAM-bandwidth-bound on this
 device. Their measured thread optima differ, so the active optimization is a phase pair:
@@ -102,7 +108,9 @@ demo. Remaining submission actions are tracked in [the Phase 5 checklist](docs/p
    offload, bounded partial-layer hybrid offload, and Auto. Native capability data includes the
    Vulkan device/driver/API, UMA class, FP16, integer-dot and cooperative-matrix flags, backend
    memory/capabilities, and KleidiAI presence. Auto never treats capability as proof: a missing or
-   stale qualified profile resolves to CPU.
+   stale qualified profile resolves to CPU. MobileSpec qualifies CPU, Vulkan, and partial-layer
+   policies and fails closed to CPU; on the tested PowerVR device, all GPU candidates were rejected.
+   This is a safety/fallback result, not a GPU speedup claim.
 
 See [CHANGES_FOR_CHALLENGE.md](CHANGES_FOR_CHALLENGE.md) for the commit-by-commit challenge-window
 work.
@@ -111,7 +119,9 @@ work.
 
 ### 1. Clone and verify the pins
 
-The repository must be public before submission. Until then, cloning requires repository access.
+The repository is public. A logged-out shallow recursive clone of merged `main` was verified on
+10 August 2026; the pinned Vulkan-Headers checkout may require the documented unshallow fallback
+when a hosting-side shallow fetch does not expose the exact gitlink.
 
 ```bash
 git clone --depth 1 --shallow-submodules \
@@ -336,6 +346,7 @@ The full protocol is in
 | `benchmarks/results/raw/20260807-232905-autotune/autotune.json` | Completed three-round topology-derived sweep, individual pp/tg samples, measured stock defaults, thermal/order gates, and promoted `pp8-tg2` policy |
 | `benchmarks/results/20260807-real-generation/` | Frozen five-run/mode confirmation, three-suite 14.37-minute session, exact output hashes, native timings, telemetry, and generated summary |
 | `benchmarks/results/20260810-powervr-backend-qualification/qualification.json` | App-exported Redmi qualification: CPU reference preflight passed; Hybrid 4/8/12 and full Vulkan were rejected before GPU execution by retained PowerVR BXM operation failures; Auto stayed on CPU |
+| `benchmarks/results/20260810-final-release/` | Final GPU-capable app A/B: five runs/mode, exact output hashes, Auto-to-CPU fallback, `pp8-tg2` identity, native timings, and hot-session telemetry |
 | `docs/assets/mobilespec-phase-policy.png` | Reproducible headline chart: decode mean/variance, TTFT mean/p99, and no-cooldown suite drift |
 | `tools/autotune.py` + `benchmarks/suites/autotune.json` | Topology-derived phase-pair tuner with exact binary/model/context/workload identity and strict one-command APK policy export |
 
@@ -354,8 +365,9 @@ The full protocol is in
   shapes. It is not claimed safe for arbitrary models.
 - The Android Vulkan/hybrid path is build-verified and its PowerVR fail-closed behavior is
   device-verified: Hybrid 4/8/12 and full Vulkan were rejected before GPU execution, and Auto
-  retained CPU. No Adreno, Mali, or PowerVR Android speedup claim is made, and the old CPU phase
-  policy is not reused across the new native-library identity.
+  retained CPU. No Adreno, Mali, or PowerVR Android speedup claim is made. The CPU phase policy is
+  accepted only because the rebuilt stripped benchmark is byte-identical to the six-gate discovery
+  binary and the final GPU-capable app A/B independently confirms its exact fail-closed identity.
 - The native-MTP run is only one repetition per prompt, started at thermal status 2, and crossed
   the no-swap threshold. It supports rejecting that candidate, not a repeatable speed estimate.
 - The n-gram run completed but is rejection evidence only: its 2.97x number was a persistent-cache

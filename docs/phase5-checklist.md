@@ -22,11 +22,11 @@ performance, correctness, memory, or demo evidence.
 | Native-MTP correctness | All six runs succeed and all three greedy output pairs match | Passed |
 | Sustained baseline/optimized run | Three no-cooldown suites, 14.37 min, 15 runs/mode, exact hashes; separate final VmHWM/SwapFree supplement | Proven with scoped supplement |
 | Android debug build/launch | SAF import/hash/load, generation, A/B, export, cancellation/reuse verified on Redmi | Proven |
-| Android release/model generation | Final debug/release build and v2 signing pass; debug full flow proven; final release full flow not repeated | Partially proven |
-| Fresh-clone build record | Authenticated shallow recursive clone and Android `test assembleRelease` pass; native/model/device sequence pending | Partial |
+| Android release/model generation | GPU-capable debug build completed model import and final five-run/mode A/B; committed release rebuild/smoke remains | Partially proven |
+| Fresh-clone build record | Public unauthenticated clone at `358d458` passed exact submodule checkout, tests, debug build, and release build | Build proven; final tagged device smoke pending |
 | Headline chart | `docs/assets/mobilespec-phase-policy.png`, generated from checked-in JSON | Proven |
 | Screenshots/demo video | Not recorded | Blocked |
-| Public repository/release | Repository documented as private | Blocked |
+| Public repository/release | Repository is public; `v1.0.0-arm-challenge` release pending | Partial |
 | Devpost submission | Not verified | Blocked |
 
 ## Freeze the final candidate
@@ -243,7 +243,8 @@ single-policy candidate model are development evidence only.
 Correctness artifact path/hash:
 
 ```text
-________________________________________
+benchmarks/results/20260810-final-release/mobilespec-1786369326067.json
+edccdeeb0963e566f962a4786ed9166d4c1295fd5d8664bb077b7e36cb66c40d
 ```
 
 ## Sustained run
@@ -305,21 +306,9 @@ ANDROID_HOME=/absolute/path/to/Android/Sdk \
   ./gradlew test assembleDebug --stacktrace
 ```
 
-Verified debug artifact:
-
-```text
-app/build/outputs/apk/debug/app-debug.apk
-size:   39,284,593 bytes
-sha256: 6228b85028a8f016ea6463f420da0a47e66264b87c3e3c8944922b66fcc87385
-```
-
-Release APK path and SHA-256:
-
-```text
-app/build/outputs/apk/release/app-release.apk
-size:   28,836,295 bytes
-sha256: 345c2d81fdf1a921b3617976ca9daaf2a82f5d0b3588c4a90c79719be2aa1a0b
-```
+The published release bundle's `release-manifest.json` and `SHA256SUMS` are the canonical APK,
+native-library, source, patch-series, and signing record. Do not copy older development APK hashes
+into this checklist after a provenance-only commit changes the package bytes.
 
 Both final APKs verify with APK Signature Scheme v2. The release APK intentionally uses debug
 signing for the demo. The phase-aware debug APK passed the complete device flow; the new telemetry
@@ -386,10 +375,10 @@ Video URL:
 
 Run on a clean path, not the development worktree.
 
-- [ ] Public clone works without private credentials.
+- [x] Public clone works without private credentials.
 - [x] Recursive shallow submodules resolve at the documented pins.
 - [ ] README model download/hash step passes.
-- [ ] CPU and Vulkan build commands pass.
+- [x] CPU and Vulkan build commands pass.
 - [ ] Smoke generation is coherent.
 - [ ] Standard suite emits/summarizes 12 results.
 - [ ] Historical MTP and n-gram rejection artifacts remain inspectable; rerunning them is not a
@@ -402,16 +391,16 @@ Run on a clean path, not the development worktree.
 Fresh-clone environment, date, commit, and log:
 
 ```text
-8 Aug 2026, `/tmp/llama-edge-shallow.QAqcVr`
-commit `c854112163e1`; llama.cpp `178a6c449371`; Vulkan-Headers `8864cdc896bb`
-`./gradlew --no-daemon test assembleRelease`: BUILD SUCCESSFUL in 54s, 146 tasks
+10 Aug 2026, `/tmp/llama-edge-public-clone.KUI6vH/repo`
+public main `358d4583fb26`; llama.cpp `178a6c449371`; Vulkan-Headers `8864cdc896bb`
+`./gradlew --no-daemon test :app:assembleDebug :app:assembleRelease`: BUILD SUCCESSFUL in 1m 1s
 ```
 
 ## Release and submission
 
-- [ ] Root `LICENSE` is Apache-2.0 and visible.
-- [ ] Third-party/model license boundaries are documented.
-- [ ] Repository is public.
+- [x] Root `LICENSE` is Apache-2.0 and visible.
+- [x] Third-party/model license boundaries are documented.
+- [x] Repository is public.
 - [ ] Default branch points at the frozen submission commit.
 - [ ] GitHub Release contains immutable evidence bundle and APK, if distributing it.
 - [ ] Release asset SHA-256 values recorded.

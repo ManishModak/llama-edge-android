@@ -594,21 +594,15 @@ python tools/export_android_backend_policy.py /absolute/path/to/qualification.js
 
 Only a report with one fully qualified candidate and exact profile identity can generate a bundled
 Auto policy. Unknown GPUs therefore remain on CPU until device evidence is supplied. The retained
-PowerVR BXM operation failures reject that known family before timing. Because the current CPU
-phase policy is deliberately disabled after the native binary change, a final GPU policy also
-cannot be promoted until the approved final CPU re-sweep supplies the matching policy identity.
+PowerVR BXM operation failures reject that known family before timing. The release CPU policy is
+generated from the accepted six-gate report and its rebuilt stripped benchmark is byte-identical
+(`459de42359a7abc37ac1e8b0df0ef20b54175d6e09b1d65dbeedd873846fc68b`) to the report identity.
+No GPU policy was promoted on the tested PowerVR device; Auto therefore retains CPU.
 
-The final builds embed provenance that distinguishes the committed parent from the dirty worktree:
-
-```text
-appCommit:              54aabbde5b9c
-appSourceSha256:        239ed059e829ee68afbc14cf0fe853b5c6b1d47d31e242315ed7ce77e63534d6
-llamaCommit:            178a6c449371
-llamaSourceDiffSha256:  fcf05675d714db3d9f14172b434c4f89737113dce6d4355347fc8f185557477f
-nativeLibrarySha256:    1e50ca51c1228862f349232c6ffb0061e9edc6c10b682dc1e5e37998f96c3251
-```
-
-The native-library hash is identical in the final debug and release APKs.
+Final builds embed the committed app identity plus source, pinned llama.cpp, pinned patch-series,
+native-library, phase-policy, device, model, and backend identities. The release bundle manifest
+and its `SHA256SUMS` are the canonical record for the published APK, avoiding stale hashes in this
+document whenever a provenance-only commit changes the APK bytes.
 
 ```bash
 TASK_APKSIGNER=/absolute/path/to/Android/Sdk/build-tools/36.0.0/apksigner
@@ -682,6 +676,14 @@ native-timing runs/mode, exact output hashes, complete worktree/JNI provenance, 
 VmHWM, and SwapFree at every boundary. The existing sustained run predates those fields and is not
 misrepresented as peak-RSS/swap evidence.
 
+The final GPU-capable native library was also confirmed in
+`benchmarks/results/20260810-final-release/mobilespec-1786369326067.json`, SHA-256
+`edccdeeb0963e566f962a4786ed9166d4c1295fd5d8664bb077b7e36cb66c40d`. It contains five scored
+runs per mode, exact output-hash equality, native timings, `pp8-tg2` identity, and Auto resolving to
+CPU because no PowerVR GPU policy qualified. Every boundary reported thermal status `MODERATE`, so
+this is final integration/fallback evidence; the cooler 15-run-per-mode bundle remains the
+headline performance source.
+
 ## 15. Prepare (but do not publish) the release bundle
 
 After all device gates pass and the final source is committed, build the release APK and create a
@@ -707,16 +709,20 @@ llama.cpp patch worktree is allowed and is recorded by commit plus source-diff h
 Devpost submission gates passed. `--allow-dirty` exists solely for development previews and marks
 that field false.
 
-Do not publish this experimental branch's bundle until P1/P2 and the final clean-device gates pass.
+Publish only after the final device gate passes and the bundle is produced from the committed
+default branch. A release bundle records packaging provenance; it does not turn a rejected GPU
+candidate into a performance claim.
 
 ## 16. Fresh-clone acceptance test
 
 A final fresh clone passes only when all of the following are evidenced:
 
-- [x] authenticated shallow clone and recursive submodule checkout succeed;
+- [x] unauthenticated shallow clone and recursive submodule checkout succeed (10 Aug, public
+      `main` at `358d458`; Vulkan-Headers required the documented unshallow fallback);
 - [x] both submodule hashes match the documented pins;
 - [ ] model download produces the documented size and SHA-256;
-- [ ] CPU and Vulkan binaries build from the documented commands;
+- [x] debug and release Android APKs, including CPU and Vulkan JNI backends, build from the public
+      clone and all Gradle tests pass;
 - [ ] smoke generation is coherent at `-c 512`;
 - [ ] the standard suite produces 12 non-dry-run JSON files;
 - [ ] the summarizer renders all 12 cases;
