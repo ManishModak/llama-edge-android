@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(LLAMA_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../../third_party/llama.cpp")
 set(MOBILESPEC_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../..")
 
-option(MOBILESPEC_ENABLE_KLEIDIAI "Enable Arm KleidiAI CPU kernels" ON)
+option(MOBILESPEC_ENABLE_KLEIDIAI "Enable experimental Arm KleidiAI CPU kernels" OFF)
 option(MOBILESPEC_ENABLE_VULKAN "Enable Vulkan GPU and hybrid offload" ON)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)

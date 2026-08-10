@@ -158,14 +158,20 @@ The recorded Linux build used NDK `28.2.13676358`, CMake `4.3.4`, Ninja `1.13.1`
 `-march=armv8.2-a+dotprod+fp16`. Exact CPU and Vulkan commands, binary deployment, device
 preparation, and result verification are in [docs/reproducibility.md](docs/reproducibility.md).
 
-Build the Android app with the pinned Arm CPU ISA, KleidiAI kernels, and Vulkan backend, then print
-the source/toolchain/APK/native identities plus symbol evidence:
+Build the Android app with the pinned Arm CPU ISA and Vulkan backend, then print the
+source/toolchain/APK/native identities plus symbol evidence:
 
 ```bash
 ANDROID_HOME=/absolute/path/to/Android/Sdk ./gradlew --no-daemon test :app:assembleDebug
 ANDROID_NDK_HOME=/absolute/path/to/Android/Sdk/ndk/28.2.13676358 \
   python tools/inspect_android_build.py
 ```
+
+KleidiAI is intentionally off in the release build. The bounded Redmi Note 14 5G/Q4_0 spike
+activated its DOTPROD kernels and preserved greedy output, but regressed mean prefill throughput
+by 5.90% and decode throughput by 1.11%; see
+[docs/kleidiai-go-no-go.md](docs/kleidiai-go-no-go.md). It remains reproducible as an explicit
+experiment with `-Pmobilespec.enableKleidiAI=true`.
 
 The Models screen exposes four execution choices:
 
@@ -329,6 +335,7 @@ The full protocol is in
 | `benchmarks/results/phase3-feasibility/20260727-204314-phase3-ngram/ngram-ab.json` | Rejected n-gram run, including the persistent-cache confound and failed resource gates |
 | `benchmarks/results/raw/20260807-232905-autotune/autotune.json` | Completed three-round topology-derived sweep, individual pp/tg samples, measured stock defaults, thermal/order gates, and promoted `pp8-tg2` policy |
 | `benchmarks/results/20260807-real-generation/` | Frozen five-run/mode confirmation, three-suite 14.37-minute session, exact output hashes, native timings, telemetry, and generated summary |
+| `benchmarks/results/20260810-powervr-backend-qualification/qualification.json` | App-exported Redmi qualification: CPU reference preflight passed; Hybrid 4/8/12 and full Vulkan were rejected before GPU execution by retained PowerVR BXM operation failures; Auto stayed on CPU |
 | `docs/assets/mobilespec-phase-policy.png` | Reproducible headline chart: decode mean/variance, TTFT mean/p99, and no-cooldown suite drift |
 | `tools/autotune.py` + `benchmarks/suites/autotune.json` | Topology-derived phase-pair tuner with exact binary/model/context/workload identity and strict one-command APK policy export |
 
@@ -345,9 +352,10 @@ The full protocol is in
 - The PowerVR Vulkan path produced coherent output for the tested Llama model and prompt, but the
   partial operator sweep found unsupported bf16 pipeline creation and Q4_0 failures at other
   shapes. It is not claimed safe for arbitrary models.
-- The new Android Vulkan/hybrid path is locally build-verified only. No current Adreno, Mali, or
-  PowerVR Android speedup claim is made, and the old CPU phase policy is not reused across the new
-  native-library identity.
+- The Android Vulkan/hybrid path is build-verified and its PowerVR fail-closed behavior is
+  device-verified: Hybrid 4/8/12 and full Vulkan were rejected before GPU execution, and Auto
+  retained CPU. No Adreno, Mali, or PowerVR Android speedup claim is made, and the old CPU phase
+  policy is not reused across the new native-library identity.
 - The native-MTP run is only one repetition per prompt, started at thermal status 2, and crossed
   the no-swap threshold. It supports rejecting that candidate, not a repeatable speed estimate.
 - The n-gram run completed but is rejection evidence only: its 2.97x number was a persistent-cache

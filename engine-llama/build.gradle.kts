@@ -1,6 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-val enableKleidiAI = providers.gradleProperty("mobilespec.enableKleidiAI").orElse("true")
+// The Redmi/Q4_0 go/no-go spike regressed prefill throughput, so KleidiAI remains
+// an explicit experiment instead of changing the release CPU binary by default.
+val enableKleidiAI = providers.gradleProperty("mobilespec.enableKleidiAI").orElse("false")
 val enableVulkan = providers.gradleProperty("mobilespec.enableVulkan").orElse("true")
 
 plugins {

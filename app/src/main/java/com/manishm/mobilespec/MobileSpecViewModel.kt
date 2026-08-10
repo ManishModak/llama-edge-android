@@ -43,11 +43,14 @@ import java.util.UUID
 import java.util.zip.ZipFile
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 
 data class BenchmarkUiState(
     val running: Boolean = false,
@@ -308,15 +311,6 @@ class MobileSpecViewModel(
             temperature = 0f,
             seed = QUALIFICATION_SEED,
         )
-        val baselineConfig = qualificationModelConfig(model, Backend.CPU, gpuLayers = 0)
-        val baselinePreflight = runPreflight(
-            baselineConfig,
-            requiredOperationsPassed = true,
-            requiredOperationsDetail = "CPU reference backend",
-        )
-        check(baselinePreflight.modelLoadSucceeded) {
-            baselinePreflight.failure ?: "CPU preflight failed"
-        }
         val layerCount = (engine.state.value as? EngineState.Ready)
             ?.model
             ?.modelLayerCount
@@ -332,7 +326,19 @@ class MobileSpecViewModel(
             }
         }
         check(candidates.isNotEmpty()) { "No Vulkan or hybrid candidates are available" }
-        mutableQualification.update { it.copy(totalCandidates = candidates.size) }
+        mutableQualification.update {
+            it.copy(totalCandidates = candidates.size, currentLabel = "CPU load")
+        }
+        val baselineConfig = qualificationModelConfig(model, Backend.CPU, gpuLayers = 0)
+        val baselinePreflight = runPreflight(
+            baselineConfig,
+            label = "CPU",
+            requiredOperationsPassed = true,
+            requiredOperationsDetail = "CPU reference backend",
+        )
+        check(baselinePreflight.modelLoadSucceeded) {
+            baselinePreflight.failure ?: "CPU preflight failed"
+        }
 
         val records = mutableListOf<BackendQualificationRecord>()
         candidates.forEachIndexed { index, candidate ->
@@ -345,11 +351,16 @@ class MobileSpecViewModel(
                 candidate.backend,
                 candidate.gpuLayers,
             )
-            val candidatePreflight = runPreflight(
-                candidateConfig,
-                requiredOperationsPassed = operationEvidence.first,
-                requiredOperationsDetail = operationEvidence.second,
-            )
+            val candidatePreflight = if (operationEvidence.first == false) {
+                skippedOperationPreflight(operationEvidence.second)
+            } else {
+                runPreflight(
+                    candidateConfig,
+                    label = candidate.label(),
+                    requiredOperationsPassed = operationEvidence.first,
+                    requiredOperationsDetail = operationEvidence.second,
+                )
+            }
             val preflightEvidence = BackendQualificationEvidence(
                 candidate = candidate,
                 baselinePreflight = baselinePreflight,
@@ -444,12 +455,15 @@ class MobileSpecViewModel(
 
     private suspend fun runPreflight(
         config: ModelConfig,
+        label: String,
         requiredOperationsPassed: Boolean?,
         requiredOperationsDetail: String,
     ): QualificationPreflight {
         val before = telemetryMonitor.snapshotSafely()
         val started = SystemClock.elapsedRealtimeNanos()
-        val loadResult = runCatching { engine.load(config) }
+        val loadResult = runCatching {
+            boundedQualificationStage("$label load") { engine.load(config) }
+        }
         val loadDurationMs = (SystemClock.elapsedRealtimeNanos() - started) / 1_000_000.0
         val after = telemetryMonitor.snapshotSafely()
         if (loadResult.isFailure) {
@@ -484,9 +498,19 @@ class MobileSpecViewModel(
                 failure = "requested ${config.backend}/${config.gpuLayers}, active ${active?.backend}/${active?.gpuLayers}",
             )
         }
-        val greedy = runCatching { generateOutput(QUALIFICATION_PREFLIGHT_TOKENS) }
-        val cancellationPassed = runCatching { cancellationAndReuseCheck() }.getOrDefault(false)
-        val reuse = runCatching { generateOutput(QUALIFICATION_REUSE_TOKENS) }
+        val greedy = runCatching {
+            boundedQualificationStage("$label greedy output") {
+                generateOutput(QUALIFICATION_PREFLIGHT_TOKENS)
+            }
+        }
+        val cancellationPassed = runCatching {
+            boundedQualificationStage("$label cancellation") { cancellationAndReuseCheck() }
+        }.getOrDefault(false)
+        val reuse = runCatching {
+            boundedQualificationStage("$label reuse") {
+                generateOutput(QUALIFICATION_REUSE_TOKENS)
+            }
+        }
         val currentCapabilities = engine.capabilities()
         val deviceAvailable = config.backend == Backend.CPU ||
             (config.backend in currentCapabilities.backends &&
@@ -504,6 +528,41 @@ class MobileSpecViewModel(
             deviceAvailableAfter = deviceAvailable,
             failure = greedy.exceptionOrNull()?.message ?: reuse.exceptionOrNull()?.message,
         )
+    }
+
+    private suspend fun skippedOperationPreflight(detail: String): QualificationPreflight {
+        val snapshot = telemetryMonitor.snapshotSafely()
+        return QualificationPreflight(
+            modelLoadSucceeded = false,
+            loadDurationMs = 0.0,
+            loadTelemetry = RunTelemetry(snapshot, snapshot),
+            nonEmptyGreedyOutput = false,
+            greedyOutputSha256 = null,
+            requiredOperationsPassed = false,
+            requiredOperationsDetail = detail,
+            cancellationPassed = false,
+            reusePassed = false,
+            deviceAvailableAfter = true,
+            failure = "Candidate execution skipped because required operation evidence failed",
+        )
+    }
+
+    private suspend fun <T> boundedQualificationStage(
+        label: String,
+        block: suspend () -> T,
+    ): T = coroutineScope {
+        mutableQualification.update { it.copy(currentLabel = label) }
+        val watchdog = launch {
+            delay(QUALIFICATION_STAGE_TIMEOUT_MS)
+            engine.cancel()
+        }
+        try {
+            withTimeout(QUALIFICATION_STAGE_TIMEOUT_MS + QUALIFICATION_CANCEL_GRACE_MS) {
+                block()
+            }
+        } finally {
+            watchdog.cancel()
+        }
     }
 
     private suspend fun cancellationAndReuseCheck(): Boolean {
@@ -733,6 +792,8 @@ class MobileSpecViewModel(
         const val QUALIFICATION_CANCEL_AFTER_TOKENS = 2
         const val QUALIFICATION_REPETITIONS = 3
         const val QUALIFICATION_SEED = 42L
+        const val QUALIFICATION_STAGE_TIMEOUT_MS = 30_000L
+        const val QUALIFICATION_CANCEL_GRACE_MS = 5_000L
     }
 }
 
