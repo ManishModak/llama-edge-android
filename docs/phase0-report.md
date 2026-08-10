@@ -1,7 +1,7 @@
 # Phase 0 Exit Report — CPU cross-compile, model bring-up, device smoke test
 
 **Date:** 2026-07-20
-**Device:** Redmi Note 14 5G (`24094RAD4I`, ADB serial `8DYTMRKF755TOBZD`) — MediaTek Dimensity 7025 (MT6855), 2× Cortex-A78 (cpu6/7 @ 2.5 GHz) + 6× Cortex-A55 (cpu0–5 @ 2.0 GHz), arm64-v8a, Android 16, 5.6 GB RAM.
+**Device:** Redmi Note 14 5G (`24094RAD4I`; ADB serial omitted) — MediaTek Dimensity 7025 (MT6855), 2× Cortex-A78 (cpu6/7 @ 2.5 GHz) + 6× Cortex-A55 (cpu0–5 @ 2.0 GHz), arm64-v8a, Android 16, 5.6 GB RAM.
 **llama.cpp:** pinned upstream `178a6c4` (b10069), ggml version 0.17.0. **No changes made under `third_party/llama.cpp`.**
 **Toolchain:** NDK `28.2.13676358` (r28c), SDK CMake 3.22.1 + bundled ninja 1.10.2, Ninja generator.
 

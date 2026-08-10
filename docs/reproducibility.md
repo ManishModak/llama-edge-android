@@ -509,7 +509,7 @@ Final Android pins:
 The final central validation command was:
 
 ```bash
-ANDROID_HOME=/home/manishm/Android/Sdk \
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
   ./gradlew --no-daemon test assembleDebug assembleRelease
 ```
 
@@ -538,6 +538,65 @@ sha256: 345c2d81fdf1a921b3617976ca9daaf2a82f5d0b3588c4a90c79719be2aa1a0b
 Both APKs contain `lib/arm64-v8a/libmobilespec_llama.so` and
 `lib/arm64-v8a/libc++_shared.so`, and both verify with APK Signature Scheme v2. They do not carry
 v1, v3, v3.1, or v4 signatures.
+
+### Experimental KleidiAI + Vulkan/hybrid Android build
+
+The bounded Phase 5 backend branch keeps the pinned
+`-march=armv8.2-a+dotprod+fp16` CPU target and adds two independently switchable Gradle/CMake
+properties. Both default on:
+
+```bash
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
+  ./gradlew --no-daemon test :app:assembleDebug
+```
+
+The proven CPU-only release path remains buildable without either experiment:
+
+```bash
+ANDROID_HOME=/absolute/path/to/Android/Sdk \
+  ./gradlew --no-daemon \
+    -Pmobilespec.enableKleidiAI=false \
+    -Pmobilespec.enableVulkan=false \
+    :app:assembleDebug
+```
+
+The Vulkan build uses the pinned `third_party/Vulkan-Headers`, the committed SPIR-V CMake shim,
+and the NDK host `glslc`; it does not require a separately installed LunarG SDK. After building,
+emit machine-readable source/toolchain/artifact identities and verify that both `kai_*` and
+`ggml_backend_vk_*` symbols are present and that the JNI library links `libvulkan.so`:
+
+```bash
+ANDROID_NDK_HOME=/absolute/path/to/Android/Sdk/ndk/28.2.13676358 \
+  python tools/inspect_android_build.py
+```
+
+The report also reads the KleidiAI pin from the checked-out llama.cpp CMake source, verifies the
+downloaded archive against that source's MD5, records its SHA-256, and lists the license files in
+the archive. For the current pin these are KleidiAI `v1.24.0`, archive SHA-256
+`9348b969e042d8890a54b01a463dbe71f5a4c074b5329e9c26a85ef3b68aa19b`, and the bundled
+Apache-2.0 and BSD-3-Clause texts. The downloaded archive and extracted source remain under the
+ignored `.cxx/` build tree.
+
+On 8 August 2026 this local build passed in 3m41s. This proves packaging and symbol presence only;
+it is not device correctness, stability, or speed evidence. Since the native binary changed, the
+previously measured Android phase policy is disabled on this branch until the final binary is
+frozen and an explicitly approved re-sweep refreshes the policy and hashes.
+
+The Models screen also contains a bounded backend-qualification action. It runs CPU and available
+partial/full GPU candidates through fail-fast correctness, cancellation/reuse, device-loss,
+memory/SwapFree, thermal, native-timing, stability, and counterbalanced performance gates. Timing
+is skipped when required operation-shape evidence is absent or has already failed. Export the raw
+qualification JSON from the screen, then validate it without changing source:
+
+```bash
+python tools/export_android_backend_policy.py /absolute/path/to/qualification.json --check
+```
+
+Only a report with one fully qualified candidate and exact profile identity can generate a bundled
+Auto policy. Unknown GPUs therefore remain on CPU until device evidence is supplied. The retained
+PowerVR BXM operation failures reject that known family before timing. Because the current CPU
+phase policy is deliberately disabled after the native binary change, a final GPU policy also
+cannot be promoted until the approved final CPU re-sweep supplies the matching policy identity.
 
 The final builds embed provenance that distinguishes the committed parent from the dirty worktree:
 
@@ -623,7 +682,34 @@ native-timing runs/mode, exact output hashes, complete worktree/JNI provenance, 
 VmHWM, and SwapFree at every boundary. The existing sustained run predates those fields and is not
 misrepresented as peak-RSS/swap evidence.
 
-## 15. Fresh-clone acceptance test
+## 15. Prepare (but do not publish) the release bundle
+
+After all device gates pass and the final source is committed, build the release APK and create a
+non-overwriting bundle containing its provenance, signature verification, checksums, project and
+third-party notices, and the matching NDK LLVM notice:
+
+```bash
+TASK_SDK=/absolute/path/to/Android/Sdk
+ANDROID_HOME="$TASK_SDK" ./gradlew --no-daemon test :app:assembleRelease
+python tools/prepare_release_bundle.py \
+  --apk app/build/outputs/apk/release/app-release.apk \
+  --ndk "$TASK_SDK/ndk/28.2.13676358" \
+  --apksigner "$TASK_SDK/build-tools/36.0.0/apksigner" \
+  --version v1.0.0-arm-challenge \
+  --output dist/v1.0.0-arm-challenge
+```
+
+The command refuses an existing destination, an uncommitted project tree, an APK that does not
+embed the current Git commit, a missing/mismatched APK inspection hash, an invalid APK signature,
+a missing patch-series check, or an ambiguous LLVM notice. The expected repository-managed
+llama.cpp patch worktree is allowed and is recorded by commit plus source-diff hash.
+`packagingEligible` covers package/source hygiene only—it does not mean physical qualification or
+Devpost submission gates passed. `--allow-dirty` exists solely for development previews and marks
+that field false.
+
+Do not publish this experimental branch's bundle until P1/P2 and the final clean-device gates pass.
+
+## 16. Fresh-clone acceptance test
 
 A final fresh clone passes only when all of the following are evidenced:
 

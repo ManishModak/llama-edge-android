@@ -1,9 +1,11 @@
 package com.manishm.mobilespec.llama
 
 import com.manishm.mobilespec.engine.Backend
+import com.manishm.mobilespec.engine.BackendDeviceInfo
 import com.manishm.mobilespec.engine.EngineCapabilities
 import com.manishm.mobilespec.engine.GenerationConfig
 import com.manishm.mobilespec.engine.ModelConfig
+import com.manishm.mobilespec.engine.VulkanDeviceInfo
 
 fun interface NativeTokenCallback {
     fun onToken(text: String, tokenIndex: Int, elapsedMicros: Long)
@@ -22,6 +24,7 @@ interface NativeBindings {
 
     fun capabilities(): EngineCapabilities
     fun createSession(config: ModelConfig): Long
+    fun modelLayerCount(handle: Long): Int
     fun generate(
         handle: Long,
         prompt: String,
@@ -39,26 +42,15 @@ class JniNativeBindings(
 ) : NativeBindings {
     override val available: Boolean get() = runtime.available
     override val unavailableReason: String? get() = runtime.error
-
-    override fun capabilities(): EngineCapabilities {
-        if (!available) return unavailableCapabilities(unavailableReason)
-        return nativeCall {
-            val detail = nativeCapabilities()
-            EngineCapabilities(
-                nativeAvailable = true,
-                backends = buildSet {
-                    add(Backend.CPU)
-                    if ("vulkan" in detail.lowercase()) add(Backend.VULKAN)
-                },
-                supportsSpeculativeDecoding =
-                    "speculative" in detail.lowercase() || "mtp" in detail.lowercase(),
-                supportsCancellation = true,
-                timingSource = "llama.cpp native monotonic clock",
-                supportsPhaseAwareThreadPolicy = "phase-aware threads" in detail.lowercase(),
-                detail = detail,
-            )
+    private val cachedCapabilities: EngineCapabilities by lazy {
+        if (!available) {
+            unavailableCapabilities(unavailableReason)
+        } else {
+            nativeCall { parseNativeCapabilities(nativeCapabilities()) }
         }
     }
+
+    override fun capabilities(): EngineCapabilities = cachedCapabilities
 
     override fun createSession(config: ModelConfig): Long = nativeCall {
         nativeCreateSession(
@@ -69,8 +61,13 @@ class JniNativeBindings(
             optimizedDecodeThreads = config.phasePolicy?.decodeThreads ?: 0,
             optimizedPrefillThreads = config.phasePolicy?.prefillThreads ?: 0,
             backend = config.backend.ordinal,
+            gpuLayers = config.gpuLayers,
             useMmap = config.useMmap,
         )
+    }
+
+    override fun modelLayerCount(handle: Long): Int = nativeCall {
+        nativeModelLayerCount(handle)
     }
 
     override fun generate(
@@ -117,6 +114,7 @@ class JniNativeBindings(
         optimizedDecodeThreads: Int,
         optimizedPrefillThreads: Int,
         backend: Int,
+        gpuLayers: Int,
         useMmap: Boolean,
     ): Long
     private external fun nativeGenerate(
@@ -129,6 +127,7 @@ class JniNativeBindings(
         mode: Int,
         callback: NativeTokenCallback,
     ): LongArray
+    private external fun nativeModelLayerCount(handle: Long): Int
     private external fun nativeCancel(handle: Long)
     private external fun nativeDestroySession(handle: Long)
 }
@@ -141,6 +140,73 @@ internal fun unavailableCapabilities(reason: String?) = EngineCapabilities(
     timingSource = "unavailable",
     detail = reason,
 )
+
+internal fun parseNativeCapabilities(raw: String): EngineCapabilities {
+    val features = mutableSetOf<String>()
+    val backendDevices = mutableListOf<BackendDeviceInfo>()
+    val vulkanDevices = mutableListOf<VulkanDeviceInfo>()
+    val notes = mutableListOf<String>()
+
+    raw.lineSequence().filter(String::isNotBlank).forEach { line ->
+        val fields = line.split('\t')
+        when (fields.firstOrNull()) {
+            "feature" -> fields.getOrNull(1)?.let(features::add)
+            "backend" -> if (fields.size >= 6) {
+                backendDevices += BackendDeviceInfo(
+                    name = fields[1],
+                    description = fields[2],
+                    type = fields[3],
+                    memoryFreeBytes = fields[4].toLongOrNull() ?: 0,
+                    memoryTotalBytes = fields[5].toLongOrNull() ?: 0,
+                    asynchronous = fields.getOrNull(6)?.toBooleanStrictOrNull() ?: false,
+                    hostBuffer = fields.getOrNull(7)?.toBooleanStrictOrNull() ?: false,
+                    bufferFromHostPointer = fields.getOrNull(8)?.toBooleanStrictOrNull() ?: false,
+                    events = fields.getOrNull(9)?.toBooleanStrictOrNull() ?: false,
+                )
+            }
+            "vulkan" -> if (fields.size >= 12) {
+                vulkanDevices += VulkanDeviceInfo(
+                    name = fields[1],
+                    vendorId = fields[2].toLongOrNull() ?: 0,
+                    deviceId = fields[3].toLongOrNull() ?: 0,
+                    apiVersion = fields[4],
+                    driverVersionRaw = fields[5].toLongOrNull() ?: 0,
+                    driverVersion = fields[6],
+                    deviceType = fields[7],
+                    fp16 = fields[8].toBooleanStrictOrNull() ?: false,
+                    integerDotProduct = fields[9].toBooleanStrictOrNull() ?: false,
+                    cooperativeMatrix = fields[10].toBooleanStrictOrNull() ?: false,
+                    cooperativeMatrix2 = fields[11].toBooleanStrictOrNull() ?: false,
+                )
+            }
+            "system" -> notes += fields.drop(1).joinToString(" ")
+            "vulkan-error" -> notes += "Vulkan probe: ${fields.drop(1).joinToString(" ")}"
+            else -> notes += line
+        }
+    }
+    val gpuReady = "gpu-offload" in features && vulkanDevices.isNotEmpty()
+    return EngineCapabilities(
+        nativeAvailable = true,
+        backends = buildSet {
+            add(Backend.CPU)
+            add(Backend.AUTO)
+            if (gpuReady) {
+                add(Backend.VULKAN)
+                add(Backend.HYBRID)
+            }
+        },
+        supportsSpeculativeDecoding = "speculative" in features || "mtp" in features,
+        supportsCancellation = true,
+        timingSource = "llama.cpp native monotonic clock",
+        supportsPhaseAwareThreadPolicy = "phase-aware" in features,
+        supportsGpuOffload = gpuReady,
+        supportsHybridOffload = gpuReady,
+        supportsKleidiAI = "kleidiai" in features,
+        backendDevices = backendDevices,
+        vulkanDevices = vulkanDevices,
+        detail = notes.joinToString("; ").ifBlank { null },
+    )
+}
 
 class NativeRuntime private constructor() {
     val available: Boolean

@@ -9,7 +9,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,13 +20,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.manishm.mobilespec.ImportedModel
 import com.manishm.mobilespec.ModelsUiState
+import com.manishm.mobilespec.QualificationUiState
+import com.manishm.mobilespec.engine.Backend
+import com.manishm.mobilespec.engine.EngineCapabilities
+import com.manishm.mobilespec.engine.QualificationGateStatus
 import java.util.Locale
 
 @Composable
 fun ModelsScreen(
     state: ModelsUiState,
+    capabilities: EngineCapabilities,
+    qualification: QualificationUiState,
     onImport: () -> Unit,
     onSelect: (ImportedModel) -> Unit,
+    onBackendChange: (Backend) -> Unit,
+    onGpuLayersChange: (Int) -> Unit,
+    onRunQualification: () -> Unit,
+    onCancelQualification: () -> Unit,
+    onExportQualification: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -40,6 +53,76 @@ fun ModelsScreen(
         )
         Button(onClick = onImport, enabled = !state.importing) {
             Text(if (state.importing) "Importing…" else "Import GGUF")
+        }
+        Text("Execution backend", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Auto uses GPU only with a matching qualified profile; otherwise it safely uses CPU.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Backend.entries.forEach { backend ->
+            val supported = backend == Backend.CPU || backend == Backend.AUTO ||
+                backend in capabilities.backends
+            FilterChip(
+                selected = state.backend == backend,
+                onClick = { onBackendChange(backend) },
+                enabled = supported,
+                label = {
+                    Text(
+                        when (backend) {
+                            Backend.CPU -> "CPU"
+                            Backend.VULKAN -> "Vulkan (full offload)"
+                            Backend.HYBRID -> "Hybrid (partial offload)"
+                            Backend.AUTO -> "Auto (qualified policy)"
+                        },
+                    )
+                },
+            )
+        }
+        if (state.backend == Backend.HYBRID) {
+            OutlinedTextField(
+                value = state.gpuLayers.toString(),
+                onValueChange = { value -> value.toIntOrNull()?.let(onGpuLayersChange) },
+                label = { Text("GPU layers") },
+                supportingText = { Text("Positive bounded layer count; validate against memory before qualification.") },
+                singleLine = true,
+            )
+        }
+        Text("Short backend qualification", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Runs fail-fast load, output, operation, cancellation, reuse, memory, thermal, and " +
+                "counterbalanced A/B gates. Capability alone cannot promote Auto.",
+            style = MaterialTheme.typography.bodySmall,
+        )
+        if (qualification.running) {
+            Text(
+                qualification.currentLabel ?: "Qualification running…",
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Text("${qualification.completedCandidates}/${qualification.totalCandidates} candidates")
+            Button(onClick = onCancelQualification) { Text("Cancel qualification") }
+        } else {
+            Button(
+                onClick = onRunQualification,
+                enabled = state.selected != null && capabilities.supportsGpuOffload,
+            ) {
+                Text("Run short qualification")
+            }
+        }
+        qualification.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+        qualification.report?.let { report ->
+            report.records.forEach { record ->
+                val candidate = record.evidence.candidate
+                val failed = record.evaluation.gates.firstOrNull {
+                    it.status != QualificationGateStatus.PASS
+                }
+                Text(
+                    "${candidate.backend} ${candidate.gpuLayers}: " +
+                        "${record.evaluation.verdict}" +
+                        (failed?.let { " · ${it.name}: ${it.detail}" } ?: ""),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Button(onClick = onExportQualification) { Text("Export qualification JSON") }
         }
         state.status?.let { Text(it, color = MaterialTheme.colorScheme.primary) }
         state.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }

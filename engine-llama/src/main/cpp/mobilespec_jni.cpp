@@ -5,12 +5,17 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "ggml-backend.h"
 #include "ggml.h"
 #include "llama.h"
+
+#if MOBILESPEC_ENABLE_VULKAN
+#include <vulkan/vulkan.h>
+#endif
 
 namespace {
 
@@ -36,6 +41,160 @@ struct Session {
 };
 
 std::once_flag backend_once;
+
+std::string safe_field(const char * value) {
+    std::string result = value == nullptr ? "" : value;
+    std::replace(result.begin(), result.end(), '\t', ' ');
+    std::replace(result.begin(), result.end(), '\n', ' ');
+    std::replace(result.begin(), result.end(), '\r', ' ');
+    return result;
+}
+
+const char * backend_device_type_name(enum ggml_backend_dev_type type) {
+    switch (type) {
+        case GGML_BACKEND_DEVICE_TYPE_CPU: return "CPU";
+        case GGML_BACKEND_DEVICE_TYPE_GPU: return "GPU";
+        case GGML_BACKEND_DEVICE_TYPE_IGPU: return "IGPU";
+        case GGML_BACKEND_DEVICE_TYPE_ACCEL: return "ACCEL";
+        case GGML_BACKEND_DEVICE_TYPE_META: return "META";
+        default: return "UNKNOWN";
+    }
+}
+
+#if MOBILESPEC_ENABLE_VULKAN
+std::string vulkan_version_string(uint32_t version) {
+    return std::to_string(VK_VERSION_MAJOR(version)) + "." +
+        std::to_string(VK_VERSION_MINOR(version)) + "." +
+        std::to_string(VK_VERSION_PATCH(version));
+}
+
+const char * vulkan_device_type_name(VkPhysicalDeviceType type) {
+    switch (type) {
+        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: return "INTEGRATED_GPU";
+        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: return "DISCRETE_GPU";
+        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: return "VIRTUAL_GPU";
+        case VK_PHYSICAL_DEVICE_TYPE_CPU: return "CPU";
+        case VK_PHYSICAL_DEVICE_TYPE_OTHER: return "OTHER";
+        default: return "UNKNOWN";
+    }
+}
+
+bool has_vulkan_extension(
+        const std::vector<VkExtensionProperties> & extensions,
+        const char * name) {
+    return std::any_of(extensions.begin(), extensions.end(), [name](const auto & extension) {
+        return std::string(extension.extensionName) == name;
+    });
+}
+
+void append_vulkan_devices(std::ostringstream & detail) {
+    VkApplicationInfo app_info{};
+    app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    app_info.pApplicationName = "MobileSpec capability probe";
+    app_info.applicationVersion = 1;
+    app_info.pEngineName = "MobileSpec";
+    app_info.engineVersion = 1;
+    app_info.apiVersion = VK_API_VERSION_1_0;
+
+    VkInstanceCreateInfo create_info{};
+    create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    create_info.pApplicationInfo = &app_info;
+
+    VkInstance instance = VK_NULL_HANDLE;
+    const VkResult created = vkCreateInstance(&create_info, nullptr, &instance);
+    if (created != VK_SUCCESS) {
+        detail << "vulkan-error\tinstance-create-" << static_cast<int>(created) << '\n';
+        return;
+    }
+
+    uint32_t count = 0;
+    VkResult enumerated = vkEnumeratePhysicalDevices(instance, &count, nullptr);
+    if (enumerated != VK_SUCCESS || count == 0) {
+        detail << "vulkan-error\tdevice-enumeration-" << static_cast<int>(enumerated) << '\n';
+        vkDestroyInstance(instance, nullptr);
+        return;
+    }
+
+    std::vector<VkPhysicalDevice> devices(count);
+    enumerated = vkEnumeratePhysicalDevices(instance, &count, devices.data());
+    if (enumerated != VK_SUCCESS) {
+        detail << "vulkan-error\tdevice-enumeration-" << static_cast<int>(enumerated) << '\n';
+        vkDestroyInstance(instance, nullptr);
+        return;
+    }
+
+    auto get_features2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2>(
+        vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2"));
+    if (get_features2 == nullptr) {
+        get_features2 = reinterpret_cast<PFN_vkGetPhysicalDeviceFeatures2>(
+            vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR"));
+    }
+
+    for (VkPhysicalDevice device : devices) {
+        VkPhysicalDeviceProperties properties{};
+        vkGetPhysicalDeviceProperties(device, &properties);
+
+        uint32_t extension_count = 0;
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extension_count, nullptr);
+        std::vector<VkExtensionProperties> extensions(extension_count);
+        if (extension_count > 0) {
+            vkEnumerateDeviceExtensionProperties(
+                device,
+                nullptr,
+                &extension_count,
+                extensions.data());
+        }
+
+        bool fp16 = false;
+        bool integer_dot = false;
+        if (get_features2 != nullptr) {
+            const bool query_fp16 = properties.apiVersion >= VK_API_VERSION_1_2 ||
+                has_vulkan_extension(extensions, "VK_KHR_shader_float16_int8");
+            const bool query_integer_dot = properties.apiVersion >= VK_API_VERSION_1_3 ||
+                has_vulkan_extension(extensions, "VK_KHR_shader_integer_dot_product");
+            VkPhysicalDeviceShaderIntegerDotProductFeatures dot_features{};
+            dot_features.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES;
+            VkPhysicalDeviceShaderFloat16Int8Features fp16_features{};
+            fp16_features.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES;
+            VkPhysicalDeviceFeatures2 features{};
+            features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+            if (query_integer_dot) {
+                dot_features.pNext = features.pNext;
+                features.pNext = &dot_features;
+            }
+            if (query_fp16) {
+                fp16_features.pNext = features.pNext;
+                features.pNext = &fp16_features;
+            }
+            if (features.pNext != nullptr) {
+                get_features2(device, &features);
+                fp16 = query_fp16 && fp16_features.shaderFloat16 == VK_TRUE;
+                integer_dot = query_integer_dot &&
+                    dot_features.shaderIntegerDotProduct == VK_TRUE;
+            }
+        }
+
+        detail << "vulkan\t"
+               << safe_field(properties.deviceName) << '\t'
+               << properties.vendorID << '\t'
+               << properties.deviceID << '\t'
+               << vulkan_version_string(properties.apiVersion) << '\t'
+               << properties.driverVersion << '\t'
+               << vulkan_version_string(properties.driverVersion) << '\t'
+               << vulkan_device_type_name(properties.deviceType) << '\t'
+               << (fp16 ? "true" : "false") << '\t'
+               << (integer_dot ? "true" : "false") << '\t'
+               << (has_vulkan_extension(extensions, "VK_KHR_cooperative_matrix") ? "true" : "false")
+               << '\t'
+               << (has_vulkan_extension(extensions, "VK_NV_cooperative_matrix2") ? "true" : "false")
+               << '\n';
+    }
+
+    vkDestroyInstance(instance, nullptr);
+}
+#endif
 
 void initialize_backend() {
     std::call_once(backend_once, [] {
@@ -185,10 +344,36 @@ Java_com_manishm_mobilespec_llama_JniNativeBindings_nativeCapabilities(
         JNIEnv * env,
         jobject /* self */) {
     initialize_backend();
-    const std::string detail =
-        std::string("CPU; ") + llama_print_system_info() +
-        "; serialized queue; native monotonic timing; cancellation; phase-aware threads";
-    return env->NewStringUTF(detail.c_str());
+    std::ostringstream detail;
+    detail << "feature\tphase-aware\n";
+#if MOBILESPEC_ENABLE_KLEIDIAI
+    detail << "feature\tkleidiai\n";
+#endif
+    if (llama_supports_gpu_offload()) {
+        detail << "feature\tgpu-offload\n";
+    }
+
+    for (size_t index = 0; index < ggml_backend_dev_count(); ++index) {
+        ggml_backend_dev_t device = ggml_backend_dev_get(index);
+        ggml_backend_dev_props properties{};
+        ggml_backend_dev_get_props(device, &properties);
+        detail << "backend\t"
+               << safe_field(properties.name) << '\t'
+               << safe_field(properties.description) << '\t'
+               << backend_device_type_name(properties.type) << '\t'
+               << properties.memory_free << '\t'
+               << properties.memory_total << '\t'
+               << (properties.caps.async ? "true" : "false") << '\t'
+               << (properties.caps.host_buffer ? "true" : "false") << '\t'
+               << (properties.caps.buffer_from_host_ptr ? "true" : "false") << '\t'
+               << (properties.caps.events ? "true" : "false") << '\n';
+    }
+#if MOBILESPEC_ENABLE_VULKAN
+    append_vulkan_devices(detail);
+#endif
+    detail << "system\t" << safe_field(llama_print_system_info()) << '\n';
+    const std::string value = detail.str();
+    return env->NewStringUTF(value.c_str());
 }
 
 extern "C" JNIEXPORT jlong JNICALL
@@ -202,10 +387,24 @@ Java_com_manishm_mobilespec_llama_JniNativeBindings_nativeCreateSession(
         jint optimized_decode_threads,
         jint optimized_prefill_threads,
         jint backend,
+        jint gpu_layers,
         jboolean use_mmap) {
     initialize_backend();
-    if (backend != 0) {
-        throw_illegal_state(env, "This APK contains the CPU backend only");
+    if (backend < 0 || backend > 2) {
+        throw_illegal_state(env, "Backend must be resolved to CPU, Vulkan, or Hybrid");
+        return 0;
+    }
+    const bool use_gpu = backend == 1 || backend == 2;
+    if (use_gpu && !llama_supports_gpu_offload()) {
+        throw_illegal_state(env, "This native build cannot offload to a GPU");
+        return 0;
+    }
+    if (backend == 1 && gpu_layers != -1) {
+        throw_illegal_state(env, "Vulkan backend requires full layer offload");
+        return 0;
+    }
+    if (backend == 2 && gpu_layers <= 0) {
+        throw_illegal_state(env, "Hybrid backend requires a positive GPU layer count");
         return 0;
     }
 
@@ -218,7 +417,7 @@ Java_com_manishm_mobilespec_llama_JniNativeBindings_nativeCreateSession(
     std::unique_ptr<Session> session(new Session());
     llama_model_params model_params = llama_model_default_params();
     model_params.use_mmap = use_mmap == JNI_TRUE;
-    model_params.n_gpu_layers = 0;
+    model_params.n_gpu_layers = use_gpu ? gpu_layers : 0;
     session->model = llama_model_load_from_file(path.c_str(), model_params);
     if (session->model == nullptr) {
         throw_illegal_state(env, "llama.cpp failed to load the GGUF model");
@@ -229,6 +428,8 @@ Java_com_manishm_mobilespec_llama_JniNativeBindings_nativeCreateSession(
     context_params.n_ctx = static_cast<uint32_t>(std::max(64, context_size));
     context_params.n_batch = std::min<uint32_t>(context_params.n_ctx, 512);
     context_params.n_ubatch = context_params.n_batch;
+    context_params.offload_kqv = use_gpu;
+    context_params.op_offload = use_gpu;
     if (baseline_decode_threads > 0 && baseline_prefill_threads > 0) {
         context_params.n_threads = baseline_decode_threads;
         context_params.n_threads_batch = baseline_prefill_threads;
@@ -439,6 +640,19 @@ Java_com_manishm_mobilespec_llama_JniNativeBindings_nativeGenerate(
     jlongArray result = env->NewLongArray(5);
     env->SetLongArrayRegion(result, 0, 5, timing);
     return result;
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_com_manishm_mobilespec_llama_JniNativeBindings_nativeModelLayerCount(
+        JNIEnv * env,
+        jobject /* self */,
+        jlong handle) {
+    Session * session = from_handle(handle);
+    if (session == nullptr || session->model == nullptr) {
+        throw_illegal_state(env, "Invalid native session");
+        return 0;
+    }
+    return static_cast<jint>(llama_model_n_layer(session->model));
 }
 
 extern "C" JNIEXPORT void JNICALL

@@ -927,7 +927,7 @@ def device_identity(adb: Adb) -> dict[str, Any]:
         for prop in ("ro.product.model", "ro.build.version.release", "ro.soc.model"):
             adb.shell(f"getprop {prop}")
         return {
-            "serial": adb.serial,
+            "serial": "<redacted>",
             "model": None,
             "android": None,
             "soc": None,
@@ -939,7 +939,7 @@ def device_identity(adb: Adb) -> dict[str, Any]:
         ("soc", "ro.soc.model"),
     ):
         values[key] = adb.shell(f"getprop {prop}", timeout=15) or None
-    return {"serial": adb.serial, **values}
+    return {"serial": "<redacted>", **values}
 
 
 def summarize_runs(runs: list[dict[str, Any]], mode: str) -> dict[str, Any]:

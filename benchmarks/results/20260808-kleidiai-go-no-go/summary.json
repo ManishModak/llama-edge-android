@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "decision": "reject",
+  "reason": "No primary throughput metric improved by 3%; pp256 regressed by 5.90%.",
+  "device": {
+    "model": "24094RAD4I",
+    "soc": "MT6855",
+    "serial": "<redacted>"
+  },
+  "software": {
+    "llamaCppCommit": "178a6c4",
+    "ndkVersion": "28.2.13676358",
+    "cpuArmArch": "armv8.2-a+dotprod+fp16",
+    "controlBinarySha256": "cad23be44f02912ef2e329a783519b9aadeb981b2eb80453f7bfd3e9fd54af56",
+    "kleidiaiBinarySha256": "8cc4b692e9bef3288c18506b744c5cef15a5a66795ae3a072e80c16f2a223403",
+    "kleidiaiSymbolCount": 58,
+    "runtimeFeatures": ["DOTPROD", "KLEIDIAI", "REPACK"]
+  },
+  "model": {
+    "id": "llama-3.2-1b-instruct-q4_0",
+    "sha256": "fa0390e7c043f89ae1847bd6682d748041a99d4ef3de0e0b27d33b6af97a8be8",
+    "quantization": "Q4_0"
+  },
+  "workload": {
+    "threads": 2,
+    "threadsBatch": 8,
+    "contextSize": 512,
+    "batchSize": 64,
+    "ubatchSize": 64,
+    "gpuLayers": 0,
+    "scoredRepetitionsPerMode": 3,
+    "counterbalancedOrder": ["control", "kleidiai", "kleidiai", "control", "control", "kleidiai"]
+  },
+  "correctness": {
+    "exactGreedyOutputMatch": true,
+    "crashOrUnsupportedInstruction": false
+  },
+  "metrics": {
+    "pp256TokensPerSecond": {
+      "controlSamples": [80.194155, 79.938265, 81.116520],
+      "controlMean": 80.416313,
+      "controlCvPercent": 0.770674,
+      "kleidiaiSamples": [78.722076, 71.879188, 76.402423],
+      "kleidiaiMean": 75.667896,
+      "kleidiaiCvPercent": 4.599144,
+      "deltaPercent": -5.904
+    },
+    "tg64TokensPerSecond": {
+      "controlSamples": [12.947106, 13.053811, 13.088576],
+      "controlMean": 13.029831,
+      "controlCvPercent": 0.565783,
+      "kleidiaiSamples": [12.938690, 12.841966, 12.873397],
+      "kleidiaiMean": 12.884684,
+      "kleidiaiCvPercent": 0.382935,
+      "deltaPercent": -1.113951
+    }
+  }
+}

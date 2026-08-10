@@ -19,7 +19,8 @@
 
 set -euo pipefail
 
-SERIAL="${ANDROID_SERIAL:-8DYTMRKF755TOBZD}"
+: "${ANDROID_SERIAL:?Set ANDROID_SERIAL to the target phone shown by adb devices}"
+SERIAL="$ANDROID_SERIAL"
 DEV=/data/local/tmp/llama-edge
 MODEL=$DEV/models/Llama-3.2-1B-Instruct-Q4_0.gguf
 OUT="${OUT:-benchmarks/results/profiles/$(date -u +%Y%m%d-%H%M%S)}"

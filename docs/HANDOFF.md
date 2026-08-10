@@ -6,8 +6,8 @@
 > Sections 4–6 below are now historical; §7 gotchas and §9 next actions remain live.
 >
 > Linux env: CachyOS (Arch), GCC 16.1.1, CMake 4.3.4, ninja 1.13.1,
-> NDK r28c at `~/Android/Sdk/ndk/28.2.13676358`, models at
-> `/run/media/manishm/T7_Shield/models/`.
+> NDK r28c at `$ANDROID_HOME/ndk/28.2.13676358`; set `LLAMA_EDGE_MODELS` to the
+> host's model directory.
 
 Written 22 Jul 2026 and updated 8 Aug after the final phase-aware device evidence. Read this first when picking the project up on the Linux side of the dual boot.
 **Local `main` contains the complete Phase 1 and Phase 2 evidence; verify `git status -sb` before switching machines because the latest commits may still be ahead of `origin/main`.**
@@ -26,11 +26,11 @@ Companion docs: [PLAN.md](PLAN.md) (strategy + checklists), [phase0-report.md](p
 | 4 — Android app | **DEVICE VERIFIED IN DEBUG** — import/hash/load, generation, A/B, export, cancellation, and reuse passed; final APKs build and verify |
 | 5 — evidence, docs, demo, submit | **IN PROGRESS** — chart, immutable evidence, and telemetry supplement exist; true fresh clone, video, public release, and submission remain |
 
-Deadline **14 Aug 2026 4:00 PM PDT**; submission target **12 Aug**. Repo is **private** — must be flipped public before submitting.
+Deadline **14 Aug 2026 4:00 PM PDT**; submission target **12 Aug**. The repository is public.
 
 ## 2. Verified facts (do not re-derive)
 
-**Device — Redmi Note 14 5G**, adb serial `8DYTMRKF755TOBZD`
+**Device — Redmi Note 14 5G** (ADB serial intentionally omitted from public docs)
 - MediaTek Dimensity 7025 (MT6855); 2× Cortex-A78 (cores **6,7**) + 6× Cortex-A55 (cores 0–5)
 - SIMD: **dotprod + fp16**; **no i8mm, no SVE** → build with `-march=armv8.2-a+dotprod+fp16`
 - GPU **PowerVR B-Series BXM-8-256**, Vulkan **1.3**, driver `25.1@6715691`
@@ -74,7 +74,7 @@ Deadline **14 Aug 2026 4:00 PM PDT**; submission target **12 Aug**. Repo is **pr
 
 - [ ] Install: `git`, `cmake` (≥3.22), `ninja-build`, `python3`, `android-sdk-platform-tools` (adb), a host C++ compiler (`build-essential`)
 - [ ] Android NDK **r28** (same major as Windows side: 28.2.13676358) — SDK manager or the standalone zip
-- [ ] udev rule for the phone (Xiaomi vendor id `2717`), then `adb devices` → confirm serial `8DYTMRKF755TOBZD`
+- [ ] udev rule for the phone (Xiaomi vendor id `2717`), then `adb devices` → identify the phone serial
 - [ ] `git clone --recurse-submodules https://github.com/ManishModak/llama-edge-android.git`
 - [ ] Verify submodule pin: `git -C third_party/llama.cpp rev-parse --short HEAD` → `178a6c4`
 - [ ] `export LLAMA_EDGE_MODELS=<exfat-mount>/models`
@@ -122,7 +122,7 @@ adb shell chmod +x /data/local/tmp/llama-edge/llama-bench
    real `llama-completion`/APK generation.
 5. **Vulkan needs a host-side shader generator** — that's the whole Windows blocker (Smart App Control refuses to execute freshly compiled unsigned .exe). Non-issue on Linux.
 6. **Binaries from different toolchains are not comparable.** Every A/B must use binaries built by the same toolchain. Windows numbers below are a sanity reference only.
-7. **An Android emulator is also attached on the Linux box.** Bare `adb shell` fails with `more than one device/emulator`. Always pin the phone: `export ANDROID_SERIAL=8DYTMRKF755TOBZD` (adb honours it natively), or pass `--serial` to `run_suite.py`. Note `tools/device_snapshot.py` has **no** `--serial` flag — it needs the env var, and silently writes an all-empty snapshot if it can't reach a unique device. Check the snapshot is populated before trusting a run.
+7. **An Android emulator may also be attached.** Bare `adb shell` then fails with `more than one device/emulator`. Always pin the phone with `export ANDROID_SERIAL=<phone-serial>` (adb honours it natively), or pass `--serial` to `run_suite.py`. Note `tools/device_snapshot.py` has **no** `--serial` flag — it needs the env var, and silently writes an all-empty snapshot if it can't reach a unique device. Check the snapshot is populated before trusting a run.
 8. **Vulkan cross-compile needs two headers the NDK doesn't provide.** `vulkan.hpp` (vendored: `third_party/Vulkan-Headers` @ `v1.4.350`) and `spirv/unified1/spirv.hpp` (present in the NDK but never propagated to the `ggml-vulkan` target — inject with `-isystem`). Full recipe in [vulkan-build-notes.md](vulkan-build-notes.md).
 9. **zsh does not word-split unquoted variables.** `D="-s $SERIAL"; adb $D shell …` fails on this box (works in bash). Inline the flags or use `${=D}`.
 10. **Piping a build to `tail` masks its exit code.** `cmake --build … | tail -40` reports tail's status, so a failed ninja build looks like success. Redirect to a log and check `$?` instead.

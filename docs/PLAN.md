@@ -11,7 +11,7 @@ Canonical copy of this plan: `docs/PLAN.md` in the repo. P0 lands the completed
 
 ## 0. Verified facts (measured 20 Jul 2026 — do not re-derive)
 
-### Device (Redmi Note 14 5G, `24094RAD4I`, ADB serial `8DYTMRKF755TOBZD`)
+### Device (Redmi Note 14 5G, `24094RAD4I`; ADB serial omitted from public docs)
 | Item | Verified value |
 |---|---|
 | SoC | **MediaTek Dimensity 7025 (MT6855)** |
@@ -325,7 +325,7 @@ portable claim is that phase optima can differ and must be measured rather than 
       The promoted phone profile is `pp8-tg2`; wrong device/model/build/context identities disable it.
 - [x] Verify model import, generation, cancellation/reuse, benchmark UI, and JSON export on the phone.
       SAF copy/hash/load, baseline and optimized generation, A/B, export, cancellation, and a
-      successful 128-token post-cancel reuse run were exercised on serial `8DYTMRKF755TOBZD`.
+      successful 128-token post-cancel reuse run were exercised on the target phone.
 
 **What generalizes and what does not:**
 
@@ -374,62 +374,83 @@ worth more than an unproven late optimization.
 - [x] Commit the audited plan and publish the current proven `agent/phase-aware-autotuner` work to
       default `main` through repository PR #1 before experimental kernel/backend work — completed
       8 Aug. The external Kilo review check was non-actionable (`model unavailable`, zero findings).
-- [ ] Create KleidiAI and GPU/hybrid work on separate branches from the landed known-good baseline.
-      Merge either only after its own gates pass; a failed experiment must leave `main` releasable.
+- [x] Create KleidiAI and GPU/hybrid work on an isolated branch from the landed known-good baseline.
+      Both experiments share `agent/kleidiai-gpu-policy` because the final native-library identity
+      and qualification gates cover their combined binary. Do not merge it until the applicable
+      gates pass; a failed experiment must leave `main` releasable.
 
 **P1 — bounded KleidiAI go/no-go spike (Codex can implement; 2–4 h plus device time)**
-- [ ] Create an experimental build with `GGML_CPU_KLEIDIAI=ON` while retaining
+- [x] Create an experimental build with `GGML_CPU_KLEIDIAI=ON` while retaining
       `armv8.2-a+dotprod+fp16`; record the fetched KleidiAI version (`v1.24.0` in the pinned tree),
-      source/archive identity, license, and resulting JNI SHA-256.
-- [ ] Prove activation at three levels: CMake reports `Using KleidiAI optimized kernels`, the JNI
+      source/archive identity, license, and resulting JNI SHA-256. The local inspector verifies the
+      pinned MD5, records archive SHA-256, reports Apache-2.0/BSD-3-Clause license files, and hashes
+      the APK/JNI. This is build provenance, not device activation proof.
+- [x] Prove activation at three levels: CMake reports `Using KleidiAI optimized kernels`, the JNI
       library contains `GGML_USE_CPU_KLEIDIAI`/`kai_*` evidence, and device logs report a compatible
-      DOTPROD Q4 kernel. Symbol presence alone is not runtime use.
-- [ ] Smoke model load and greedy correctness, then run a counterbalanced current-vs-KleidiAI A/B
+      DOTPROD Q4 kernel. The matched candidate contained 58 `kai_*` symbols; Redmi runtime logs
+      reported `DOTPROD = 1 | KLEIDIAI = 1` while loading the registered Q4_0 model.
+- [x] Smoke model load and greedy correctness, then run a counterbalanced current-vs-KleidiAI A/B
       on the same phone/model/workload. Start with 3 scored repetitions per mode; expand only if the
-      signal is positive and thermally credible.
-- [ ] **Accept only if** exact outputs match, there is no crash/unsupported instruction, no low-memory
+      signal is positive and thermally credible. Completed 8 Aug with exact greedy output and three
+      thermally gated samples per mode in counterbalanced order.
+- [x] **Accept only if** exact outputs match, there is no crash/unsupported instruction, no low-memory
       event or material sustained SwapFree regression, model-load/TTFT/end-to-end do not regress by
-      more than 3%, and at least one primary metric improves by at least 3% beyond run noise.
-- [ ] If rejected, keep the current binary/policy and document one concise negative result. If the
+      more than 3%, and at least one primary metric improves by at least 3% beyond run noise. The
+      acceptance predicate failed: mean pp256 regressed 5.90% and tg64 regressed 1.11%; no full
+      autotuner was started.
+- [x] If rejected, keep the current binary/policy and document one concise negative result. If the
       short gate passes, mark KleidiAI **provisionally accepted** but do not start the full phase-pair
       sweep yet: P2 may change the binary again. After the final shipped feature set freezes, run one
       approved full autotuner, export the policy, rerun final app A/B evidence, and refresh hashes,
-      chart, and docs. **Budget cap: stop the KleidiAI decision by 10 Aug evening.**
+      chart, and docs. **Budget cap: stop the KleidiAI decision by 10 Aug evening.** Rejected on
+      8 Aug; release defaults are restored to KleidiAI off and the concise evidence is in
+      `docs/kleidiai-go-no-go.md`.
 
 **P2 — Vulkan GPU, hybrid offload, and Auto policy (Codex can implement; ~1 focused day before validation)**
-- [ ] Build the Android JNI engine with `GGML_VULKAN=ON` while retaining the CPU backend and its
-      phase-aware policy. Package the pinned Vulkan headers/shaders reproducibly and record shader
-      compiler, llama.cpp, native-library, and APK identities.
-- [ ] Extend the engine/app contract with explicit `CPU`, `VULKAN`, `HYBRID`, and `AUTO` modes.
+- [x] Build the Android JNI engine with `GGML_VULKAN=ON` while retaining an independently buildable
+      CPU backend. Package the pinned Vulkan headers/shaders reproducibly and add a command that
+      records shader compiler, llama.cpp, native-library, APK, KleidiAI-symbol, and Vulkan-symbol
+      identities. The old measured phase policy is intentionally disabled because this binary
+      changed; refreshing it remains gated on the final approved re-sweep.
+- [x] Extend the engine/app contract with explicit `CPU`, `VULKAN`, `HYBRID`, and `AUTO` modes.
       `CPU` sets `n_gpu_layers=0`; `VULKAN` requests all supported layers; `HYBRID` uses a bounded
       layer count; `AUTO` may select only a fully qualified cached policy.
-- [ ] Enumerate the Vulkan device and export vendor/device name, driver/API version, UMA status,
+- [x] Enumerate the Vulkan device and export vendor/device name, driver/API version, UMA status,
       FP16, integer-dot, cooperative/matrix capability, and supported operation information. Treat
       capability detection as candidate generation, never as proof that the backend is faster or
-      correct.
-- [ ] Add bounded layer-placement candidates derived from model layer count: CPU-only, approximately
-      25%, 50%, 75%, and full offload. Remove duplicates for small models and reject candidates that
-      exceed the measured memory budget.
-- [ ] Bind GPU profiles to device fingerprint, Vulkan driver/capabilities, llama.cpp/source and JNI
+      correct. Required Q4_0 operation-shape evidence is a separate fail-closed gate: the retained
+      PowerVR failures reject that family, while an unknown GPU remains inconclusive until evidence
+      is imported.
+- [x] Add bounded layer-placement candidates derived from model layer count: CPU-only, approximately
+      25%, 50%, 75%, and full offload, with duplicate removal for small models.
+- [x] Reject layer candidates that exceed the measured memory/SwapFree budget in the qualification
+      evaluator. No candidate has passed this device-dependent gate yet.
+- [x] Bind GPU profiles to device fingerprint, Vulkan driver/capabilities, llama.cpp/source and JNI
       hashes, model hash, context/shape, layer placement, CPU phase pair, workload, and scoring
-      policy. Unknown/stale GPU profiles use a valid CPU profile when available, otherwise stock CPU.
-- [ ] Add fast qualification gates before timing: model load, non-empty greedy output, exact-output
+      policy. The runtime contract and fail-closed exporter reject missing, stale, mismatched, or
+      incomplete qualification reports, including output shape and CPU-policy identity.
+- [x] Add fast qualification gates before timing: model load, non-empty greedy output, exact-output
       agreement with CPU, required official Q4_0 shapes, cancellation/reuse, memory/SwapFree, and no
-      driver/device loss. The known PowerVR bf16/Q4_0 failures remain rejection evidence.
-- [ ] Run only a short counterbalanced qualification initially (one discarded warm-up and 3 scored
+      driver/device loss. Missing operation evidence is inconclusive and prevents timing; the known
+      PowerVR bf16/Q4_0 failures remain rejection evidence.
+- [x] Run only a short counterbalanced qualification initially (one discarded warm-up and 3 scored
       repetitions per surviving mode). Require at least 3% end-to-end improvement beyond noise with
       non-regressing correctness, memory, thermal, and stability before considering a GPU policy.
+      On 10 Aug, retained PowerVR BXM operation failures rejected Hybrid 4/8/12 and full Vulkan
+      before candidate execution, so no mode survived to warm-up or scored timing.
 - [ ] Treat `GGML_OP_OFFLOAD_MIN_BATCH` as an **experimental phase-sensitive candidate** that may
       keep small decode operations on CPU while offloading larger batched work. Do not call it true
       GPU-prefill/CPU-decode switching unless traces prove the intended placement and the result
       beats CPU. Standard partial `n_gpu_layers` offload is the supported hybrid baseline.
-- [ ] On Redmi, a safe expected outcome is `AUTO -> CPU` with Vulkan/Hybrid rejected. The generic
+- [x] On Redmi, a safe expected outcome is `AUTO -> CPU` with Vulkan/Hybrid rejected. The generic
       modes may still ship for other devices if they fail closed correctly, but no Adreno/Mali speed
-      claim is permitted without physical evidence from such hardware.
-- [ ] **Long-run authorization gate:** after implementation, build, and short qualification, stop and
+      claim is permitted without physical evidence from such hardware. Device-verified 10 Aug;
+      exported evidence is `benchmarks/results/20260810-powervr-backend-qualification/qualification.json`.
+- [x] **Long-run authorization gate:** after implementation, build, and short qualification, stop and
       report surviving candidates, exact expected duration, device temperature requirements, and
       whether the shipped binary changed. Do not start a full GPU matrix, CPU re-sweep, sustained
-      session, or final evidence rerun until the user explicitly approves it.
+      session, or final evidence rerun until the user explicitly approves it. No GPU candidate
+      survived; no long GPU matrix or CPU re-sweep was started.
 - [ ] If GPU support is unfinished or unsafe by **11 Aug evening**, do not merge it. Keep the proven
       CPU app on `main`, document the measured PowerVR rejection, and retain GPU Auto routing as
       post-submission work.
@@ -459,9 +480,11 @@ worth more than an unproven late optimization.
 - [x] `CHANGES_FOR_CHALLENGE.md` — exact work done during the submission window
 - [x] `docs/reproducibility.md` complete: JDK/NDK/CMake/AGP versions, build commands, ADB steps
 - [x] Authenticated shallow recursive clone + Android release build passed on commit `02c369b`.
-- [ ] Because the repo is already public, immediately audit tracked files and Git history for
+- [x] Because the repo is already public, immediately audit tracked files and Git history for
       secrets, personal paths, device serial exposure, model redistribution, third-party notices,
-      and submodule reproducibility.
+      and submodule reproducibility. Completed 8 Aug; findings and retained immutable-evidence
+      exceptions are in `docs/repository-audit.md`, and dependency attribution is in
+      `THIRD_PARTY_NOTICES.md`.
 - [ ] Publish a GitHub Release with the testable release APK, source/commit identity, checksums,
       model acquisition instructions (do not redistribute restricted weights), and final evidence.
 - [x] Public visibility and GitHub Apache-2.0 detection verified 8 Aug.
@@ -552,7 +575,9 @@ worth more than an unproven late optimization.
       as a general result
 - [x] Correctness checks pass; unsupported-device fallback works
 - [x] App demos chat + A/B benchmark without log-diving
-- [ ] Proven CPU mode remains independently releasable regardless of KleidiAI/GPU experiment status
+- [x] Proven CPU mode remains independently releasable regardless of KleidiAI/GPU experiment status:
+      default `main` contains the frozen verified CPU app, and the experimental branch retains a
+      build-verified `mobilespec.enableKleidiAI=false`/`mobilespec.enableVulkan=false` path.
 - [ ] If P2 is merged: CPU/Vulkan/Hybrid/Auto are explicit; unknown/stale/failed GPU policies fall
       back to CPU; PowerVR rejection is device-verified; no untested-GPU speed claim appears
 - [ ] Public repo and test build are accessible, Apache-2.0 is detected, README is judge-ordered,

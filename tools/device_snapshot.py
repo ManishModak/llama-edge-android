@@ -34,7 +34,9 @@ def main() -> None:
 
     snap = {
         "timestampUtc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "serial": devices[0].split()[0],
+        # The physical serial selects the adb target but is not experiment identity.
+        # Never persist it in shareable evidence.
+        "serial": "<redacted>",
         "model": getprop("ro.product.model"),
         "soc": getprop("ro.soc.model"),
         "socManufacturer": getprop("ro.soc.manufacturer"),
