@@ -12,7 +12,7 @@ import prepare_release_bundle as release
 
 class PrepareReleaseBundleTest(unittest.TestCase):
     def test_expected_patch_state_matches_porcelain_v1(self):
-        self.assertEqual(" m third_party/llama.cpp", release.ALLOWED_PATCHED_SUBMODULE_STATUS)
+        self.assertEqual("M third_party/llama.cpp", release.ALLOWED_PATCHED_SUBMODULE_STATUS)
 
     def test_checksums_are_sorted_and_exclude_checksum_file(self):
         with tempfile.TemporaryDirectory() as temporary:
